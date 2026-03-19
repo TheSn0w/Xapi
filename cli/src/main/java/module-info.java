@@ -8,6 +8,8 @@ module com.botwithus.bot.cli {
     requires org.lwjgl.glfw;
     requires org.lwjgl.opengl;
     requires java.desktop;
+    requires javafx.graphics;
+    requires javafx.controls;
     requires ch.qos.logback.classic;
     requires ch.qos.logback.core;
 

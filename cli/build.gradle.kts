@@ -7,6 +7,12 @@ plugins {
 val lwjglVersion = "3.3.6"
 val imguiVersion = "1.90.0"
 val lwjglNatives = "natives-windows"
+val javafxVersion = "24"
+val javafxPlatform = when {
+    org.gradle.internal.os.OperatingSystem.current().isWindows -> "win"
+    org.gradle.internal.os.OperatingSystem.current().isMacOsX -> "mac"
+    else -> "linux"
+}
 
 dependencies {
     implementation(project(":api"))
@@ -18,6 +24,9 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
     implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("org.openjfx:javafx-base:$javafxVersion:$javafxPlatform")
+    implementation("org.openjfx:javafx-controls:$javafxVersion:$javafxPlatform")
+    implementation("org.openjfx:javafx-graphics:$javafxVersion:$javafxPlatform")
 }
 
 extraJavaModuleInfo {
@@ -41,7 +50,8 @@ tasks.named<JavaExec>("run") {
     workingDir = rootProject.projectDir
     jvmArgs(
         "-Dorg.lwjgl.librarypath=${layout.buildDirectory.dir("natives").get().asFile.absolutePath}",
-        "--enable-native-access=org.lwjgl,org.lwjgl.opengl,org.lwjgl.glfw,imgui.binding"
+        "--enable-native-access=org.lwjgl,org.lwjgl.opengl,org.lwjgl.glfw,imgui.binding,javafx.graphics",
+        "--add-modules=javafx.controls,javafx.graphics"
     )
 }
 

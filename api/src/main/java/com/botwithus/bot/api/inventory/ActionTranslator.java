@@ -25,8 +25,8 @@ public final class ActionTranslator {
         int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
         if (npcSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "npcs.query().name(\"" + entityName + "\").first().interact(\"" + orEmpty(optionName) + "\")"
-                    : "npcs.query().index(" + p1 + ").first().interact(" + npcSlot + ")";
+                    ? "npcs.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
+                    : "npcs.query().index(" + p1 + ").nearest().interact(" + npcSlot + ")";
             return highLevel + "\n" + raw;
         }
 
@@ -34,8 +34,8 @@ public final class ActionTranslator {
         int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, actionId);
         if (objSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "objects.query().name(\"" + entityName + "\").first().interact(\"" + orEmpty(optionName) + "\")"
-                    : "objects.query().typeId(" + p1 + ").first().interact(" + objSlot + ")";
+                    ? "objects.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
+                    : "objects.query().typeId(" + p1 + ").nearest().interact(" + objSlot + ")";
             return highLevel + "\n" + raw;
         }
 
@@ -43,8 +43,8 @@ public final class ActionTranslator {
         int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId);
         if (giSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "groundItems.query().name(\"" + entityName + "\").first().interact(\"" + orEmpty(optionName) + "\")"
-                    : "groundItems.query().itemId(" + p1 + ").first().interact(" + giSlot + ")";
+                    ? "groundItems.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
+                    : "groundItems.query().itemId(" + p1 + ").nearest().interact(" + giSlot + ")";
             return highLevel + "\n" + raw;
         }
 
@@ -52,8 +52,8 @@ public final class ActionTranslator {
         int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, actionId);
         if (playerSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "players.query().name(\"" + entityName + "\").first().interact(" + playerSlot + ")"
-                    : "players.query().index(" + p1 + ").first().interact(" + playerSlot + ")";
+                    ? "players.query().name(\"" + entityName + "\").nearest().interact(" + playerSlot + ")"
+                    : "players.query().index(" + p1 + ").nearest().interact(" + playerSlot + ")";
             return highLevel + "\n" + raw;
         }
 
@@ -82,28 +82,28 @@ public final class ActionTranslator {
         // NPC options (9–13, 1003)
         int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
         if (npcSlot > 0) {
-            String comment = "// npcs.query().index(" + p1 + ").first().interact(" + npcSlot + ")";
+            String comment = "// npcs.query().index(" + p1 + ").nearest().interact(" + npcSlot + ")";
             return comment + "  -- " + ActionTypes.nameOf(actionId) + "\n" + raw;
         }
 
         // Object options (3–6, 1001–1002)
         int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, actionId);
         if (objSlot > 0) {
-            String comment = "// objects.query().typeId(" + p1 + ").tile(" + p2 + ", " + p3 + ").first().interact(" + objSlot + ")";
+            String comment = "// objects.query().typeId(" + p1 + ").tile(" + p2 + ", " + p3 + ").nearest().interact(" + objSlot + ")";
             return comment + "  -- " + ActionTypes.nameOf(actionId) + "\n" + raw;
         }
 
         // Ground item options (18–22, 1004)
         int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId);
         if (giSlot > 0) {
-            String comment = "// groundItems.query().itemId(" + p1 + ").tile(" + p2 + ", " + p3 + ").first().interact(" + giSlot + ")";
+            String comment = "// groundItems.query().itemId(" + p1 + ").tile(" + p2 + ", " + p3 + ").nearest().interact(" + giSlot + ")";
             return comment + "  -- " + ActionTypes.nameOf(actionId) + "\n" + raw;
         }
 
         // Player options (44–53)
         int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, actionId);
         if (playerSlot > 0) {
-            String comment = "// players.query().index(" + p1 + ").first().interact(" + playerSlot + ")";
+            String comment = "// players.query().index(" + p1 + ").nearest().interact(" + playerSlot + ")";
             return comment + "  -- " + ActionTypes.nameOf(actionId) + "\n" + raw;
         }
 
@@ -119,7 +119,7 @@ public final class ActionTranslator {
 
         // Walk (23)
         if (actionId == ActionTypes.WALK) {
-            return "// WALK to (" + p1 + ", " + p2 + ")\n" + raw;
+            return "// WALK to (" + p2 + ", " + p3 + ", " + p1 + ")\n" + raw;
         }
 
         // Dialogue (30)
@@ -282,7 +282,7 @@ public final class ActionTranslator {
 
             // Walk actions get special handling
             if (e.actionId() == ActionTypes.WALK) {
-                sb.append("                api.walkToAsync(").append(e.param1()).append(", ").append(e.param2()).append(");\n");
+                sb.append("                api.walkToAsync(").append(e.param2()).append(", ").append(e.param3()).append(");\n");
                 sb.append("                Conditions.waitUntil(() -> !api.getLocalPlayer().isMoving(), 5000);\n");
             } else {
                 sb.append("                ").append(code).append(";").append(comment).append("\n");

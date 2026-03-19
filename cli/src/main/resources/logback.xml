@@ -5,8 +5,22 @@
     </encoder>
   </appender>
   <appender name="LOG_BUFFER" class="com.botwithus.bot.cli.log.LogBufferAppender"/>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/xapi.log</file>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{script.name:-system}] %logger{36} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/xapi.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>10MB</maxFileSize>
+      <maxHistory>7</maxHistory>
+      <totalSizeCap>100MB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+  <logger name="com.botwithus.bot.scripts.xapi" level="DEBUG"/>
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="LOG_BUFFER"/>
+    <appender-ref ref="FILE"/>
   </root>
 </configuration>
