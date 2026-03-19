@@ -1,0 +1,71 @@
+package com.botwithus.bot.cli;
+
+import com.botwithus.bot.core.impl.EventBusImpl;
+import com.botwithus.bot.core.pipe.PipeClient;
+import com.botwithus.bot.core.rpc.RpcClient;
+import com.botwithus.bot.core.runtime.ScriptRunner;
+import com.botwithus.bot.core.runtime.ScriptRuntime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Connection {
+
+    private static final Logger log = LoggerFactory.getLogger(Connection.class);
+
+    private final String name;
+    private final PipeClient pipe;
+    private final RpcClient rpc;
+    private final ScriptRuntime runtime;
+    private EventBusImpl eventBus;
+    private String accountName;
+    private java.util.Map<String, Object> accountInfo;
+
+    public Connection(String name, PipeClient pipe, RpcClient rpc, ScriptRuntime runtime) {
+        this.name = name;
+        this.pipe = pipe;
+        this.rpc = rpc;
+        this.runtime = runtime;
+    }
+
+    public String getName() { return name; }
+    public PipeClient getPipe() { return pipe; }
+    public RpcClient getRpc() { return rpc; }
+    public ScriptRuntime getRuntime() { return runtime; }
+
+    public void setEventBus(EventBusImpl eventBus) { this.eventBus = eventBus; }
+    public EventBusImpl getEventBus() { return eventBus; }
+
+    public void setAccountName(String accountName) { this.accountName = accountName; }
+    public String getAccountName() { return accountName; }
+
+    public void setAccountInfo(java.util.Map<String, Object> accountInfo) { this.accountInfo = accountInfo; }
+    public java.util.Map<String, Object> getAccountInfo() { return accountInfo; }
+
+    /** Returns true if the underlying pipe is still open. */
+    public boolean isAlive() {
+        return pipe.isOpen();
+    }
+
+    /** Returns true if any scripts are currently running on this connection. */
+    public boolean hasRunningScripts() {
+        return runtime.getRunners().stream().anyMatch(ScriptRunner::isRunning);
+    }
+
+    /** Stop all scripts AND close the connection. */
+    public void close() {
+        // Unblock actions on the game client before stopping scripts/closing RPC
+        // so the game isn't left stuck if blocking was enabled
+        try {
+            rpc.callSync("set_actions_blocked", java.util.Map.of("blocked", false));
+        } catch (Exception e) {
+            log.debug("Could not unblock actions for {} (pipe may already be closed)", name);
+        }
+        try { runtime.stopAll(); } catch (Exception e) {
+            log.error("Error stopping scripts for {}", name, e);
+        }
+        try { rpc.close(); } catch (Exception e) {
+            log.error("Error closing RPC for {}", name, e);
+        }
+    }
+}
