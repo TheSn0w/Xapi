@@ -254,18 +254,89 @@ public class TestScript implements BotScript {
                 return 2000;
             }
 
-            // ---- Restore mode to 1, close, summary ----
+            // ================ DEPOSIT AMOUNT TESTS ================
+            // Test deposit(itemId, amount) from mode=FIVE to check if deposit options shift
+
+            // ---- Withdraw 28 swordfish to fill backpack ----
             case 26 -> {
-                bank.setTransferMode(Bank.TransferAmount.ONE);
+                log.info("[BankTest] === Deposit Tests: Fill backpack first ===");
+                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ALL);
                 step++;
                 return 2000;
             }
             case 27 -> {
+                int bp = countBackpackSwordfish();
+                check("Backpack filled with 28 swordfish", bp == 28);
+                log.info("[BankTest] Backpack: {} (expected 28)", bp);
+
+                // Set mode to FIVE (not ALL) to test if deposit options shift
+                log.info("[BankTest] === setTransferMode(FIVE) for deposit tests ===");
+                bank.setTransferMode(Bank.TransferAmount.FIVE);
+                step++;
+                return 2000;
+            }
+
+            // ---- Deposit 1 from mode FIVE ----
+            case 28 -> {
+                check("transferMode() == FIVE", bank.transferMode() == Bank.TransferAmount.FIVE);
+                log.info("[BankTest] Deposit 1 (mode=FIVE)");
+                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.ONE);
+                step++;
+                return 2000;
+            }
+            case 29 -> {
+                int bp = countBackpackSwordfish();
+                check("D1 from mode FIVE: backpack=27", bp == 27);
+                log.info("[BankTest] Backpack: {} (expected 27)", bp);
+                step++;
+                return 1000;
+            }
+
+            // ---- Deposit 5 from mode FIVE ----
+            case 30 -> {
+                log.info("[BankTest] Deposit 5 (mode=FIVE)");
+                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.FIVE);
+                step++;
+                return 2000;
+            }
+            case 31 -> {
+                int bp = countBackpackSwordfish();
+                check("D5 from mode FIVE: backpack=22", bp == 22);
+                log.info("[BankTest] Backpack: {} (expected 22)", bp);
+                step++;
+                return 1000;
+            }
+
+            // ---- Deposit 10 from mode FIVE ----
+            case 32 -> {
+                log.info("[BankTest] Deposit 10 (mode=FIVE)");
+                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.TEN);
+                step++;
+                return 2000;
+            }
+            case 33 -> {
+                int bp = countBackpackSwordfish();
+                check("D10 from mode FIVE: backpack=12", bp == 12);
+                log.info("[BankTest] Backpack: {} (expected 12)", bp);
+
+                // Deposit rest
+                bank.depositAll();
+                step++;
+                return 2000;
+            }
+
+            // ---- Restore mode to 1, close, summary ----
+            case 34 -> {
+                bank.setTransferMode(Bank.TransferAmount.ONE);
+                step++;
+                return 2000;
+            }
+            case 35 -> {
                 bank.close();
                 step++;
                 return 2000;
             }
-            case 28 -> {
+            case 36 -> {
                 check("Bank is closed", !bank.isOpen());
                 log.info("[BankTest] ==============================");
                 log.info("[BankTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
