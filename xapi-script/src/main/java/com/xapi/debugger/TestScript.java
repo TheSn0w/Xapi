@@ -4,9 +4,6 @@ import com.botwithus.bot.api.*;
 import com.botwithus.bot.api.inventory.Bank;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
-import com.botwithus.bot.api.model.Component;
-
-import java.util.List;
 
 /**
  * Bank API test — withdraw(int) and deposit(int) with Swordfish (ID 373).
@@ -23,10 +20,7 @@ public class TestScript implements BotScript {
 
     private static final BotLogger log = LoggerFactory.getLogger(TestScript.class);
     private static final int SWORDFISH_ID = 373;
-    private static final int BANK_INTERFACE = 517;
-    private static final int BACKPACK_COMPONENT = 15;
 
-    private GameAPI api;
     private Bank bank;
     private int step = 0;
     private int passed = 0;
@@ -34,8 +28,7 @@ public class TestScript implements BotScript {
 
     @Override
     public void onStart(ScriptContext ctx) {
-        this.api = ctx.getGameAPI();
-        this.bank = new Bank(api);
+        this.bank = new Bank(ctx.getGameAPI());
         log.info("[BankTest] Started — open bank with Swordfish in bank, empty backpack");
     }
 
@@ -58,7 +51,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 1 -> {
-                check("Backpack empty", countBackpackSwordfish() == 0);
+                check("Backpack empty", bank.backpackIsEmpty());
                 step++;
                 return 1000;
             }
@@ -72,7 +65,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 3 -> {
-                int bp = countBackpackSwordfish();
+                int bp = bank.backpackCount(SWORDFISH_ID);
                 check("Withdraw 19: backpack=19", bp == 19);
                 log.info("[BankTest] Backpack: {} (expected 19)", bp);
                 step++;
@@ -88,7 +81,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 5 -> {
-                int bp = countBackpackSwordfish();
+                int bp = bank.backpackCount(SWORDFISH_ID);
                 check("Deposit 4: backpack=15", bp == 15);
                 log.info("[BankTest] Backpack: {} (expected 15)", bp);
                 step++;
@@ -104,7 +97,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 7 -> {
-                int bp = countBackpackSwordfish();
+                int bp = bank.backpackCount(SWORDFISH_ID);
                 check("Deposit 9: backpack=6", bp == 6);
                 log.info("[BankTest] Backpack: {} (expected 6)", bp);
                 step++;
@@ -120,7 +113,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 9 -> {
-                int bp = countBackpackSwordfish();
+                int bp = bank.backpackCount(SWORDFISH_ID);
                 check("Withdraw 22: backpack=28", bp == 28);
                 log.info("[BankTest] Backpack: {} (expected 28 = 6 + 22)", bp);
                 step++;
@@ -136,7 +129,7 @@ public class TestScript implements BotScript {
                 return 2000;
             }
             case 11 -> {
-                int bp = countBackpackSwordfish();
+                int bp = bank.backpackCount(SWORDFISH_ID);
                 check("Deposit 13: backpack=15", bp == 15);
                 log.info("[BankTest] Backpack: {} (expected 15 = 28 - 13)", bp);
                 step++;
@@ -165,17 +158,6 @@ public class TestScript implements BotScript {
 
             default -> { return -1; }
         }
-    }
-
-    private int countBackpackSwordfish() {
-        List<Component> children = api.getComponentChildren(BANK_INTERFACE, BACKPACK_COMPONENT);
-        int count = 0;
-        for (Component child : children) {
-            if (child.itemId() == SWORDFISH_ID) {
-                count++;
-            }
-        }
-        return count;
     }
 
     private void check(String name, boolean condition) {

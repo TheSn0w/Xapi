@@ -216,6 +216,69 @@ public final class Bank {
         return container.occupiedSlots();
     }
 
+    // ========================== Backpack (live while bank is open) ==========================
+
+    /**
+     * Count how many of an item are in the backpack while the bank is open.
+     * <p>Uses interface 517 component 15 which reflects the live backpack state
+     * (inventory 93 is stale while the bank interface is open).</p>
+     *
+     * @param itemId the item ID to count
+     * @return the number of matching items in the backpack
+     */
+    public int backpackCount(int itemId) {
+        if (!isOpen()) return 0;
+        List<Component> children = api.getComponentChildren(INTERFACE_ID, BACKPACK_COMPONENT);
+        int count = 0;
+        for (Component child : children) {
+            if (child.itemId() == itemId) count++;
+        }
+        return count;
+    }
+
+    /**
+     * Check if the backpack contains an item while the bank is open.
+     *
+     * @param itemId the item ID to check
+     * @return {@code true} if at least one is in the backpack
+     */
+    public boolean backpackContains(int itemId) {
+        return backpackCount(itemId) > 0;
+    }
+
+    /**
+     * Check if the backpack is empty while the bank is open.
+     *
+     * @return {@code true} if no items are in the backpack
+     */
+    public boolean backpackIsEmpty() {
+        if (!isOpen()) return false;
+        List<Component> children = api.getComponentChildren(INTERFACE_ID, BACKPACK_COMPONENT);
+        return children.stream().noneMatch(c -> c.itemId() > 0);
+    }
+
+    /**
+     * Count total occupied slots in the backpack while the bank is open.
+     *
+     * @return the number of non-empty backpack slots
+     */
+    public int backpackOccupiedSlots() {
+        if (!isOpen()) return 0;
+        List<Component> children = api.getComponentChildren(INTERFACE_ID, BACKPACK_COMPONENT);
+        return (int) children.stream().filter(c -> c.itemId() > 0).count();
+    }
+
+    /**
+     * Count free slots in the backpack while the bank is open.
+     *
+     * @return the number of empty backpack slots
+     */
+    public int backpackFreeSlots() {
+        if (!isOpen()) return 0;
+        List<Component> children = api.getComponentChildren(INTERFACE_ID, BACKPACK_COMPONENT);
+        return (int) children.stream().filter(c -> c.itemId() <= 0).count();
+    }
+
     // ========================== Deposit Methods ==========================
 
     /**
@@ -364,7 +427,7 @@ public final class Bank {
 
     /**
      * Finish a deposit/withdraw-X by entering the amount.
-     * Call after {@link #startDepositX} or {@link #startWithdrawX} when the input dialog is open.
+     * Call after {@link #startDepositX} or when the input dialog is open.
      */
     public boolean finishTransferX(int amount) {
         if (!isOpen() || !api.isInterfaceOpen(INPUT_INTERFACE)) return false;
