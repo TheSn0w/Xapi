@@ -49,6 +49,12 @@ final class ActionsTab {
         ImGui.sameLine();
         if (ImGui.checkbox("Other##f", script.categoryFilters[6])) { script.categoryFilters[6] = !script.categoryFilters[6]; script.settingsDirty = true; }
 
+        ImGui.sameLine(); ImGui.text(" |");
+        ImGui.sameLine();
+        if (ImGui.smallButton("Copy All")) {
+            copyAllActions();
+        }
+
         List<LogEntry> entries = script.actionLog;
         String filter = script.filterText.get().toLowerCase();
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
@@ -181,10 +187,14 @@ final class ActionsTab {
                 if (ImGui.isItemHovered()) ImGui.setTooltip("Copy all — this line active, others commented");
             }
 
+            String logLine = hasHuman
+                    ? "log.info(\"" + escapeJava(human) + "\");\n"
+                    : "";
+
             ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
             if (ImGui.selectable(highLevel + "##hi_" + i)) {
                 String copied = hasHuman ? "// " + human + "\n" : "";
-                ImGui.setClipboardText(copied + highLevel + "\n// " + rawLine);
+                ImGui.setClipboardText(copied + logLine + highLevel + "\n// " + rawLine);
             }
             ImGui.popStyleColor();
             if (ImGui.isItemHovered()) ImGui.setTooltip("Copy all — this line active, others commented");
@@ -192,7 +202,7 @@ final class ActionsTab {
             ImGui.pushStyleColor(ImGuiCol.Text, 0.6f, 0.6f, 0.6f, 0.9f);
             if (ImGui.selectable(rawLine + "##raw_" + i)) {
                 String copied = hasHuman ? "// " + human + "\n" : "";
-                ImGui.setClipboardText(copied + "// " + highLevel + "\n" + rawLine);
+                ImGui.setClipboardText(copied + logLine + "// " + highLevel + "\n" + rawLine);
             }
             ImGui.popStyleColor();
             if (ImGui.isItemHovered()) ImGui.setTooltip("Copy all — this line active, others commented");
@@ -234,10 +244,70 @@ final class ActionsTab {
         }
     }
 
+    private void copyAllActions() {
+        // Collect visible entries respecting filters
+        List<LogEntry> visible = new ArrayList<>();
+        String filter = script.filterText.get().toLowerCase();
+        for (LogEntry e : script.actionLog) {
+            if (!passesCategory(e.actionId())) continue;
+            if (!filter.isEmpty()) {
+                String actionName = ActionTypes.nameOf(e.actionId()).toLowerCase();
+                String entity = e.entityName() != null ? e.entityName().toLowerCase() : "";
+                String option = e.optionName() != null ? e.optionName().toLowerCase() : "";
+                if (!actionName.contains(filter) && !entity.contains(filter) && !option.contains(filter)) continue;
+            }
+            visible.add(e);
+        }
+        if (visible.isEmpty()) return;
+
+        // Generate switch cases with delays from recorded timestamps
+        StringBuilder sb = new StringBuilder();
+        sb.append("switch (step) {\n");
+        for (int i = 0; i < visible.size(); i++) {
+            LogEntry e = visible.get(i);
+
+            // Delay to next action based on recorded timing
+            int delayMs = 600;
+            if (i + 1 < visible.size()) {
+                long delta = visible.get(i + 1).timestamp() - e.timestamp();
+                delayMs = (int) Math.max(300, Math.min(delta, 10000));
+            }
+
+            String human = script.buildTargetText(e);
+            String fullCode = ActionTranslator.toCode(e.actionId(), e.param1(), e.param2(), e.param3(),
+                    e.entityName(), e.optionName());
+            // Take the first executable line (high-level if available, otherwise raw)
+            int nl = fullCode.indexOf('\n');
+            String code;
+            if (nl > 0) {
+                String highLevel = fullCode.substring(0, nl);
+                code = highLevel.startsWith("//") ? fullCode.substring(nl + 1) : highLevel;
+            } else {
+                code = fullCode;
+            }
+
+            sb.append("    case ").append(i).append(" -> {\n");
+            String logMsg = !human.isEmpty() ? human : ActionTypes.nameOf(e.actionId());
+            sb.append("        log.info(\"[Step ").append(i).append("] ").append(escapeJava(logMsg)).append("\");\n");
+            sb.append("        ").append(code).append("\n");
+            sb.append("        step++;\n");
+            sb.append("        return ").append(delayMs).append(";\n");
+            sb.append("    }\n");
+        }
+        sb.append("    default -> { return -1; }\n");
+        sb.append("}\n");
+        ImGui.setClipboardText(sb.toString());
+    }
+
     private static int findSlot(int[] options, int actionId) {
         for (int i = 1; i < options.length; i++) {
             if (options[i] == actionId) return i;
         }
         return -1;
+    }
+
+    /** Escapes quotes and backslashes for use inside a Java string literal. */
+    private static String escapeJava(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

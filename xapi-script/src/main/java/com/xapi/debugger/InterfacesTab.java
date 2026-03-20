@@ -3,6 +3,7 @@ package com.xapi.debugger;
 import static com.xapi.debugger.XapiData.*;
 
 import com.botwithus.bot.api.model.Component;
+import com.botwithus.bot.api.model.MiniMenuEntry;
 import com.botwithus.bot.api.model.OpenInterface;
 
 import imgui.ImGui;
@@ -31,6 +32,10 @@ final class InterfacesTab {
             }
             if (ImGui.beginTabItem("Events")) {
                 renderInterfaceEventsSubTab();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Menu Log")) {
+                renderMenuLogSubTab();
                 ImGui.endTabItem();
             }
             ImGui.endTabBar();
@@ -97,7 +102,8 @@ final class InterfacesTab {
 
                             ImGui.tableSetColumnIndex(6);
                             String compCode = "api.queryComponents(ComponentFilter.builder().interfaceId("
-                                    + c.interfaceId() + ").componentId(" + c.componentId() + ").build())";
+                                    + c.interfaceId() + ").build()).stream().filter(c -> c.componentId() == "
+                                    + c.componentId() + ").findFirst()";
                             ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
                             if (ImGui.selectable("query##comp_" + ifaceId + "_" + i)) {
                                 ImGui.setClipboardText(compCode);
@@ -107,14 +113,50 @@ final class InterfacesTab {
                         }
                         ImGui.endTable();
                     }
+
+                    // Live right-click menu options for this interface
+                    List<MiniMenuEntry> menuEntries = getMenuEntriesForInterface(ifaceId);
+                    if (!menuEntries.isEmpty()) {
+                        ImGui.spacing();
+                        ImGui.textColored(1f, 0.8f, 0.3f, 1f, "Live Menu Options (" + menuEntries.size() + "):");
+                        for (int m = 0; m < menuEntries.size(); m++) {
+                            MiniMenuEntry me = menuEntries.get(m);
+                            int compId = me.param3() & 0xFFFF;
+                            int sub = me.param2();
+                            String label = me.optionText() + "  [comp:" + compId + " sub:" + sub
+                                    + " action:" + me.actionId() + " p1:" + me.param1() + "]";
+                            ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+                            if (ImGui.selectable(label + "##menu_" + ifaceId + "_" + m)) {
+                                String code = "api.queueAction(new GameAction(" + me.actionId()
+                                        + ", " + me.param1() + ", " + me.param2() + ", " + me.param3() + "));";
+                                ImGui.setClipboardText(code);
+                            }
+                            ImGui.popStyleColor();
+                            if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy GameAction");
+                        }
+                    }
                 }
                 ImGui.treePop();
             }
         }
     }
 
+    /** Returns mini menu entries matching the given interface ID (from packed param3 hash). */
+    private List<MiniMenuEntry> getMenuEntriesForInterface(int ifaceId) {
+        List<MiniMenuEntry> result = new ArrayList<>();
+        List<MiniMenuEntry> menu = script.lastMiniMenu;
+        if (menu == null) return result;
+        for (MiniMenuEntry entry : menu) {
+            // Component actions store packed hash in param3: ifaceId << 16 | compId
+            if ((entry.param3() >>> 16) == ifaceId) {
+                result.add(entry);
+            }
+        }
+        return result;
+    }
+
     private void renderInterfaceEventsSubTab() {
-        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Poll interval ~2s. Very fast open/close may be missed.");
+        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Polls every tick. Only visible interfaces are tracked.");
 
         if (ImGui.smallButton("Clear Events")) {
             script.interfaceEventLog.clear();
@@ -133,7 +175,7 @@ final class InterfacesTab {
                             if (cs.text() != null && !cs.text().isEmpty()) sb.append(" Text:\"").append(cs.text()).append("\"");
                             if (!cs.options().isEmpty()) sb.append(" Options:").append(cs.options());
                             sb.append(" Code:api.queueAction(new GameAction(57, 1, -1, ")
-                              .append((ev.interfaceId() << 16) | cs.componentId()).append("))\n");
+                              .append((ev.interfaceId() << 16) | cs.componentId()).append("));\n");
                         }
                     }
                 }
@@ -225,21 +267,80 @@ final class InterfacesTab {
                         }
 
                         ImGui.tableSetColumnIndex(4);
-                        // Generate interaction code
+                        // Generate interaction code — full copy-paste-ready statement
                         int hash = (ev.interfaceId() << 16) | cs.componentId();
                         String interactCode;
                         List<String> validOpts = new ArrayList<>();
                         for (String opt : cs.options()) {
                             if (opt != null && !opt.isEmpty()) validOpts.add(opt);
                         }
+                        String queryPart = "api.queryComponents(ComponentFilter.builder().interfaceId("
+                                + ev.interfaceId() + ").build()).stream().filter(c -> c.componentId() == "
+                                + cs.componentId() + ").findFirst()";
                         if (!validOpts.isEmpty()) {
-                            interactCode = "ComponentHelper.interactComponent(api, comp, \"" + validOpts.get(0) + "\")";
+                            interactCode = queryPart + ".ifPresent(comp -> ComponentHelper.interactComponent(api, comp, \"" + validOpts.get(0) + "\"));";
                         } else {
-                            interactCode = "api.queueAction(new GameAction(57, 1, -1, " + hash + "))";
+                            interactCode = "api.queueAction(new GameAction(57, 1, -1, " + hash + "));";
                         }
                         ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
                         if (ImGui.selectable(interactCode + "##evtcode_" + idx + "_" + cs.componentId())) {
                             ImGui.setClipboardText(interactCode);
+                        }
+                        ImGui.popStyleColor();
+                    }
+                    ImGui.endTable();
+                }
+                ImGui.treePop();
+            }
+        }
+    }
+
+    private void renderMenuLogSubTab() {
+        List<MenuSnapshot> log = script.menuLog;
+        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Menu changes: " + log.size() + " snapshots (max 500)");
+        ImGui.sameLine();
+        if (ImGui.smallButton("Clear##menu_clear")) {
+            script.menuLog.clear();
+        }
+
+        if (log.isEmpty()) {
+            ImGui.text("No menu changes recorded yet. Right-click something in-game.");
+            return;
+        }
+
+        // Show newest first
+        for (int i = log.size() - 1; i >= 0; i--) {
+            MenuSnapshot snap = log.get(i);
+            String time = Instant.ofEpochMilli(snap.timestamp())
+                    .atZone(ZoneId.systemDefault()).format(XapiScript.TIME_FMT);
+            String header = time + " [tick " + snap.gameTick() + "] — " + snap.entries().size() + " entries";
+
+            if (ImGui.treeNode(header + "##menu_" + i)) {
+                int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
+                if (ImGui.beginTable("##menu_tbl_" + i, 5, flags)) {
+                    ImGui.tableSetupColumn("Option", 0, 1.5f);
+                    ImGui.tableSetupColumn("Action", 0, 0.5f);
+                    ImGui.tableSetupColumn("ItemId", 0, 0.5f);
+                    ImGui.tableSetupColumn("Params", 0, 1f);
+                    ImGui.tableSetupColumn("Code", 0, 1.5f);
+                    ImGui.tableHeadersRow();
+
+                    for (int j = 0; j < snap.entries().size(); j++) {
+                        MiniMenuEntry me = snap.entries().get(j);
+                        ImGui.tableNextRow();
+                        ImGui.tableSetColumnIndex(0);
+                        ImGui.textColored(1f, 0.9f, 0.6f, 1f, me.optionText() != null ? me.optionText() : "");
+                        ImGui.tableSetColumnIndex(1); ImGui.text(String.valueOf(me.actionId()));
+                        ImGui.tableSetColumnIndex(2);
+                        if (me.itemId() > 0) ImGui.text(String.valueOf(me.itemId()));
+                        ImGui.tableSetColumnIndex(3);
+                        ImGui.text("p1:" + me.param1() + " p2:" + me.param2() + " p3:" + me.param3());
+                        ImGui.tableSetColumnIndex(4);
+                        String code = "api.queueAction(new GameAction(" + me.actionId()
+                                + ", " + me.param1() + ", " + me.param2() + ", " + me.param3() + "));";
+                        ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+                        if (ImGui.selectable("copy##ml_" + i + "_" + j)) {
+                            ImGui.setClipboardText(code);
                         }
                         ImGui.popStyleColor();
                     }

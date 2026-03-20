@@ -2,6 +2,8 @@ package com.xapi.debugger;
 
 import static com.xapi.debugger.XapiData.*;
 
+import com.botwithus.bot.api.model.ItemVar;
+
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiTableFlags;
@@ -29,69 +31,22 @@ final class VariablesTab {
         boolean wSVP = script.showVarps;
         if (ImGui.checkbox("Varps##vf", wSVP)) { script.showVarps = !wSVP; script.settingsDirty = true; }
         ImGui.sameLine();
-        boolean wSVC = script.showVarcs;
-        if (ImGui.checkbox("VarcInt##vf", wSVC)) { script.showVarcs = !wSVC; script.settingsDirty = true; }
+        boolean wSIV = script.showItemVarbits;
+        if (ImGui.checkbox("ItemVar##vf", wSIV)) { script.showItemVarbits = !wSIV; script.settingsDirty = true; }
         ImGui.sameLine();
         ImGui.text("|");
         ImGui.sameLine();
         if (ImGui.button("Clear Vars")) { script.varLog.clear(); script.varsByTick.clear(); script.lastVarSize = -1; }
 
         // Watchlist filter
-        ImGui.text("Watchlist:");
+        ImGui.text("Filter:");
         ImGui.sameLine();
         ImGui.pushItemWidth(200);
         ImGui.inputText("##var_filter", script.varFilterText);
         ImGui.popItemWidth();
-        ImGui.sameLine();
-        ImGui.text("VarcInt poll:");
-        ImGui.sameLine();
-        ImGui.pushItemWidth(200);
-        ImGui.inputText("##varc_watch", script.varcWatchIdsInput);
-        ImGui.popItemWidth();
 
-        // Varc scan feature
-        ImGui.sameLine();
-        if (script.varcScanProgress >= 0) {
-            float progress = (float) script.varcScanProgress / XapiScript.VARC_SCAN_MAX;
-            ImGui.pushItemWidth(100);
-            ImGui.progressBar(progress, 100, 14, "Scanning...");
-            ImGui.popItemWidth();
-            ImGui.sameLine();
-            if (ImGui.smallButton("Cancel Scan")) {
-                script.varcScanRequested = false;
-                script.varcScanProgress = -1;
-            }
-        } else {
-            if (ImGui.smallButton("Scan Varcs")) {
-                script.varcScanResults.clear();
-                script.varcScanRequested = true;
-            }
-            if (ImGui.isItemHovered()) ImGui.setTooltip("Scan varc IDs 0-" + XapiScript.VARC_SCAN_MAX + " for non-zero values.\nVarcs have no auto-detection events — use this to discover active ones.");
-        }
-
-        // Show varc scan results if any
-        if (!script.varcScanResults.isEmpty() && script.varcScanProgress < 0) {
-            ImGui.textColored(0.5f, 0.9f, 1f, 1f, "Varc scan found " + script.varcScanResults.size() + " non-zero varcs:");
-            ImGui.sameLine();
-            if (ImGui.smallButton("Copy All##varc_scan")) {
-                StringBuilder sb = new StringBuilder();
-                for (int[] r : script.varcScanResults) sb.append("varc:").append(r[0]).append(" = ").append(r[1]).append("\n");
-                ImGui.setClipboardText(sb.toString());
-            }
-            ImGui.sameLine();
-            if (ImGui.smallButton("Add to Watch##varc_scan")) {
-                StringBuilder sb = new StringBuilder(script.varcWatchIdsInput.get());
-                for (int[] r : script.varcScanResults) {
-                    if (!sb.isEmpty()) sb.append(",");
-                    sb.append(r[0]);
-                }
-                script.varcWatchIdsInput.set(sb.toString());
-            }
-            ImGui.sameLine();
-            if (ImGui.smallButton("Dismiss##varc_scan")) {
-                script.varcScanResults.clear();
-            }
-        }
+        // -- Item Varbits Section (equipped items) --
+        renderItemVarbits();
 
         List<VarChange> vars = script.varLog;
         int[] watchIds = parseWatchIds(script.varFilterText.get().trim());
@@ -120,7 +75,8 @@ final class VariablesTab {
                 // Type colored
                 if ("varbit".equals(type)) ImGui.textColored(0.4f, 0.8f, 1f, 1f, type);
                 else if ("varp".equals(type)) ImGui.textColored(1f, 0.7f, 0.4f, 1f, type);
-                else ImGui.textColored(0.8f, 0.5f, 1f, 1f, type);
+                else if ("itemvar".equals(type)) ImGui.textColored(0.9f, 0.6f, 0.9f, 1f, type);
+                else ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, type);
                 ImGui.sameLine();
                 ImGui.text(idStr);
                 ImGui.sameLine();
@@ -204,7 +160,8 @@ final class VariablesTab {
                 // Type filter
                 if ("varbit".equals(vc.type()) && !script.showVarbits) continue;
                 if ("varp".equals(vc.type()) && !script.showVarps) continue;
-                if ("varc".equals(vc.type()) && !script.showVarcs) continue;
+                if ("varc".equals(vc.type()) || "varcstr".equals(vc.type())) continue; // varc disabled until API event support
+                if ("itemvar".equals(vc.type()) && !script.showItemVarbits) continue;
 
                 if (watchIds.length > 0 && !inWatchlist(vc.varId(), watchIds)) continue;
                 displayed++;
@@ -233,15 +190,30 @@ final class VariablesTab {
                 ImGui.tableSetColumnIndex(4);
                 if ("varbit".equals(vc.type())) ImGui.textColored(0.4f, 0.8f, 1f, 1f, vc.type());
                 else if ("varp".equals(vc.type())) ImGui.textColored(1f, 0.7f, 0.4f, 1f, vc.type());
-                else ImGui.textColored(0.8f, 0.5f, 1f, 1f, vc.type());
+                else if ("itemvar".equals(vc.type())) ImGui.textColored(0.9f, 0.6f, 0.9f, 1f, vc.type());
+                else ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, vc.type());
 
                 ImGui.tableSetColumnIndex(5);
                 String varCode = getVarCode(vc.type(), vc.varId());
+                String varIdDisplay;
+                if ("itemvar".equals(vc.type())) {
+                    int slot = vc.varId() / 100000;
+                    int itemVarId = vc.varId() % 100000;
+                    varIdDisplay = "S" + slot + ":" + itemVarId;
+                } else {
+                    varIdDisplay = String.valueOf(vc.varId());
+                }
                 ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
-                if (ImGui.selectable(vc.varId() + "##var_" + i)) ImGui.setClipboardText(varCode);
+                if (ImGui.selectable(varIdDisplay + "##var_" + i)) ImGui.setClipboardText(varCode);
                 ImGui.popStyleColor();
                 if (ImGui.isItemHovered()) {
-                    renderVarHistoryTooltip(vc.type(), vc.varId());
+                    if ("itemvar".equals(vc.type())) {
+                        int slot = vc.varId() / 100000;
+                        int itemVarId = vc.varId() % 100000;
+                        ImGui.setTooltip("Click to copy: " + varCode + "\nSlot: " + slot + " | Varbit: " + itemVarId);
+                    } else {
+                        renderVarHistoryTooltip(vc.type(), vc.varId());
+                    }
                 }
 
                 ImGui.tableSetColumnIndex(6); ImGui.text(String.valueOf(vc.oldValue()));
@@ -271,12 +243,65 @@ final class VariablesTab {
         }
     }
 
+    private void renderItemVarbits() {
+        List<ItemVarEntry> items = script.itemVarCache;
+        if (items.isEmpty()) return;
+
+        if (ImGui.collapsingHeader("Item Varbits (" + items.size() + " items with vars)")) {
+            int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
+                    | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.Resizable;
+            if (ImGui.beginTable("##item_vars", 5, flags)) {
+                ImGui.tableSetupColumn("Slot", 0, 0.6f);
+                ImGui.tableSetupColumn("Item", 0, 1.2f);
+                ImGui.tableSetupColumn("VarId", 0, 0.4f);
+                ImGui.tableSetupColumn("Value", 0, 0.5f);
+                ImGui.tableSetupColumn("Code", 0, 1.5f);
+                ImGui.tableSetupScrollFreeze(0, 1);
+                ImGui.tableHeadersRow();
+
+                for (ItemVarEntry entry : items) {
+                    for (ItemVar v : entry.vars()) {
+                        ImGui.tableNextRow();
+                        ImGui.tableSetColumnIndex(0);
+                        ImGui.textColored(0.7f, 0.7f, 0.4f, 1f, entry.slotName());
+                        ImGui.tableSetColumnIndex(1);
+                        ImGui.text(entry.itemName().isEmpty()
+                                ? String.valueOf(entry.itemId())
+                                : entry.itemName() + " (" + entry.itemId() + ")");
+                        ImGui.tableSetColumnIndex(2);
+                        ImGui.text(String.valueOf(v.varId()));
+                        ImGui.tableSetColumnIndex(3);
+                        ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(v.value()));
+                        ImGui.tableSetColumnIndex(4);
+                        String code = "api.getItemVarValue(94, " + entry.slot() + ", " + v.varId() + ")";
+                        ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+                        if (ImGui.selectable(code + "##iv_" + entry.slot() + "_" + v.varId())) {
+                            ImGui.setClipboardText(code);
+                        }
+                        ImGui.popStyleColor();
+                        if (ImGui.isItemHovered()) {
+                            ImGui.setTooltip("Click to copy | Slot: " + entry.slotName()
+                                    + " | Item: " + entry.itemName());
+                        }
+                    }
+                }
+                ImGui.endTable();
+            }
+            ImGui.separator();
+        }
+    }
+
     static String getVarCode(String type, int varId) {
         if ("varbit".equals(type)) return "api.getVarbit(" + varId + ")";
         if ("varp".equals(type)) return "api.getVarp(" + varId + ")";
-        if ("varc".equals(type)) return "api.getVarcInt(" + varId + ")";
+        if ("itemvar".equals(type)) {
+            int slot = varId / 100000;
+            int itemVarId = varId % 100000;
+            return "api.getItemVarValue(94, " + slot + ", " + itemVarId + ")";
+        }
         return "var:" + varId;
     }
+
 
     private void renderVarHistoryTooltip(String type, int varId) {
         List<VarChange> vars = script.varLog;

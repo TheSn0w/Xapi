@@ -1,5 +1,8 @@
 package com.xapi.debugger;
 
+import com.botwithus.bot.api.model.ItemVar;
+import com.botwithus.bot.api.model.MiniMenuEntry;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,14 +34,22 @@ public final class XapiData {
     public record InterfaceEvent(String type, int interfaceId, long timestamp, int gameTick,
                                  List<InterfaceComponentSnapshot> components) {}
 
+    public record MenuSnapshot(long timestamp, int gameTick, List<MiniMenuEntry> entries) {}
+
+    public record ItemVarEntry(String slotName, int itemId, String itemName, int slot,
+                               List<ItemVar> vars) {}
+
+    public record InventoryChange(int itemId, String itemName, int oldQty, int newQty,
+                                  long timestamp, int gameTick) {}
+
     public record SessionData(List<LogEntry> actions, List<VarChange> vars, List<ChatEntry> chat,
                               long exportTime, String description) {}
 
     public record XapiSettings(
             boolean recording, boolean blocking, boolean selectiveBlocking,
-            boolean trackVars, boolean trackChat,
+            boolean trackVars, boolean trackChat, boolean trackItemVarbits,
             boolean[] categoryFilters, boolean[] selectiveBlockCategories,
-            boolean showVarbits, boolean showVarps, boolean showVarcs,
+            boolean showVarbits, boolean showVarps, boolean showVarcs, boolean showVarcStrs, boolean showItemVarbits,
             String varFilterText, String varcWatchIds,
             Set<String> pinnedVars, Map<String, String> varAnnotations,
             boolean useNamesForGeneration, String scriptClassName,

@@ -18,15 +18,15 @@ public final class ActionTranslator {
      */
     public static String toCode(int actionId, int p1, int p2, int p3,
                                 String entityName, String optionName) {
-        String raw = "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "))";
+        String raw = "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "));";
         String nameSuffix = formatNames(entityName, optionName);
 
         // NPC options (9-13, 1003) — p1 is serverIndex (runtime, not hardcodable)
         int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
         if (npcSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "npcs.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
-                    : "npcs.query().index(" + p1 + ").nearest().interact(" + npcSlot + ")";
+                    ? "npcs.query().named(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\");"
+                    : "npcs.query().index(" + p1 + ").nearest().interact(" + npcSlot + ");";
             return highLevel + "\n" + raw;
         }
 
@@ -34,8 +34,8 @@ public final class ActionTranslator {
         int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, actionId);
         if (objSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "objects.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
-                    : "objects.query().typeId(" + p1 + ").nearest().interact(" + objSlot + ")";
+                    ? "objects.query().named(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\");"
+                    : "objects.query().typeId(" + p1 + ").nearest().interact(" + objSlot + ");";
             return highLevel + "\n" + raw;
         }
 
@@ -43,8 +43,8 @@ public final class ActionTranslator {
         int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId);
         if (giSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "groundItems.query().name(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\")"
-                    : "groundItems.query().itemId(" + p1 + ").nearest().interact(" + giSlot + ")";
+                    ? "groundItems.query().named(\"" + entityName + "\").nearest().interact(\"" + orEmpty(optionName) + "\");"
+                    : "groundItems.query().itemId(" + p1 + ").nearest().interact(" + giSlot + ");";
             return highLevel + "\n" + raw;
         }
 
@@ -52,19 +52,19 @@ public final class ActionTranslator {
         int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, actionId);
         if (playerSlot > 0) {
             String highLevel = hasName(entityName)
-                    ? "players.query().name(\"" + entityName + "\").nearest().interact(" + playerSlot + ")"
-                    : "players.query().index(" + p1 + ").nearest().interact(" + playerSlot + ")";
+                    ? "players.query().named(\"" + entityName + "\").nearest().interact(" + playerSlot + ");"
+                    : "players.query().index(" + p1 + ").nearest().interact(" + playerSlot + ");";
             return highLevel + "\n" + raw;
         }
 
         // Component (57)
         if (actionId == ActionTypes.COMPONENT) {
-            return formatComponentCode(p1, p2, p3, optionName, raw);
+            return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
         }
 
-        // Select component item (58)
+        // Select component item (58) — "use item on item" in backpack
         if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
-            return formatComponentCode(p1, p2, p3, optionName, raw);
+            return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
         }
 
         // Delegate to the no-names version for everything else
@@ -77,7 +77,7 @@ public final class ActionTranslator {
      * @return a two-line string: comment with high-level call + raw GameAction call
      */
     public static String toCode(int actionId, int p1, int p2, int p3) {
-        String raw = "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "))";
+        String raw = "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "));";
 
         // NPC options (9–13, 1003)
         int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
@@ -109,12 +109,12 @@ public final class ActionTranslator {
 
         // Component (57)
         if (actionId == ActionTypes.COMPONENT) {
-            return formatComponentCode(p1, p2, p3, null, raw);
+            return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
         }
 
         // Select component item (58)
         if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
-            return formatComponentCode(p1, p2, p3, null, raw);
+            return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
         }
 
         // Walk (23)
@@ -165,27 +165,62 @@ public final class ActionTranslator {
      * Returns just the raw GameAction line (no comment), for clipboard copy.
      */
     public static String toRawCode(int actionId, int p1, int p2, int p3) {
-        return "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "))";
+        return "api.queueAction(new GameAction(" + actionId + ", " + p1 + ", " + p2 + ", " + p3 + "));";
     }
 
     /**
      * Generates complete, working component interaction code.
-     * Includes the query to find the component AND the interaction call.
+     * <ul>
+     *   <li>No sub-component (p2 == -1): uses queryComponents to find the component directly</li>
+     *   <li>With sub-component (p2 >= 0): uses getComponentChildren to find the specific slot/child</li>
+     *   <li>Action 58 (SELECT_COMPONENT_ITEM): same as above but queues action type 58 instead of 57</li>
+     * </ul>
      */
-    private static String formatComponentCode(int p1, int p2, int p3, String optionName, String raw) {
+    private static String formatComponentCode(int actionId, int p1, int p2, int p3,
+                                               String entityName, String optionName, String raw) {
         int ifaceId = p3 >>> 16;
         int compId = p3 & 0xFFFF;
 
-        String query = "api.queryComponents(ComponentFilter.builder().interfaceId(" + ifaceId + ").componentId(" + compId + ").build())";
+        // Build a descriptive comment: e.g. // "Withdraw-5" Shrimps iface:517 comp:201 sub:1 option:3
+        StringBuilder commentParts = new StringBuilder("//");
+        if (hasName(optionName)) commentParts.append(" \"").append(optionName).append("\"");
+        if (hasName(entityName)) commentParts.append(" ").append(entityName);
+        commentParts.append(" iface:").append(ifaceId)
+                .append(" comp:").append(compId)
+                .append(" sub:").append(p2)
+                .append(" option:").append(p1);
+        String comment = commentParts.toString();
+
+        String query;
+        if (p2 >= 0) {
+            // Sub-component involved (bank slot, inventory slot, etc.)
+            // Must use getComponentChildren to find the child with the correct subComponentId
+            query = "api.getComponentChildren(" + ifaceId + ", " + compId + ").stream()"
+                    + ".filter(c -> c.subComponentId() == " + p2 + ").findFirst()";
+        } else {
+            // No sub-component — find the component itself
+            query = "api.queryComponents(ComponentFilter.builder().interfaceId(" + ifaceId + ").build())"
+                    + ".stream().filter(c -> c.componentId() == " + compId + ").findFirst()";
+        }
+
         String interact;
-        if (hasName(optionName)) {
+        if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
+            // Action 58 — must queue with the correct action type, not 57
+            interact = "comp -> api.queueAction(new GameAction(" + actionId + ", " + p1
+                    + ", comp.subComponentId(), ComponentHelper.componentHash(comp)))";
+        } else if (p2 >= 0) {
+            // Sub-component (bank slot, inventory slot, etc.) — interactComponent fails
+            // because getComponentOptions returns empty for child components.
+            // Use queueComponentAction which skips option lookup and uses the index directly.
+            interact = "comp -> ComponentHelper.queueComponentAction(api, comp, " + p1 + ")";
+        } else if (hasName(optionName)) {
+            // No sub-component, has option name — interactComponent works here
             interact = "comp -> ComponentHelper.interactComponent(api, comp, \"" + optionName + "\")";
         } else {
             interact = "comp -> ComponentHelper.queueComponentAction(api, comp, " + p1 + ")";
         }
 
-        String highLevel = query + ".stream().findFirst().ifPresent(" + interact + ")";
-        String comment = "// iface:" + ifaceId + " comp:" + compId + " sub:" + p2 + " option:" + p1;
+        String highLevel = query + ".ifPresent(" + interact + ");";
         return highLevel + "  " + comment + "\n" + raw;
     }
 

@@ -11,6 +11,16 @@ import com.botwithus.bot.api.event.*;
 import com.botwithus.bot.api.inventory.ActionTranslator;
 import com.botwithus.bot.api.inventory.ActionTypes;
 import com.botwithus.bot.api.model.*;
+import com.botwithus.bot.api.model.ItemVar;
+import com.botwithus.bot.api.model.InventoryItem;
+import com.botwithus.bot.api.entities.Npcs;
+import com.botwithus.bot.api.entities.Npc;
+import com.botwithus.bot.api.entities.Players;
+import com.botwithus.bot.api.entities.Player;
+import com.botwithus.bot.api.entities.SceneObjects;
+import com.botwithus.bot.api.entities.SceneObject;
+import com.botwithus.bot.api.entities.EntityContext;
+import com.botwithus.bot.api.query.ComponentFilter;
 import com.botwithus.bot.api.query.EntityFilter;
 import com.botwithus.bot.api.query.InventoryFilter;
 import com.botwithus.bot.api.ui.ScriptUI;
@@ -50,8 +60,7 @@ public class XapiScript implements BotScript {
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static final Path SESSION_DIR = Path.of("xapi_sessions");
     static final Path SETTINGS_FILE = Path.of("xapi_settings.json");
-    static final int VARC_SCAN_MAX = 10000;
-    private static final int VARC_SCAN_BATCH = 200;
+
 
     private ScriptContext ctx;
 
@@ -63,6 +72,7 @@ public class XapiScript implements BotScript {
     private PlayerTab playerTab;
     private EntitiesTab entitiesTab;
     private InterfacesTab interfacesTab;
+    private InventoryTab inventoryTab;
 
     // ── Shared state (package-private for tab access) ────────────────────
 
@@ -76,9 +86,7 @@ public class XapiScript implements BotScript {
     volatile boolean recording = true;
     volatile boolean blocking;
     private volatile boolean lastBlockingSentToClient;
-    volatile boolean selectiveBlocking;
-    volatile boolean trackVars = true;
-    volatile boolean trackChat = true;
+    // Tracking is always enabled (varps, varbits, varcs, chat, item varbits)
     volatile int currentTick;
 
     // Export/import (render thread requests, onLoop() executes)
@@ -105,25 +113,28 @@ public class XapiScript implements BotScript {
     volatile LocalPlayer localPlayerData;
     volatile List<PlayerStat> playerStats = List.of();
 
-    // Selected entity for info panel
-    volatile int selectedEntityHandle = -1;
-    volatile EntityInfo selectedEntityInfo;
 
     // Chat history polling fallback
     private volatile int lastChatHistorySize;
 
-    // Varc scan
-    volatile boolean varcScanRequested;
-    volatile int varcScanProgress = -1;
-    final List<int[]> varcScanResults = new CopyOnWriteArrayList<>();
+    // Action history polling (captures manual player actions not seen by events)
+    private volatile boolean actionHistoryAvailable = true;
+    private volatile long lastActionHistoryPoll;
+    private volatile long lastSeenActionTimestamp;
+
+    // Mini menu cache — polled each tick, used to resolve option text for actions
+    volatile List<MiniMenuEntry> lastMiniMenu = List.of();
+    final List<MenuSnapshot> menuLog = new CopyOnWriteArrayList<>();
+    private volatile int lastMiniMenuHash; // for change detection
+
     final ConcurrentHashMap<Integer, List<Component>> componentCache = new ConcurrentHashMap<>();
     final ConcurrentHashMap<String, String> componentTextCache = new ConcurrentHashMap<>();
     final ConcurrentHashMap<String, List<String>> componentOptionsCache = new ConcurrentHashMap<>();
     private volatile long lastInspectorUpdate;
 
-    // Inventory diff tracking
+    // Inventory change tracking
     private volatile Map<Integer, Integer> lastInventorySnapshot = Map.of();
-    volatile String lastInventoryDiff = "";
+    final List<InventoryChange> inventoryLog = new CopyOnWriteArrayList<>();
 
     // Pinned variables (survive clears)
     final Set<String> pinnedVars = ConcurrentHashMap.newKeySet(); // "varbit:1234", "varp:567"
@@ -135,18 +146,26 @@ public class XapiScript implements BotScript {
     // Var annotations (user-defined labels)
     final ConcurrentHashMap<String, String> varAnnotations = new ConcurrentHashMap<>();
 
-    // Varc polling cache
-    private final ConcurrentHashMap<Integer, Integer> varcCache = new ConcurrentHashMap<>();
 
     // Ground item type cache (itemId -> ItemType with name/options)
     volatile Map<Integer, ItemType> groundItemTypeCache = Map.of();
+
+    // Item varbits cache (equipment items with their vars)
+    volatile List<ItemVarEntry> itemVarCache = List.of();
+    volatile boolean showItemVarbits = true;
+
+    // Previous item varbit snapshot for change detection (slot:varId -> value)
+    private volatile Map<String, Integer> previousItemVarSnapshot = Map.of();
 
     // Interface event tracking
     final List<InterfaceEvent> interfaceEventLog = new CopyOnWriteArrayList<>();
     private volatile Set<Integer> previousOpenInterfaceIds = Set.of();
 
-    // Entity overlay
-    private final XapiOverlay overlay = new XapiOverlay();
+    // Entity facades (initialized in onStart)
+    private Npcs npcs;
+    private Players players;
+    private SceneObjects sceneObjects;
+
 
     // Entity distance filter (tiles)
     volatile int entityDistanceFilter = 50;
@@ -169,7 +188,6 @@ public class XapiScript implements BotScript {
     final ImString scriptClassName = new ImString("GeneratedScript", 128);
     final boolean[] categoryFilters = {true, true, true, true, true, true, true};
     // indices: 0=NPC, 1=Object, 2=GroundItem, 3=Player, 4=Component, 5=Walk, 6=Other
-    final boolean[] selectiveBlockCategories = new boolean[7];
     boolean useNamesForGeneration = true;
     final float[] replaySpeedArr = {1.0f};
     String[] sessionFiles = new String[0];
@@ -178,10 +196,7 @@ public class XapiScript implements BotScript {
     // Variables tab: type filters
     boolean showVarbits = true;
     boolean showVarps = true;
-    boolean showVarcs = true;
 
-    // Varc watch IDs input
-    final ImString varcWatchIdsInput = new ImString(256);
 
     // Var annotation editing
     final ImString annotationInput = new ImString(64);
@@ -201,9 +216,25 @@ public class XapiScript implements BotScript {
         playerTab = new PlayerTab(this);
         entitiesTab = new EntitiesTab(this);
         interfacesTab = new InterfacesTab(this);
+        inventoryTab = new InventoryTab(this);
+
+        // Initialize entity facades
+        GameAPI gameApi = ctx.getGameAPI();
+        npcs = new Npcs(gameApi);
+        players = new Players(gameApi);
+        sceneObjects = new SceneObjects(gameApi);
 
         // Load persistent settings
         loadSettings();
+
+        // Force-sync blocking state to game client on start (selective blocking is per-action, not client-wide)
+        try {
+            gameApi.setActionsBlocked(blocking);
+            lastBlockingSentToClient = blocking;
+            log.info("Initial blocking state synced to client: {}", blocking);
+        } catch (Exception e) {
+            log.warn("Failed to sync initial blocking state: {}", e.getMessage());
+        }
 
         EventBus events = ctx.getEventBus();
         events.subscribe(ActionExecutedEvent.class, this::onActionExecuted);
@@ -214,13 +245,6 @@ public class XapiScript implements BotScript {
 
         try { Files.createDirectories(SESSION_DIR); } catch (IOException ignored) {}
 
-        // Initialize overlay with background position poller
-        try {
-            overlay.initFX();
-            overlay.startTracking(ctx.getGameAPI(),
-                    () -> selectedEntityHandle,
-                    () -> selectedEntityInfo);
-        } catch (Exception e) { log.debug("Overlay init failed: {}", e.getMessage()); }
     }
 
     // ── Event handlers (event thread -- RPC safe) ────────────────────────
@@ -230,9 +254,16 @@ public class XapiScript implements BotScript {
     }
 
     private void onActionExecuted(ActionExecutedEvent e) {
-        if (recording || blocking || selectiveBlocking) {
+        if (recording || blocking) {
             String[] names = resolveNames(ctx.getGameAPI(),
                     e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+
+            // Try to resolve option text and item name from the cached mini menu snapshot
+            String[] menuMatch = matchMiniMenu(e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+            if (menuMatch != null) {
+                if (names[1] == null || names[1].isEmpty()) names[1] = menuMatch[0]; // optionText
+                if (names[0] == null || names[0].isEmpty()) names[0] = menuMatch[1]; // itemName
+            }
 
             int px = 0, py = 0, pp = 0, pa = -1;
             boolean pm = false;
@@ -252,38 +283,63 @@ public class XapiScript implements BotScript {
         }
     }
 
+    /**
+     * Matches an action against the cached mini menu to find option text and item name.
+     * Returns {optionText, itemName} or null if no match.
+     */
+    private String[] matchMiniMenu(int actionId, int p1, int p2, int p3) {
+        try {
+            List<MiniMenuEntry> menu = lastMiniMenu;
+            if (menu == null || menu.isEmpty()) return null;
+            for (MiniMenuEntry entry : menu) {
+                if (entry.actionId() == actionId
+                        && entry.param1() == p1
+                        && entry.param2() == p2
+                        && entry.param3() == p3) {
+                    String optionText = entry.optionText();
+                    String itemName = null;
+                    // Resolve item name from the menu entry's itemId if available
+                    if (entry.itemId() > 0) {
+                        try {
+                            var itemType = ctx.getGameAPI().getItemType(entry.itemId());
+                            if (itemType != null && itemType.name() != null) {
+                                itemName = itemType.name();
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                    return new String[]{optionText, itemName};
+                }
+            }
+        } catch (Exception ignored) {}
+        return null;
+    }
+
     private void onVarbitChange(VarbitChangeEvent e) {
         try {
-            if (trackVars) {
-                VarChange vc = new VarChange("varbit", e.getVarId(), e.getOldValue(), e.getNewValue(),
-                        System.currentTimeMillis(), currentTick);
-                varLog.add(vc);
-                varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
-                varChangeCount.merge("varbit:" + e.getVarId(), 1, Integer::sum);
-            }
+            VarChange vc = new VarChange("varbit", e.getVarId(), e.getOldValue(), e.getNewValue(),
+                    System.currentTimeMillis(), currentTick);
+            varLog.add(vc);
+            varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
+            varChangeCount.merge("varbit:" + e.getVarId(), 1, Integer::sum);
         } catch (Exception ex) { log.debug("varbit event error: {}", ex.getMessage()); }
     }
 
     private void onVarChange(VarChangeEvent e) {
         try {
-            if (trackVars) {
-                VarChange vc = new VarChange("varp", e.getVarId(), e.getOldValue(), e.getNewValue(),
-                        System.currentTimeMillis(), currentTick);
-                varLog.add(vc);
-                varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
-                varChangeCount.merge("varp:" + e.getVarId(), 1, Integer::sum);
-            }
+            VarChange vc = new VarChange("varp", e.getVarId(), e.getOldValue(), e.getNewValue(),
+                    System.currentTimeMillis(), currentTick);
+            varLog.add(vc);
+            varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
+            varChangeCount.merge("varp:" + e.getVarId(), 1, Integer::sum);
         } catch (Exception ex) { log.debug("varp event error: {}", ex.getMessage()); }
     }
 
     private void onChatMessage(ChatMessageEvent e) {
         try {
-            if (trackChat) {
-                var msg = e.getMessage();
-                String text = msg.text() != null ? msg.text().replaceAll("<img=\\d+>", "").trim() : "";
-                chatLog.add(new ChatEntry(msg.messageType(), text,
-                        msg.playerName(), System.currentTimeMillis(), currentTick));
-            }
+            var msg = e.getMessage();
+            String text = msg.text() != null ? msg.text().replaceAll("<img=\\d+>", "").replaceAll("<col=[0-9a-fA-F]+>", "").replaceAll("</col>", "").trim() : "";
+            chatLog.add(new ChatEntry(msg.messageType(), text,
+                    msg.playerName(), System.currentTimeMillis(), currentTick));
         } catch (Exception ex) { log.debug("chat event error: {}", ex.getMessage()); }
     }
 
@@ -303,8 +359,8 @@ public class XapiScript implements BotScript {
             int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, actionId);
             if (playerSlot > 0) return resolvePlayer(api, p1);
 
-            if (actionId == ActionTypes.COMPONENT) return resolveComponent(api, p1, p3);
-            if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) return resolveComponent(api, p1, p3);
+            if (actionId == ActionTypes.COMPONENT) return resolveComponent(api, p1, p2, p3);
+            if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) return resolveComponent(api, p1, p2, p3);
         } catch (Exception e) {
             log.debug("Name resolution failed for action {}: {}", actionId, e.getMessage());
         }
@@ -375,14 +431,47 @@ public class XapiScript implements BotScript {
         return new String[]{null, null};
     }
 
-    private String[] resolveComponent(GameAPI api, int optionIndex, int packedHash) {
+    private String[] resolveComponent(GameAPI api, int optionIndex, int subComponent, int packedHash) {
         try {
             int ifaceId = packedHash >>> 16;
             int compId = packedHash & 0xFFFF;
+
+            // Resolve option name
+            String optionName = null;
             List<String> options = api.getComponentOptions(ifaceId, compId);
+            log.debug("resolveComponent iface:{} comp:{} sub:{} optIdx:{} options:{}",
+                    ifaceId, compId, subComponent, optionIndex, options);
             if (options != null && optionIndex - 1 >= 0 && optionIndex - 1 < options.size()) {
-                return new String[]{null, options.get(optionIndex - 1)};
+                optionName = options.get(optionIndex - 1);
             }
+
+            // Resolve item name from the sub-component (slot)
+            String entityName = null;
+            if (subComponent >= 0) {
+                try {
+                    List<com.botwithus.bot.api.model.Component> children = api.getComponentChildren(ifaceId, compId);
+                    log.debug("resolveComponent children count:{} for iface:{} comp:{}",
+                            children != null ? children.size() : 0, ifaceId, compId);
+                    if (children != null) {
+                        for (var child : children) {
+                            if (child.subComponentId() == subComponent) {
+                                log.debug("resolveComponent found child sub:{} itemId:{} type:{}",
+                                        child.subComponentId(), child.itemId(), child.type());
+                                if (child.itemId() > 0) {
+                                    var itemType = api.getItemType(child.itemId());
+                                    if (itemType != null && itemType.name() != null) {
+                                        entityName = itemType.name();
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            log.debug("resolveComponent result: entity={} option={}", entityName, optionName);
+            return new String[]{entityName, optionName};
         } catch (Exception ignored) {}
         return new String[]{null, null};
     }
@@ -402,19 +491,19 @@ public class XapiScript implements BotScript {
         ActionDebugger debugger = ActionDebugger.get();
         debugger.setRecording(recording);
         debugger.setBlocking(blocking);
-        debugger.setSelectiveBlocking(selectiveBlocking);
 
-        // Sync selective block categories to ActionDebugger
-        syncSelectiveBlocking(debugger);
-
+        // Sync blocking to game client
         if (blocking != lastBlockingSentToClient) {
             try {
                 api.setActionsBlocked(blocking);
                 lastBlockingSentToClient = blocking;
+                log.info("Actions blocked on client: {}", blocking);
             } catch (Exception e) {
-                log.debug("Failed to sync blocking state to client: {}", e.getMessage());
+                log.warn("Failed to sync blocking state to client: {}", e.getMessage());
             }
         }
+
+        long now = System.currentTimeMillis();
 
         // Export session
         if (exportRequested) {
@@ -439,7 +528,6 @@ public class XapiScript implements BotScript {
         try { playerStats = api.getPlayerStats(); } catch (Exception ignored) {}
 
         // Inspector data collection (every ~3 ticks / 1.8s)
-        long now = System.currentTimeMillis();
         if (now - lastInspectorUpdate > 1800) {
             lastInspectorUpdate = now;
             collectInspectorData(api);
@@ -448,56 +536,36 @@ public class XapiScript implements BotScript {
         // Inventory diff
         collectInventoryDiff(api);
 
+        // Poll mini menu — cache the current right-click menu so we can match option text to actions
+        try {
+            var menu = api.getMiniMenu();
+            if (menu != null && !menu.isEmpty()) {
+                lastMiniMenu = menu;
+                // Track menu changes for history log
+                int hash = menu.stream()
+                        .mapToInt(e -> Objects.hash(e.optionText(), e.actionId(), e.param1(), e.param2(), e.param3()))
+                        .sum();
+                if (hash != lastMiniMenuHash) {
+                    lastMiniMenuHash = hash;
+                    menuLog.add(new MenuSnapshot(System.currentTimeMillis(), currentTick, List.copyOf(menu)));
+                    // Cap at 500 entries
+                    while (menuLog.size() > 500) menuLog.remove(0);
+                }
+            }
+        } catch (Exception ignored) {}
+
         // Poll pinned variable live values
         pollPinnedVars(api);
-
-        // Poll varc watch IDs
-        pollVarcs(api);
 
         // Poll chat history as fallback
         pollChatHistory(api);
 
-        // Fetch info for selected entity
-        if (selectedEntityHandle >= 0) {
-            try {
-                if (api.isEntityValid(selectedEntityHandle)) {
-                    selectedEntityInfo = api.getEntityInfo(selectedEntityHandle);
-                } else {
-                    selectedEntityHandle = -1;
-                    selectedEntityInfo = null;
-                }
-            } catch (Exception e) {
-                selectedEntityHandle = -1;
-                selectedEntityInfo = null;
-            }
-        }
+        // Poll action history (captures manual player actions not seen by events)
+        pollActionHistory(api);
 
-        // Varc scan (batched over multiple ticks)
-        if (varcScanRequested) {
-            if (varcScanProgress < 0) {
-                varcScanProgress = 0;
-                varcScanResults.clear();
-            }
-            int end = Math.min(varcScanProgress + VARC_SCAN_BATCH, VARC_SCAN_MAX);
-            for (int i = varcScanProgress; i < end; i++) {
-                try {
-                    int val = api.getVarcInt(i);
-                    if (val != 0) varcScanResults.add(new int[]{i, val});
-                } catch (Exception ignored) {}
-            }
-            varcScanProgress = end;
-            if (varcScanProgress >= VARC_SCAN_MAX) {
-                varcScanRequested = false;
-                varcScanProgress = -1;
-            }
-        }
+        // Poll interface events every tick (fast open/close detection)
+        pollInterfaceEvents(api);
 
-        // Update overlay with selected entity
-        try {
-            overlay.update(api, selectedEntityHandle, selectedEntityInfo);
-        } catch (Exception e) {
-            log.debug("Overlay update error: {}", e.getMessage());
-        }
 
         // Prune varsByTick to prevent unbounded growth
         if (varsByTick.size() > 5000) {
@@ -520,25 +588,6 @@ public class XapiScript implements BotScript {
         return 600;
     }
 
-    private void syncSelectiveBlocking(ActionDebugger debugger) {
-        Set<Integer> blocked = debugger.getBlockedActionIds();
-        blocked.clear();
-        if (selectiveBlocking) {
-            if (selectiveBlockCategories[0]) addActionIds(blocked, ActionTypes.NPC_OPTIONS);
-            if (selectiveBlockCategories[1]) addActionIds(blocked, ActionTypes.OBJECT_OPTIONS);
-            if (selectiveBlockCategories[2]) addActionIds(blocked, ActionTypes.GROUND_ITEM_OPTIONS);
-            if (selectiveBlockCategories[3]) addActionIds(blocked, ActionTypes.PLAYER_OPTIONS);
-            if (selectiveBlockCategories[4]) { blocked.add(ActionTypes.COMPONENT); blocked.add(ActionTypes.SELECT_COMPONENT_ITEM); }
-            if (selectiveBlockCategories[5]) blocked.add(ActionTypes.WALK);
-            if (selectiveBlockCategories[6]) { blocked.add(ActionTypes.DIALOGUE); blocked.add(ActionTypes.SELECT_NPC); blocked.add(ActionTypes.SELECT_OBJECT); }
-        }
-    }
-
-    private void addActionIds(Set<Integer> blocked, int[] options) {
-        for (int i = 1; i < options.length; i++) {
-            blocked.add(options[i]);
-        }
-    }
 
     private void pollPinnedVars(GameAPI api) {
         for (String key : pinnedVars) {
@@ -550,29 +599,14 @@ public class XapiScript implements BotScript {
                 switch (parts[0]) {
                     case "varbit" -> value = api.getVarbit(id);
                     case "varp" -> value = api.getVarp(id);
-                    case "varc" -> value = api.getVarcInt(id);
+                    case "itemvar" -> {
+                        int slot = id / 100000;
+                        int itemVarId = id % 100000;
+                        value = api.getItemVarValue(94, slot, itemVarId);
+                    }
                     default -> { continue; }
                 }
                 pinnedCurrentValues.put(key, value);
-            } catch (Exception ignored) {}
-        }
-    }
-
-    private void pollVarcs(GameAPI api) {
-        String varcIds = varcWatchIdsInput.get().trim();
-        if (varcIds.isEmpty()) return;
-        int[] ids = VariablesTab.parseWatchIds(varcIds);
-        for (int id : ids) {
-            try {
-                int value = api.getVarcInt(id);
-                Integer old = varcCache.put(id, value);
-                if (old != null && old != value) {
-                    VarChange vc = new VarChange("varc", id, old, value,
-                            System.currentTimeMillis(), currentTick);
-                    varLog.add(vc);
-                    varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
-                    varChangeCount.merge("varc:" + id, 1, Integer::sum);
-                }
             } catch (Exception ignored) {}
         }
     }
@@ -582,12 +616,12 @@ public class XapiScript implements BotScript {
     private void saveSettings() {
         try {
             XapiSettings settings = new XapiSettings(
-                    recording, blocking, selectiveBlocking,
-                    trackVars, trackChat,
+                    recording, blocking, false,
+                    true, true, true,
                     Arrays.copyOf(categoryFilters, categoryFilters.length),
-                    Arrays.copyOf(selectiveBlockCategories, selectiveBlockCategories.length),
-                    showVarbits, showVarps, showVarcs,
-                    varFilterText.get(), varcWatchIdsInput.get(),
+                    new boolean[7],
+                    showVarbits, showVarps, false, false, showItemVarbits,
+                    varFilterText.get(), "",
                     new HashSet<>(pinnedVars), new HashMap<>(varAnnotations),
                     useNamesForGeneration, scriptClassName.get(),
                     replaySpeedArr[0],
@@ -609,25 +643,19 @@ public class XapiScript implements BotScript {
 
             recording = s.recording();
             blocking = s.blocking();
-            selectiveBlocking = s.selectiveBlocking();
-            trackVars = s.trackVars();
-            trackChat = s.trackChat();
 
             if (s.categoryFilters() != null) {
                 System.arraycopy(s.categoryFilters(), 0, categoryFilters, 0,
                         Math.min(s.categoryFilters().length, categoryFilters.length));
             }
-            if (s.selectiveBlockCategories() != null) {
-                System.arraycopy(s.selectiveBlockCategories(), 0, selectiveBlockCategories, 0,
-                        Math.min(s.selectiveBlockCategories().length, selectiveBlockCategories.length));
-            }
 
             showVarbits = s.showVarbits();
             showVarps = s.showVarps();
-            showVarcs = s.showVarcs();
+            // showVarcs/showVarcStrs removed — varc tracking disabled until API supports events
+            showItemVarbits = s.showItemVarbits();
 
             if (s.varFilterText() != null) varFilterText.set(s.varFilterText());
-            if (s.varcWatchIds() != null) varcWatchIdsInput.set(s.varcWatchIds());
+            // varcWatchIds removed — varc tracking disabled until API supports events
             if (s.pinnedVars() != null) { pinnedVars.clear(); pinnedVars.addAll(s.pinnedVars()); }
             if (s.varAnnotations() != null) { varAnnotations.clear(); varAnnotations.putAll(s.varAnnotations()); }
 
@@ -700,10 +728,18 @@ public class XapiScript implements BotScript {
         if (now < replayNextTime) return;
 
         LogEntry entry = actionLog.get(replayIndex);
-        try {
-            api.queueAction(new GameAction(entry.actionId(), entry.param1(), entry.param2(), entry.param3()));
-        } catch (Exception e) {
-            log.debug("Replay action failed at step {}: {}", replayIndex, e.getMessage());
+
+        // Validate target still exists before queueing
+        String skipReason = validateReplayAction(api, entry);
+        if (skipReason != null) {
+            log.warn("Replay step {} skipped — {}: {} (action {})",
+                    replayIndex, skipReason, entry.optionName(), ActionTypes.nameOf(entry.actionId()));
+        } else {
+            try {
+                api.queueAction(new GameAction(entry.actionId(), entry.param1(), entry.param2(), entry.param3()));
+            } catch (Exception e) {
+                log.debug("Replay action failed at step {}: {}", replayIndex, e.getMessage());
+            }
         }
 
         replayIndex++;
@@ -717,68 +753,89 @@ public class XapiScript implements BotScript {
         }
     }
 
+    /** Validates a replay action target. Returns null if valid, or a skip reason string. */
+    private String validateReplayAction(GameAPI api, LogEntry entry) {
+        try {
+            int actionId = entry.actionId();
+
+            // Component actions — check interface is open and visible
+            if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
+                int ifaceId = entry.param3() >>> 16;
+                if (!api.isInterfaceOpen(ifaceId)) {
+                    return "interface " + ifaceId + " not open";
+                }
+                try {
+                    var visible = api.queryComponents(
+                            ComponentFilter.builder().interfaceId(ifaceId).visibleOnly(true).maxResults(1).build());
+                    if (visible == null || visible.isEmpty()) {
+                        return "interface " + ifaceId + " hidden";
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            // NPC actions — check NPC exists
+            int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
+            if (npcSlot > 0) {
+                var npcs = api.queryEntities(EntityFilter.builder().type("npc")
+                        .visibleOnly(true).maxResults(500).build());
+                boolean found = npcs != null && npcs.stream().anyMatch(e -> e.serverIndex() == entry.param1());
+                if (!found) return "NPC not found (serverIndex=" + entry.param1() + ")";
+            }
+
+            // Object actions — check object exists
+            int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, actionId);
+            if (objSlot > 0) {
+                var objs = api.queryEntities(EntityFilter.builder().type("location")
+                        .visibleOnly(true).maxResults(200).build());
+                boolean found = objs != null && objs.stream().anyMatch(e -> e.typeId() == entry.param1());
+                if (!found) return "Object not found (typeId=" + entry.param1() + ")";
+            }
+        } catch (Exception e) {
+            // Validation failed — don't skip, just proceed with the action
+            log.debug("Replay validation error at step {}: {}", replayIndex, e.getMessage());
+        }
+        return null; // Valid
+    }
+
     // ── Inspector data collection ───────────────────────────────────────
 
     private void collectInspectorData(GameAPI api) {
-        // Build entity filters with optional distance constraint
-        LocalPlayer lp = localPlayerData;
         int dist = entityDistanceFilter;
-        EntityFilter.Builder npcF = EntityFilter.builder().type("npc").sortByDistance(true).maxResults(100);
-        EntityFilter.Builder playerF = EntityFilter.builder().type("player").sortByDistance(true).maxResults(50);
-        EntityFilter.Builder objF = EntityFilter.builder().type("location").sortByDistance(true).maxResults(100);
-        EntityFilter.Builder giF = EntityFilter.builder().sortByDistance(true).maxResults(50);
-        if (lp != null && dist > 0 && dist < 200) {
-            npcF.tileX(lp.tileX()).tileY(lp.tileY()).radius(dist);
-            playerF.tileX(lp.tileX()).tileY(lp.tileY()).radius(dist);
-            objF.tileX(lp.tileX()).tileY(lp.tileY()).radius(dist);
-            giF.tileX(lp.tileX()).tileY(lp.tileY()).radius(dist);
-        }
-        try { nearbyNpcs = api.queryEntities(npcF.build()); } catch (Exception ignored) { nearbyNpcs = List.of(); }
-        try { nearbyPlayers = api.queryEntities(playerF.build()); } catch (Exception ignored) { nearbyPlayers = List.of(); }
-        try { nearbyObjects = api.queryEntities(objF.build()); } catch (Exception ignored) { nearbyObjects = List.of(); }
-        try { nearbyGroundItems = api.queryGroundItems(giF.build()); } catch (Exception ignored) { nearbyGroundItems = List.of(); }
+
+        // Use entity facades for querying (SceneObjects uses "location" internally)
+        try {
+            var npcQuery = npcs.query().limit(100);
+            if (dist > 0 && dist < 200) npcQuery.withinDistance(dist);
+            nearbyNpcs = npcQuery.all().stream().map(EntityContext::raw).toList();
+        } catch (Exception e) { log.info("NPC query failed: {}", e.getMessage()); nearbyNpcs = List.of(); }
+
+        try {
+            var playerQuery = players.query().limit(50);
+            if (dist > 0 && dist < 200) playerQuery.withinDistance(dist);
+            nearbyPlayers = playerQuery.all().stream().map(EntityContext::raw).toList();
+        } catch (Exception e) { log.info("Player query failed: {}", e.getMessage()); nearbyPlayers = List.of(); }
+
+        try {
+            var objQuery = sceneObjects.query().limit(100);
+            if (dist > 0 && dist < 200) objQuery.withinDistance(dist);
+            nearbyObjects = objQuery.all().stream().map(EntityContext::raw).toList();
+        } catch (Exception e) { log.info("Object query failed: {}", e.getMessage()); nearbyObjects = List.of(); }
+
+        // Ground items — keep using raw API (facade returns different type)
+        try {
+            EntityFilter.Builder giF = EntityFilter.builder().sortByDistance(true).maxResults(50);
+            LocalPlayer lp = localPlayerData;
+            if (lp != null && dist > 0 && dist < 200) {
+                giF.tileX(lp.tileX()).tileY(lp.tileY()).radius(dist);
+            }
+            nearbyGroundItems = api.queryGroundItems(giF.build());
+        } catch (Exception e) { log.info("Ground item query failed: {}", e.getMessage()); nearbyGroundItems = List.of(); }
+
         try { openInterfaces = api.getOpenInterfaces(); } catch (Exception ignored) { openInterfaces = List.of(); }
 
-        // Diff open interfaces to detect opens/closes
-        Set<Integer> currentIfaceIds = new HashSet<>();
-        for (OpenInterface oi : openInterfaces) currentIfaceIds.add(oi.interfaceId());
-        Set<Integer> prevIds = previousOpenInterfaceIds;
-
-        // Newly opened interfaces
-        for (int id : currentIfaceIds) {
-            if (!prevIds.contains(id)) {
-                // Snapshot components for the newly opened interface
-                List<InterfaceComponentSnapshot> snapshots = new ArrayList<>();
-                try {
-                    List<Component> children = api.getComponentChildren(id, 0);
-                    if (children != null) {
-                        for (Component c : children) {
-                            String text = "";
-                            List<String> opts = List.of();
-                            try { text = api.getComponentText(c.interfaceId(), c.componentId()); } catch (Exception ignored) {}
-                            try {
-                                List<String> o = api.getComponentOptions(c.interfaceId(), c.componentId());
-                                if (o != null) opts = o;
-                            } catch (Exception ignored) {}
-                            snapshots.add(new InterfaceComponentSnapshot(
-                                    c.componentId(), c.subComponentId(), c.type(),
-                                    text != null ? text : "", opts,
-                                    c.itemId(), c.spriteId()));
-                        }
-                    }
-                } catch (Exception ignored) {}
-                interfaceEventLog.add(new InterfaceEvent("OPENED", id,
-                        System.currentTimeMillis(), currentTick, snapshots));
-            }
-        }
-        // Closed interfaces
-        for (int id : prevIds) {
-            if (!currentIfaceIds.contains(id)) {
-                interfaceEventLog.add(new InterfaceEvent("CLOSED", id,
-                        System.currentTimeMillis(), currentTick, List.of()));
-            }
-        }
-        previousOpenInterfaceIds = Set.copyOf(currentIfaceIds);
+        log.debug("Inspector: NPCs={} Players={} Objects={} GroundItems={} dist={}",
+                nearbyNpcs.size(), nearbyPlayers.size(), nearbyObjects.size(),
+                nearbyGroundItems.size(), dist);
 
         // Batch-resolve ground item names (cap 50 unique IDs)
         Set<Integer> itemIds = new HashSet<>();
@@ -827,6 +884,89 @@ public class XapiScript implements BotScript {
             } catch (Exception ignored) {}
             inspectInterfaceId = -1; // Reset -- one-shot fetch
         }
+
+        // Collect item varbits for equipped items
+        collectItemVarbits(api);
+    }
+
+    private void collectItemVarbits(GameAPI api) {
+        // Equipment slot indices matching Equipment.Slot enum
+        int[] slotIndices = {0, 1, 2, 3, 4, 5, 7, 9, 10, 12, 13, 14, 17};
+        String[] slotNames = {"Head", "Cape", "Neck", "Weapon", "Body", "Shield",
+                "Legs", "Hands", "Feet", "Ring", "Ammo", "Aura", "Pocket"};
+
+        List<ItemVarEntry> entries = new ArrayList<>();
+        Map<String, Integer> currentSnapshot = new HashMap<>();
+
+        for (int s = 0; s < slotIndices.length; s++) {
+            int slotIdx = slotIndices[s];
+            try {
+                InventoryItem item = api.getInventoryItem(94, slotIdx); // 94 = equipment
+                if (item == null || item.itemId() <= 0) continue;
+
+                List<ItemVar> vars = api.getItemVars(94, slotIdx);
+                if (vars == null || vars.isEmpty()) continue;
+
+                // Resolve item name
+                String itemName = "";
+                try {
+                    ItemType it = api.getItemType(item.itemId());
+                    if (it != null && it.name() != null) itemName = it.name();
+                } catch (Exception ignored) {}
+
+                entries.add(new ItemVarEntry(slotNames[s], item.itemId(), itemName, slotIdx, vars));
+
+                // Build snapshot for change detection
+                for (ItemVar v : vars) {
+                    String key = slotIdx + ":" + v.varId();
+                    currentSnapshot.put(key, v.value());
+                }
+            } catch (Exception ignored) {}
+        }
+        itemVarCache = List.copyOf(entries);
+
+        // Detect item varbit changes and log them
+        {
+            Map<String, Integer> prev = previousItemVarSnapshot;
+
+            // Check for changed or new values
+            for (Map.Entry<String, Integer> entry : currentSnapshot.entrySet()) {
+                String key = entry.getKey();
+                int newVal = entry.getValue();
+                Integer oldVal = prev.get(key);
+                if (oldVal == null) oldVal = 0;
+                if (oldVal != newVal) {
+                    // Parse slot:varId from key
+                    String[] parts = key.split(":");
+                    int slotIdx = Integer.parseInt(parts[0]);
+                    int varId = Integer.parseInt(parts[1]);
+                    // Encode as combined ID: slot * 100000 + varId for unique identification
+                    int combinedId = slotIdx * 100000 + varId;
+                    VarChange vc = new VarChange("itemvar", combinedId, oldVal, newVal,
+                            System.currentTimeMillis(), currentTick);
+                    varLog.add(vc);
+                    varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
+                    varChangeCount.merge("itemvar:" + combinedId, 1, Integer::sum);
+                }
+            }
+
+            // Check for removed values (item unequipped)
+            for (Map.Entry<String, Integer> entry : prev.entrySet()) {
+                if (!currentSnapshot.containsKey(entry.getKey()) && entry.getValue() != 0) {
+                    String[] parts = entry.getKey().split(":");
+                    int slotIdx = Integer.parseInt(parts[0]);
+                    int varId = Integer.parseInt(parts[1]);
+                    int combinedId = slotIdx * 100000 + varId;
+                    VarChange vc = new VarChange("itemvar", combinedId, entry.getValue(), 0,
+                            System.currentTimeMillis(), currentTick);
+                    varLog.add(vc);
+                    varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
+                    varChangeCount.merge("itemvar:" + combinedId, 1, Integer::sum);
+                }
+            }
+        }
+
+        previousItemVarSnapshot = currentSnapshot;
     }
 
     private void fetchEntityInfoBatch(GameAPI api, List<Entity> entities, Map<Integer, EntityInfo> target, int cap) {
@@ -840,7 +980,6 @@ public class XapiScript implements BotScript {
     }
 
     private void pollChatHistory(GameAPI api) {
-        if (!trackChat) return;
         try {
             List<ChatMessage> history = api.queryChatHistory(-1, 100);
             if (history != null && history.size() < lastChatHistorySize) {
@@ -851,7 +990,7 @@ public class XapiScript implements BotScript {
                     ChatMessage msg = history.get(i);
                     if (msg == null) continue;
                     // Avoid duplicates by checking if chatLog already has this message
-                    String text = msg.text() != null ? msg.text().replaceAll("<img=\\d+>", "").trim() : "";
+                    String text = msg.text() != null ? msg.text().replaceAll("<img=\\d+>", "").replaceAll("<col=[0-9a-fA-F]+>", "").replaceAll("</col>", "").trim() : "";
                     String player = msg.playerName() != null ? msg.playerName() : "";
                     boolean duplicate = false;
                     // Check last few entries for duplicate
@@ -873,6 +1012,133 @@ public class XapiScript implements BotScript {
         } catch (Exception ignored) {}
     }
 
+    // ── Interface event polling (every tick for fast detection) ─────────
+
+    private void pollInterfaceEvents(GameAPI api) {
+        try {
+            List<OpenInterface> current = api.getOpenInterfaces();
+            if (current == null) current = List.of();
+
+            Set<Integer> currentIfaceIds = new HashSet<>();
+            for (OpenInterface oi : current) currentIfaceIds.add(oi.interfaceId());
+            Set<Integer> prevIds = previousOpenInterfaceIds;
+
+            // Newly opened interfaces
+            for (int id : currentIfaceIds) {
+                if (!prevIds.contains(id)) {
+                    // Check visibility — only log if the interface has at least one visible component
+                    try {
+                        var visibleComps = api.queryComponents(
+                                ComponentFilter.builder().interfaceId(id).visibleOnly(true).maxResults(1).build());
+                        if (visibleComps == null || visibleComps.isEmpty()) continue; // Hidden interface
+                    } catch (Exception ignored) {
+                        // If query fails, still log the event (better to have false positives than miss events)
+                    }
+
+                    // Snapshot components for the newly opened interface
+                    List<InterfaceComponentSnapshot> snapshots = new ArrayList<>();
+                    try {
+                        List<Component> children = api.getComponentChildren(id, 0);
+                        if (children != null) {
+                            for (Component c : children) {
+                                String text = "";
+                                List<String> opts = List.of();
+                                try { text = api.getComponentText(c.interfaceId(), c.componentId()); } catch (Exception ignored) {}
+                                try {
+                                    List<String> o = api.getComponentOptions(c.interfaceId(), c.componentId());
+                                    if (o != null) opts = o;
+                                } catch (Exception ignored) {}
+                                snapshots.add(new InterfaceComponentSnapshot(
+                                        c.componentId(), c.subComponentId(), c.type(),
+                                        text != null ? text : "", opts,
+                                        c.itemId(), c.spriteId()));
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                    interfaceEventLog.add(new InterfaceEvent("OPENED", id,
+                            System.currentTimeMillis(), currentTick, snapshots));
+                }
+            }
+            // Closed interfaces
+            for (int id : prevIds) {
+                if (!currentIfaceIds.contains(id)) {
+                    interfaceEventLog.add(new InterfaceEvent("CLOSED", id,
+                            System.currentTimeMillis(), currentTick, List.of()));
+                }
+            }
+            previousOpenInterfaceIds = Set.copyOf(currentIfaceIds);
+        } catch (Exception e) {
+            log.debug("Interface event poll error: {}", e.getMessage());
+        }
+    }
+
+    // ── Action history polling (captures manual player actions) ─────────
+
+    private void pollActionHistory(GameAPI api) {
+        if (!actionHistoryAvailable || !recording) return;
+        long now = System.currentTimeMillis();
+        if (now - lastActionHistoryPoll < 600) return; // ~1 tick
+        lastActionHistoryPoll = now;
+        try {
+            var history = api.getActionHistory(50, -1);
+            if (history == null || history.isEmpty()) return;
+
+            for (var entry : history) {
+                // Only process entries newer than what we've already seen
+                if (entry.timestamp() <= lastSeenActionTimestamp) continue;
+                lastSeenActionTimestamp = entry.timestamp();
+
+                // Check if this action was already captured by ActionExecutedEvent
+                boolean duplicate = false;
+                for (int j = Math.max(0, actionLog.size() - 20); j < actionLog.size(); j++) {
+                    LogEntry existing = actionLog.get(j);
+                    if (existing.actionId() == entry.actionId()
+                            && existing.param1() == entry.param1()
+                            && existing.param2() == entry.param2()
+                            && existing.param3() == entry.param3()
+                            && Math.abs(existing.timestamp() - entry.timestamp()) < 1200) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (duplicate) continue;
+
+                // New action from history — resolve names and log it
+                String[] names = resolveNames(api,
+                        entry.actionId(), entry.param1(), entry.param2(), entry.param3());
+
+                // Try mini menu cache for option text and item name
+                String[] menuMatch = matchMiniMenu(entry.actionId(), entry.param1(),
+                        entry.param2(), entry.param3());
+                if (menuMatch != null) {
+                    if (names[1] == null || names[1].isEmpty()) names[1] = menuMatch[0];
+                    if (names[0] == null || names[0].isEmpty()) names[0] = menuMatch[1];
+                }
+
+                int px = 0, py = 0, pp = 0, pa = -1;
+                boolean pm = false;
+                try {
+                    LocalPlayer lp = api.getLocalPlayer();
+                    if (lp != null) {
+                        px = lp.tileX(); py = lp.tileY(); pp = lp.plane();
+                        pa = lp.animationId(); pm = lp.isMoving();
+                    }
+                } catch (Exception ignored) {}
+
+                actionLog.add(new LogEntry(
+                        entry.actionId(), entry.param1(), entry.param2(), entry.param3(),
+                        entry.timestamp(), currentTick, false, "history",
+                        names[0], names[1], px, py, pp, pa, pm
+                ));
+            }
+        } catch (NoClassDefFoundError e) {
+            actionHistoryAvailable = false;
+            log.warn("Action history polling unavailable (classloader issue) — using event-based capture only");
+        } catch (Throwable t) {
+            log.debug("pollActionHistory error: {}", t.getMessage());
+        }
+    }
+
     // ── Inventory diff ──────────────────────────────────────────────────
 
     private void collectInventoryDiff(GameAPI api) {
@@ -885,24 +1151,21 @@ public class XapiScript implements BotScript {
             }
 
             Map<Integer, Integer> prev = lastInventorySnapshot;
-            if (!prev.isEmpty() || !current.isEmpty()) {
-                StringBuilder diff = new StringBuilder();
+            if (!prev.isEmpty()) {
                 Set<Integer> allIds = new HashSet<>(prev.keySet());
                 allIds.addAll(current.keySet());
+                long now = System.currentTimeMillis();
                 for (int id : allIds) {
                     int oldQty = prev.getOrDefault(id, 0);
                     int newQty = current.getOrDefault(id, 0);
                     if (oldQty != newQty) {
-                        int delta = newQty - oldQty;
                         String name;
                         try { name = api.getItemType(id).name(); } catch (Exception e) { name = "item:" + id; }
-                        if (!diff.isEmpty()) diff.append(", ");
-                        diff.append(delta > 0 ? "+" : "").append(delta).append(" ").append(name);
+                        inventoryLog.add(new InventoryChange(id, name, oldQty, newQty, now, currentTick));
                     }
                 }
-                if (!diff.isEmpty()) {
-                    lastInventoryDiff = diff.toString();
-                }
+                // Cap at 2000 entries
+                while (inventoryLog.size() > 2000) inventoryLog.remove(0);
             }
             lastInventorySnapshot = current;
         } catch (Exception ignored) {}
@@ -913,24 +1176,19 @@ public class XapiScript implements BotScript {
         log.info("Xapi stopped — {} actions, {} var changes, {} chat messages logged",
                 actionLog.size(), varLog.size(), chatLog.size());
 
-        // Dispose overlay
-        try { overlay.dispose(); } catch (Exception ignored) {}
 
         // Save settings on stop
         saveSettings();
 
-        if (blocking) {
-            blocking = false;
-            ActionDebugger.get().setBlocking(false);
-            try {
-                ctx.getGameAPI().setActionsBlocked(false);
-            } catch (Exception e) {
-                log.debug("Failed to unblock on stop: {}", e.getMessage());
-            }
-        }
+        // Always unblock on stop
+        blocking = false;
+        ActionDebugger.get().setBlocking(false);
         ActionDebugger.get().setRecording(false);
-        ActionDebugger.get().setSelectiveBlocking(false);
-        ActionDebugger.get().getBlockedActionIds().clear();
+        try {
+            ctx.getGameAPI().setActionsBlocked(false);
+        } catch (Exception e) {
+            log.debug("Failed to unblock on stop: {}", e.getMessage());
+        }
         replaying = false;
     }
 
@@ -981,6 +1239,10 @@ public class XapiScript implements BotScript {
                     try { interfacesTab.render(); } catch (Exception e) { log.error("Interfaces tab error", e); ImGui.text("Error: " + e.getMessage()); }
                     ImGui.endTabItem();
                 }
+                if (ImGui.beginTabItem("Inventory")) {
+                    try { inventoryTab.render(); } catch (Exception e) { log.error("Inventory tab error", e); ImGui.text("Error: " + e.getMessage()); }
+                    ImGui.endTabItem();
+                }
                 ImGui.endTabBar();
             }
         } catch (Exception e) {
@@ -1021,7 +1283,7 @@ public class XapiScript implements BotScript {
                 varsByTick.clear();
                 ActionDebugger.get().clear();
                 lastActionSize = -1; lastVarSize = -1; lastChatSize = -1;
-                lastInventoryDiff = "";
+                inventoryLog.clear();
                 interfaceEventLog.clear();
                 // Don't clear pinnedVars, varChangeCount, or varAnnotations
             }
@@ -1031,42 +1293,6 @@ public class XapiScript implements BotScript {
 
             if (blocking) { ImGui.sameLine(); ImGui.textColored(0.9f, 0.2f, 0.2f, 1f, "  ACTIONS BLOCKED"); }
 
-            // Row 2: Tracking toggles
-            boolean wTV = trackVars;
-            if (ImGui.checkbox("Track Vars", wTV)) { trackVars = !wTV; settingsDirty = true; }
-            ImGui.sameLine();
-            boolean wTC = trackChat;
-            if (ImGui.checkbox("Track Chat", wTC)) { trackChat = !wTC; settingsDirty = true; }
-
-            // Inventory diff display
-            String invDiff = lastInventoryDiff;
-            if (!invDiff.isEmpty()) {
-                ImGui.sameLine();
-                ImGui.textColored(1f, 1f, 0.5f, 1f, "  Inv: " + invDiff);
-            }
-        }
-
-        // Selective blocking
-        if (ImGui.collapsingHeader("Selective Blocking")) {
-            boolean wasSB = selectiveBlocking;
-            if (ImGui.checkbox("Enable Selective Blocking", wasSB)) { selectiveBlocking = !wasSB; settingsDirty = true; }
-            if (selectiveBlocking) {
-                ImGui.indent();
-                if (ImGui.checkbox("NPC##sb", selectiveBlockCategories[0])) { selectiveBlockCategories[0] = !selectiveBlockCategories[0]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Object##sb", selectiveBlockCategories[1])) { selectiveBlockCategories[1] = !selectiveBlockCategories[1]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Ground Item##sb", selectiveBlockCategories[2])) { selectiveBlockCategories[2] = !selectiveBlockCategories[2]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Player##sb", selectiveBlockCategories[3])) { selectiveBlockCategories[3] = !selectiveBlockCategories[3]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Component##sb", selectiveBlockCategories[4])) { selectiveBlockCategories[4] = !selectiveBlockCategories[4]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Walk##sb", selectiveBlockCategories[5])) { selectiveBlockCategories[5] = !selectiveBlockCategories[5]; settingsDirty = true; }
-                ImGui.sameLine();
-                if (ImGui.checkbox("Other##sb", selectiveBlockCategories[6])) { selectiveBlockCategories[6] = !selectiveBlockCategories[6]; settingsDirty = true; }
-                ImGui.unindent();
-            }
         }
 
         // Session management

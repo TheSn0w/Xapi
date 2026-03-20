@@ -78,13 +78,6 @@ final class EntitiesTab {
     }
 
     private void renderEntityTable(List<Entity> entities, String type, String filter) {
-        // Selected entity info panel (above table)
-        EntityInfo selInfo = script.selectedEntityInfo;
-        if (selInfo != null && script.selectedEntityHandle >= 0) {
-            renderSelectedEntityPanel(selInfo);
-            ImGui.spacing();
-        }
-
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
                 | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;
         float tableHeight = ImGui.getContentRegionAvailY();
@@ -109,19 +102,11 @@ final class EntitiesTab {
                         && !String.valueOf(e.typeId()).contains(filter)) continue;
 
                 EntityInfo info = infoSnap.get(e.handle());
-                boolean isSelected = e.handle() == script.selectedEntityHandle;
 
                 ImGui.tableNextRow();
 
-                // Highlight selected row
-                if (isSelected) {
-                    ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.2f, 0.4f, 0.6f, 0.5f));
-                }
-
                 ImGui.tableSetColumnIndex(0);
-                if (ImGui.selectable(name + "##sel_" + type + "_" + i, isSelected, 0)) {
-                    script.selectedEntityHandle = isSelected ? -1 : e.handle(); // toggle
-                }
+                ImGui.text(name);
 
                 // Rich hover tooltip
                 if (ImGui.isItemHovered() && info != null) {
@@ -141,8 +126,6 @@ final class EntitiesTab {
                     if (info.followingIndex() >= 0) {
                         ImGui.text("Following: idx " + info.followingIndex());
                     }
-                    ImGui.separator();
-                    ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Click to select | Right-click to copy query");
                     ImGui.endTooltip();
                 }
 
@@ -157,70 +140,30 @@ final class EntitiesTab {
 
                 ImGui.tableSetColumnIndex(7);
                 String queryCode;
+                String codeLabel = "location".equals(type) ? "objects" : type + "s";
                 if ("npc".equals(type)) {
                     queryCode = name.isEmpty()
-                            ? "api.queryEntities(EntityFilter.builder().type(\"npc\").typeId(" + e.typeId() + ").maxResults(1).build())"
-                            : "api.queryEntities(EntityFilter.builder().type(\"npc\").namePattern(\"" + name + "\").maxResults(1).build())";
+                            ? "npcs.query().withId(" + e.typeId() + ").nearest()"
+                            : "npcs.query().named(\"" + name + "\").nearest()";
                 } else if ("player".equals(type)) {
-                    queryCode = "api.queryEntities(EntityFilter.builder().type(\"player\").namePattern(\"" + name + "\").maxResults(1).build())";
+                    queryCode = "players.query().named(\"" + name + "\").nearest()";
                 } else {
                     queryCode = name.isEmpty()
-                            ? "api.queryEntities(EntityFilter.builder().type(\"location\").typeId(" + e.typeId() + ").maxResults(1).build())"
-                            : "api.queryEntities(EntityFilter.builder().type(\"location\").namePattern(\"" + name + "\").maxResults(1).build())";
+                            ? "objects.query().withId(" + e.typeId() + ").nearest()"
+                            : "objects.query().named(\"" + name + "\").nearest()";
                 }
 
                 ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
-                String codeLabel = "location".equals(type) ? "objects" : type + "s";
-                String shortCode = codeLabel + ".query().name(\"" + name + "\").nearest()";
-                if (ImGui.selectable(shortCode + "##code_" + type + "_" + i)) {
+                if (ImGui.selectable(queryCode + "##code_" + type + "_" + i)) {
                     ImGui.setClipboardText(queryCode);
                 }
                 ImGui.popStyleColor();
-                if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy full query");
+                if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy query");
             }
             ImGui.endTable();
         }
     }
 
-    private void renderSelectedEntityPanel(EntityInfo info) {
-        ImGui.pushStyleColor(ImGuiCol.ChildBg, 0.15f, 0.15f, 0.2f, 0.9f);
-        ImGui.beginChild("##selected_entity", 0, 120, true);
-
-        String name = info.name() != null ? info.name() : "Unknown";
-        ImGui.textColored(1f, 0.8f, 0.2f, 1f, "Selected: " + name + " (ID: " + info.typeId() + ")");
-
-        ImGui.text("Handle: " + info.handle() + "  |  Index: " + info.serverIndex()
-                + "  |  Combat Lvl: " + info.combatLevel());
-        ImGui.text("Position: (" + info.tileX() + ", " + info.tileY() + ", " + info.tileZ() + ")"
-                + "  |  Moving: " + (info.isMoving() ? "Yes" : "No")
-                + "  |  Hidden: " + (info.isHidden() ? "Yes" : "No"));
-        ImGui.text("Animation: " + info.animationId() + "  |  Stance: " + info.stanceId());
-
-        if (info.maxHealth() > 0) {
-            float pct = (float) info.health() / info.maxHealth();
-            ImGui.text("Health: " + info.health() + " / " + info.maxHealth());
-            ImGui.sameLine();
-            ImGui.pushStyleColor(ImGuiCol.PlotHistogram, pct > 0.5f ? 0xFF00CC00 : pct > 0.25f ? 0xFF00CCCC : 0xFF0000CC);
-            ImGui.progressBar(pct, 100, 14, "");
-            ImGui.popStyleColor();
-        }
-
-        if (info.overheadText() != null && !info.overheadText().isEmpty()) {
-            ImGui.text("Overhead: " + info.overheadText());
-        }
-        if (info.followingIndex() >= 0) {
-            ImGui.text("Following: idx " + info.followingIndex());
-        }
-
-        ImGui.sameLine(ImGui.getContentRegionAvailX() - 60);
-        if (ImGui.smallButton("Deselect")) {
-            script.selectedEntityHandle = -1;
-            script.selectedEntityInfo = null;
-        }
-
-        ImGui.endChild();
-        ImGui.popStyleColor();
-    }
 
     private void renderGroundItemsTable(String filter) {
         List<GroundItemStack> stacks = script.nearbyGroundItems;
