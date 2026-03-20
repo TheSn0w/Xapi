@@ -370,6 +370,7 @@ public class XapiScript implements BotScript {
 
             if (actionId == ActionTypes.COMPONENT) return resolveComponent(api, p1, p2, p3);
             if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) return resolveComponent(api, p1, p2, p3);
+            if (actionId == ActionTypes.CONTAINER_ACTION) return resolveComponent(api, p1, p2, p3);
         } catch (Exception e) {
             log.debug("Name resolution failed for action {}: {}", actionId, e.getMessage());
         }
@@ -770,7 +771,8 @@ public class XapiScript implements BotScript {
             int actionId = entry.actionId();
 
             // Component actions — check interface is open and visible
-            if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
+            if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM
+                    || actionId == ActionTypes.CONTAINER_ACTION) {
                 int ifaceId = entry.param3() >>> 16;
                 if (!api.isInterfaceOpen(ifaceId)) {
                     return "interface " + ifaceId + " not open";

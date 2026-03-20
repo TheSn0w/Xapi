@@ -4,7 +4,6 @@ import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
-import com.botwithus.bot.api.model.GameAction;
 import com.botwithus.bot.api.model.InventoryItem;
 
 import java.util.Arrays;
@@ -40,11 +39,8 @@ public final class WoodBox {
     // Bank backpack component (for empty action)
     private static final int BANK_INTERFACE_ID = 517;
     private static final int BANK_BACKPACK_COMPONENT = 15;
-    private static final int HASH_BANK_BACKPACK = BANK_INTERFACE_ID << 16 | BANK_BACKPACK_COMPONENT;
-    /** Action type for "Empty" on woodbox in bank backpack. */
-    private static final int ACTION_EMPTY = 1007;
-    /** Option index for "Empty - logs and bird's nests". */
-    private static final int OPTION_EMPTY = 8;
+    /** Option index for "Empty - logs and bird's nests" on woodbox in bank backpack. */
+    private static final int OPTION_EMPTY_LOGS = 8;
 
     private final GameAPI api;
     private final InventoryContainer storage;
@@ -253,8 +249,8 @@ public final class WoodBox {
     /**
      * Empty the wood box contents into the bank.
      * <p>Must be performed while the bank interface is open. Finds the wood box
-     * in the bank's backpack view (interface 517, component 15) and queues the
-     * "Empty - logs and bird's nests" action (type 1007, option 8).</p>
+     * in the bank's backpack view (interface 517, component 15) and interacts
+     * with the "Empty" option via component interaction.</p>
      *
      * @return {@code true} if the empty action was queued
      */
@@ -268,19 +264,23 @@ public final class WoodBox {
             log.warn("[WoodBox] Cannot empty: no wood box found in backpack");
             return false;
         }
-        // Find the woodbox component in the bank's backpack view
+        if (isEmpty()) {
+            log.warn("[WoodBox] Cannot empty: wood box is already empty");
+            return false;
+        }
+
+        // Find the woodbox in the bank's backpack view
         Component comp = findWoodBoxInBankBackpack(tier);
         if (comp == null) {
             log.warn("[WoodBox] Cannot empty: wood box not found in bank backpack view");
             return false;
         }
-        if (isEmpty()) {
-            log.warn("[WoodBox] Cannot empty: wood box is already empty");
-            return false;
-        }
-        int slot = comp.subComponentId();
-        api.queueAction(new GameAction(ACTION_EMPTY, OPTION_EMPTY, slot, HASH_BANK_BACKPACK));
-        log.info("[WoodBox] Emptying {} (slot {})", tier.name, slot);
+        // Use standard COMPONENT action (57) with option index 8 — same index the game
+        // uses for "Empty - logs and bird's nests". The bank backpack component (517, 15)
+        // reports 0 options via getComponentOptions, but still processes actions via type 57
+        // (Bank deposit uses the same pattern: queueComponentAction with option 2/3/4/5/7).
+        ComponentHelper.queueComponentAction(api, comp, OPTION_EMPTY_LOGS);
+        log.info("[WoodBox] Emptying {} (slot {})", tier.name, comp.subComponentId());
         return true;
     }
 

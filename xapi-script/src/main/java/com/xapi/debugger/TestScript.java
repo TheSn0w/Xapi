@@ -1,124 +1,98 @@
 package com.xapi.debugger;
 
 import com.botwithus.bot.api.*;
-import com.botwithus.bot.api.inventory.WoodBox;
+import com.botwithus.bot.api.inventory.SoilBox;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
-import com.botwithus.bot.api.model.InventoryItem;
-
-import java.util.List;
 
 /**
- * WoodBox API test — tier detection, stored item queries, fill operation.
- * <p>Prerequisites: have a wood box and some logs in backpack.</p>
+ * SoilBox API test — emptyAtBank().
+ * <p>Prerequisites: have a soil box with some soil stored,
+ * open the bank, then start the script.</p>
  */
 @ScriptManifest(
         name = "Xapi Test",
         version = "1.0",
         author = "Xapi",
-        description = "WoodBox API test — tier, canStore, fill, queries",
+        description = "SoilBox API test — empty at bank",
         category = ScriptCategory.UTILITY
 )
 public class TestScript implements BotScript {
 
     private static final BotLogger log = LoggerFactory.getLogger(TestScript.class);
 
-    private WoodBox woodBox;
+    private SoilBox soilBox;
+    private GameAPI api;
     private int step = 0;
     private int passed = 0;
     private int failed = 0;
+    private int storedBefore = 0;
 
     @Override
     public void onStart(ScriptContext ctx) {
-        this.woodBox = new WoodBox(ctx.getGameAPI());
-        log.info("[WoodBoxTest] Started — have a wood box + logs in backpack");
+        this.api = ctx.getGameAPI();
+        this.soilBox = new SoilBox(api);
+        log.info("[SoilBoxTest] Started — have soil box with soil stored, bank open");
     }
 
     @Override
     public int onLoop() {
         switch (step) {
 
-            // ---- Tier detection ----
+            // ---- Prereqs ----
             case 0 -> {
-                log.info("[WoodBoxTest] === Tier Detection ===");
-                boolean has = woodBox.hasWoodBox();
-                check("hasWoodBox()", has);
-                if (!has) {
-                    log.error("[WoodBoxTest] No wood box in backpack — cannot continue");
+                log.info("[SoilBoxTest] === Prereqs ===");
+                check("hasSoilBox()", soilBox.hasSoilBox());
+                if (!soilBox.hasSoilBox()) {
+                    log.error("[SoilBoxTest] No soil box — cannot continue");
                     return -1;
                 }
-                WoodBox.Tier tier = woodBox.getEquippedTier();
-                log.info("[WoodBoxTest] Equipped tier: {} (level {}, itemId {}, base capacity {})",
-                        tier.name, tier.level, tier.itemId, tier.baseCapacity);
-                check("getEquippedTier() not null", tier != null);
-                check("getBaseCapacity() > 0", woodBox.getBaseCapacity() > 0);
+                check("Bank is open", api.isInterfaceOpen(517));
+                if (!api.isInterfaceOpen(517)) {
+                    log.error("[SoilBoxTest] Bank is NOT open — open bank first");
+                    return -1;
+                }
+                storedBefore = soilBox.getTotalStored();
+                log.info("[SoilBoxTest] Stored before empty: {}", storedBefore);
+                for (String line : soilBox.getBreakdown()) {
+                    log.info("[SoilBoxTest]   {}", line);
+                }
+                check("Soil box has items stored", storedBefore > 0);
+                if (storedBefore == 0) {
+                    log.error("[SoilBoxTest] Soil box is empty — fill it first");
+                    return -1;
+                }
                 step++;
                 return 1000;
             }
 
-            // ---- canStore checks ----
+            // ---- Empty at bank ----
             case 1 -> {
-                log.info("[WoodBoxTest] === canStore() ===");
-                WoodBox.Tier tier = woodBox.getEquippedTier();
-                // Should always be able to store basic logs
-                check("canStore(LOGS)", woodBox.canStore(WoodBox.LogType.LOGS));
-                check("canStore(\"Logs\")", woodBox.canStore("Logs"));
-                // Check a log type at the tier's own level
-                for (WoodBox.LogType lt : WoodBox.LogType.values()) {
-                    if (lt.requiredTier == tier.level) {
-                        check("canStore(" + lt.name + ")", woodBox.canStore(lt));
-                        break;
-                    }
-                }
-                // Unknown log name
-                check("canStore(\"Fake logs\") = false", !woodBox.canStore("Fake logs"));
+                log.info("[SoilBoxTest] === emptyAtBank() ===");
+                boolean result = soilBox.emptyAtBank();
+                check("emptyAtBank() returned true", result);
                 step++;
-                return 1000;
+                return 3000;
             }
 
-            // ---- Stored item queries (before fill) ----
+            // ---- Verify emptied ----
             case 2 -> {
-                log.info("[WoodBoxTest] === Stored Items (before fill) ===");
-                List<InventoryItem> stored = woodBox.getStoredItems();
-                log.info("[WoodBoxTest] Stored items: {} types, {} total",
-                        woodBox.storedTypes(), woodBox.getTotalStored());
-                for (InventoryItem item : stored) {
-                    log.info("[WoodBoxTest]   itemId={}, qty={}", item.itemId(), item.quantity());
+                int storedAfter = soilBox.getTotalStored();
+                log.info("[SoilBoxTest] Stored after empty: {} (was {})", storedAfter, storedBefore);
+                for (String line : soilBox.getBreakdown()) {
+                    log.info("[SoilBoxTest]   {}", line);
                 }
-                boolean empty = woodBox.isEmpty();
-                log.info("[WoodBoxTest] isEmpty = {}", empty);
-                step++;
-                return 1000;
-            }
-
-            // ---- Fill ----
-            case 3 -> {
-                log.info("[WoodBoxTest] === fill() ===");
-                boolean result = woodBox.fill();
-                check("fill() returned true", result);
-                step++;
-                return 2000;
-            }
-
-            // ---- Stored item queries (after fill) ----
-            case 4 -> {
-                log.info("[WoodBoxTest] === Stored Items (after fill) ===");
-                List<InventoryItem> stored = woodBox.getStoredItems();
-                log.info("[WoodBoxTest] Stored items: {} types, {} total",
-                        woodBox.storedTypes(), woodBox.getTotalStored());
-                for (InventoryItem item : stored) {
-                    log.info("[WoodBoxTest]   itemId={}, qty={}", item.itemId(), item.quantity());
-                }
-                check("getTotalStored() > 0 after fill", woodBox.getTotalStored() > 0);
+                check("Soil box is now empty", storedAfter == 0);
+                check("isEmpty() = true", soilBox.isEmpty());
                 step++;
                 return 1000;
             }
 
             // ---- Summary ----
-            case 5 -> {
-                log.info("[WoodBoxTest] ==============================");
-                log.info("[WoodBoxTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
-                log.info("[WoodBoxTest] ==============================");
+            case 3 -> {
+                log.info("[SoilBoxTest] ==============================");
+                log.info("[SoilBoxTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
+                log.info("[SoilBoxTest] ==============================");
                 return -1;
             }
 
@@ -129,15 +103,15 @@ public class TestScript implements BotScript {
     private void check(String name, boolean condition) {
         if (condition) {
             passed++;
-            log.info("[WoodBoxTest] PASS: {}", name);
+            log.info("[SoilBoxTest] PASS: {}", name);
         } else {
             failed++;
-            log.error("[WoodBoxTest] FAIL: {}", name);
+            log.error("[SoilBoxTest] FAIL: {}", name);
         }
     }
 
     @Override
     public void onStop() {
-        log.info("[WoodBoxTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);
+        log.info("[SoilBoxTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);
     }
 }

@@ -27,6 +27,7 @@ public final class ComponentHelper {
 
     /**
      * Queues a component action with the given option index.
+     * Uses the default action type {@link ActionTypes#COMPONENT} (57).
      *
      * @param api         the game API
      * @param comp        the target component
@@ -34,8 +35,23 @@ public final class ComponentHelper {
      * @return always {@code true}
      */
     public static boolean queueComponentAction(GameAPI api, Component comp, int optionIndex) {
+        return queueComponentAction(api, comp, ActionTypes.COMPONENT, optionIndex);
+    }
+
+    /**
+     * Queues a component action with a custom action type and option index.
+     * <p>Use this for non-standard action types like {@link ActionTypes#CONTAINER_ACTION} (1007)
+     * that share the same parameter layout as COMPONENT (57).</p>
+     *
+     * @param api         the game API
+     * @param comp        the target component
+     * @param actionType  the action type ID (e.g. 57, 1007)
+     * @param optionIndex the 1-based option index
+     * @return always {@code true}
+     */
+    public static boolean queueComponentAction(GameAPI api, Component comp, int actionType, int optionIndex) {
         api.queueAction(new GameAction(
-                ActionTypes.COMPONENT, optionIndex, comp.subComponentId(), componentHash(comp)));
+                actionType, optionIndex, comp.subComponentId(), componentHash(comp)));
         return true;
     }
 

@@ -78,6 +78,11 @@ public final class ActionTypes {
     public static final int SELECT_TILE = 59;
     public static final int COMP_ON_PLAYER = 16;
 
+    // ========================== Container ==========================
+
+    /** Container interaction (e.g. wood box "Empty" at bank). Same parameter layout as COMPONENT. */
+    public static final int CONTAINER_ACTION = 1007;
+
     // ========================== Advanced ==========================
 
     public static final int COMPONENT_KEY = 5000;
@@ -109,6 +114,7 @@ public final class ActionTypes {
             Map.entry(DIALOGUE, "DIALOGUE"), Map.entry(COMPONENT, "COMPONENT"),
             Map.entry(SELECT_COMPONENT_ITEM, "SELECT_COMPONENT_ITEM"),
             Map.entry(SELECT_TILE, "SELECT_TILE"), Map.entry(COMP_ON_PLAYER, "COMP_ON_PLAYER"),
+            Map.entry(CONTAINER_ACTION, "CONTAINER_ACTION"),
             Map.entry(COMPONENT_KEY, "COMPONENT_KEY"),
             Map.entry(COMPONENT_DRAG, "COMPONENT_DRAG"),
             Map.entry(RADIO_GROUP_SELECT, "RADIO_GROUP_SELECT")

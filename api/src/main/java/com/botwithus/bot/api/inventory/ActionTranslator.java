@@ -67,6 +67,11 @@ public final class ActionTranslator {
             return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
         }
 
+        // Container action (1007) — same layout as COMPONENT (e.g. wood box "Empty" at bank)
+        if (actionId == ActionTypes.CONTAINER_ACTION) {
+            return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
+        }
+
         // Delegate to the no-names version for everything else
         return toCode(actionId, p1, p2, p3);
     }
@@ -114,6 +119,11 @@ public final class ActionTranslator {
 
         // Select component item (58)
         if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
+            return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
+        }
+
+        // Container action (1007) — same layout as COMPONENT
+        if (actionId == ActionTypes.CONTAINER_ACTION) {
             return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
         }
 
@@ -204,8 +214,8 @@ public final class ActionTranslator {
         }
 
         String interact;
-        if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) {
-            // Action 58 — must queue with the correct action type, not 57
+        if (actionId == ActionTypes.SELECT_COMPONENT_ITEM || actionId == ActionTypes.CONTAINER_ACTION) {
+            // Action 58/1007 — must queue with the correct action type, not 57
             interact = "comp -> api.queueAction(new GameAction(" + actionId + ", " + p1
                     + ", comp.subComponentId(), ComponentHelper.componentHash(comp)))";
         } else if (p2 >= 0) {
