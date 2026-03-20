@@ -1,122 +1,124 @@
 package com.xapi.debugger;
 
 import com.botwithus.bot.api.*;
-import com.botwithus.bot.api.inventory.Bank;
+import com.botwithus.bot.api.inventory.WoodBox;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
+import com.botwithus.bot.api.model.InventoryItem;
+
+import java.util.List;
 
 /**
- * Bank API test — View All tab auto-switch on contains/count/withdraw.
- * <p>Prerequisites: open bank, switch to any tab OTHER than "View all",
- * have Swordfish in bank, empty backpack.</p>
+ * WoodBox API test — tier detection, stored item queries, fill operation.
+ * <p>Prerequisites: have a wood box and some logs in backpack.</p>
  */
 @ScriptManifest(
         name = "Xapi Test",
         version = "1.0",
         author = "Xapi",
-        description = "Bank API test — View All tab auto-switch on all query methods",
+        description = "WoodBox API test — tier, canStore, fill, queries",
         category = ScriptCategory.UTILITY
 )
 public class TestScript implements BotScript {
 
     private static final BotLogger log = LoggerFactory.getLogger(TestScript.class);
-    private static final int SWORDFISH_ID = 373;
 
-    private Bank bank;
+    private WoodBox woodBox;
     private int step = 0;
     private int passed = 0;
     private int failed = 0;
 
     @Override
     public void onStart(ScriptContext ctx) {
-        this.bank = new Bank(ctx.getGameAPI());
-        log.info("[BankTest] Started — switch to a NON 'View all' tab before running");
+        this.woodBox = new WoodBox(ctx.getGameAPI());
+        log.info("[WoodBoxTest] Started — have a wood box + logs in backpack");
     }
 
     @Override
     public int onLoop() {
         switch (step) {
 
+            // ---- Tier detection ----
             case 0 -> {
-                log.info("[BankTest] === Prereqs ===");
-                if (!bank.isOpen()) {
-                    log.error("[BankTest] Bank is NOT open!");
+                log.info("[WoodBoxTest] === Tier Detection ===");
+                boolean has = woodBox.hasWoodBox();
+                check("hasWoodBox()", has);
+                if (!has) {
+                    log.error("[WoodBoxTest] No wood box in backpack — cannot continue");
                     return -1;
                 }
-                check("Bank is open", true);
-                bank.depositAll();
+                WoodBox.Tier tier = woodBox.getEquippedTier();
+                log.info("[WoodBoxTest] Equipped tier: {} (level {}, itemId {}, base capacity {})",
+                        tier.name, tier.level, tier.itemId, tier.baseCapacity);
+                check("getEquippedTier() not null", tier != null);
+                check("getBaseCapacity() > 0", woodBox.getBaseCapacity() > 0);
                 step++;
-                return 2000;
+                return 1000;
             }
 
-            // ---- Test contains(int) auto-switches to View All ----
+            // ---- canStore checks ----
             case 1 -> {
-                log.info("[BankTest] === contains(SWORDFISH) — should auto-switch to View All ===");
-                boolean result = bank.contains(SWORDFISH_ID);
-                check("contains(SWORDFISH) returned true", result);
-                check("isViewAllTab() after contains", bank.isViewAllTab());
+                log.info("[WoodBoxTest] === canStore() ===");
+                WoodBox.Tier tier = woodBox.getEquippedTier();
+                // Should always be able to store basic logs
+                check("canStore(LOGS)", woodBox.canStore(WoodBox.LogType.LOGS));
+                check("canStore(\"Logs\")", woodBox.canStore("Logs"));
+                // Check a log type at the tier's own level
+                for (WoodBox.LogType lt : WoodBox.LogType.values()) {
+                    if (lt.requiredTier == tier.level) {
+                        check("canStore(" + lt.name + ")", woodBox.canStore(lt));
+                        break;
+                    }
+                }
+                // Unknown log name
+                check("canStore(\"Fake logs\") = false", !woodBox.canStore("Fake logs"));
                 step++;
                 return 1000;
             }
 
-            // ---- Test count(int) auto-switches ----
+            // ---- Stored item queries (before fill) ----
             case 2 -> {
-                log.info("[BankTest] === count(SWORDFISH) — should auto-switch to View All ===");
-                int cnt = bank.count(SWORDFISH_ID);
-                check("count(SWORDFISH) > 0", cnt > 0);
-                log.info("[BankTest] count = {}", cnt);
-                check("isViewAllTab() after count", bank.isViewAllTab());
+                log.info("[WoodBoxTest] === Stored Items (before fill) ===");
+                List<InventoryItem> stored = woodBox.getStoredItems();
+                log.info("[WoodBoxTest] Stored items: {} types, {} total",
+                        woodBox.storedTypes(), woodBox.getTotalStored());
+                for (InventoryItem item : stored) {
+                    log.info("[WoodBoxTest]   itemId={}, qty={}", item.itemId(), item.quantity());
+                }
+                boolean empty = woodBox.isEmpty();
+                log.info("[WoodBoxTest] isEmpty = {}", empty);
                 step++;
                 return 1000;
             }
 
-            // ---- Test withdraw(int, TransferAmount) auto-switches ----
+            // ---- Fill ----
             case 3 -> {
-                log.info("[BankTest] === withdraw(SWORDFISH, ONE) — should auto-switch to View All ===");
-                boolean result = bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ONE);
-                check("withdraw(SWORDFISH, ONE) returned true", result);
+                log.info("[WoodBoxTest] === fill() ===");
+                boolean result = woodBox.fill();
+                check("fill() returned true", result);
                 step++;
                 return 2000;
             }
+
+            // ---- Stored item queries (after fill) ----
             case 4 -> {
-                check("isViewAllTab() after withdraw", bank.isViewAllTab());
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Backpack has 1 swordfish", bp == 1);
-                log.info("[BankTest] Backpack: {} (expected 1)", bp);
-                bank.depositAll();
+                log.info("[WoodBoxTest] === Stored Items (after fill) ===");
+                List<InventoryItem> stored = woodBox.getStoredItems();
+                log.info("[WoodBoxTest] Stored items: {} types, {} total",
+                        woodBox.storedTypes(), woodBox.getTotalStored());
+                for (InventoryItem item : stored) {
+                    log.info("[WoodBoxTest]   itemId={}, qty={}", item.itemId(), item.quantity());
+                }
+                check("getTotalStored() > 0 after fill", woodBox.getTotalStored() > 0);
                 step++;
-                return 2000;
+                return 1000;
             }
 
-            // ---- Test withdraw(int, int) custom amount ----
+            // ---- Summary ----
             case 5 -> {
-                log.info("[BankTest] === withdraw(SWORDFISH, 7) — custom amount ===");
-                boolean result = bank.withdraw(SWORDFISH_ID, 7);
-                check("withdraw(SWORDFISH, 7) returned true", result);
-                step++;
-                return 2000;
-            }
-            case 6 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Backpack has 7 swordfish", bp == 7);
-                log.info("[BankTest] Backpack: {} (expected 7)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-
-            // ---- Cleanup ----
-            case 7 -> {
-                bank.setTransferMode(Bank.TransferAmount.ONE);
-                bank.close();
-                step++;
-                return 2000;
-            }
-            case 8 -> {
-                check("Bank is closed", !bank.isOpen());
-                log.info("[BankTest] ==============================");
-                log.info("[BankTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
-                log.info("[BankTest] ==============================");
+                log.info("[WoodBoxTest] ==============================");
+                log.info("[WoodBoxTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
+                log.info("[WoodBoxTest] ==============================");
                 return -1;
             }
 
@@ -127,15 +129,15 @@ public class TestScript implements BotScript {
     private void check(String name, boolean condition) {
         if (condition) {
             passed++;
-            log.info("[BankTest] PASS: {}", name);
+            log.info("[WoodBoxTest] PASS: {}", name);
         } else {
             failed++;
-            log.error("[BankTest] FAIL: {}", name);
+            log.error("[WoodBoxTest] FAIL: {}", name);
         }
     }
 
     @Override
     public void onStop() {
-        log.info("[BankTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);
+        log.info("[WoodBoxTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);
     }
 }

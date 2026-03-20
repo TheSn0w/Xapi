@@ -4,6 +4,7 @@ import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.model.GameAction;
 import com.botwithus.bot.api.model.InventoryItem;
+import com.botwithus.bot.api.query.ComponentFilter;
 
 import java.util.List;
 
@@ -191,6 +192,39 @@ public final class Backpack {
         Component comp = ComponentHelper.findComponentByItem(api, INTERFACE_ID, itemId);
         if (comp == null) return false;
         return ComponentHelper.interactComponent(api, comp, option);
+    }
+
+    /**
+     * Interact with an item in the backpack by name and option string.
+     * Uses {@link ComponentFilter} with {@code optionPattern} to find the component
+     * that has the specified right-click option, then queues the action.
+     *
+     * <p>This is useful for items with per-item options (e.g. "Fill" on a wood box)
+     * that are not part of the parent component's generic option list.</p>
+     *
+     * @param name   the item name to search for (case-insensitive, exact match)
+     * @param option the right-click option text (e.g. "Fill", "Empty")
+     * @return true if the action was queued
+     */
+    public boolean interact(String name, String option) {
+        // First find the item ID from the inventory
+        InventoryItem item = container.getFirstExact(name);
+        if (item == null) return false;
+        // Query for a component that has both the item and the option
+        List<Component> comps = api.queryComponents(ComponentFilter.builder()
+                .interfaceId(INTERFACE_ID)
+                .itemId(item.itemId())
+                .optionPattern(option)
+                .optionMatchType("exact")
+                .build());
+        if (comps.isEmpty()) return false;
+        Component comp = comps.getFirst();
+        // Try standard option resolution first
+        if (ComponentHelper.interactComponent(api, comp, option)) return true;
+        // Fallback: the optionPattern matched so the option exists on this component,
+        // but getComponentOptions may not return per-item options for sub-components.
+        // Queue option 1 as the matched option is typically the primary action.
+        return ComponentHelper.queueComponentAction(api, comp, 1);
     }
 
     /**
