@@ -223,6 +223,66 @@ public class InventoryContainer {
                 && type.name().toLowerCase().contains(lowerName);
     }
 
+    private boolean matchesNameExact(InventoryItem item, String lowerName) {
+        var type = api.getItemType(item.itemId());
+        return type != null && type.name() != null
+                && type.name().toLowerCase().equals(lowerName);
+    }
+
+    // ========================== Exact Name Methods ==========================
+
+    /**
+     * Check if the inventory contains an item whose name exactly matches (case-insensitive).
+     *
+     * @param name the exact name to match
+     * @return {@code true} if a matching item is found
+     */
+    public boolean containsExact(String name) {
+        String lowerName = name.toLowerCase();
+        return getItems().stream().anyMatch(item -> matchesNameExact(item, lowerName));
+    }
+
+    /**
+     * Count the total quantity of items whose name exactly matches (case-insensitive).
+     *
+     * @param name the exact name to match
+     * @return the total quantity of matching items
+     */
+    public int countExact(String name) {
+        String lowerName = name.toLowerCase();
+        return getItems().stream()
+                .filter(item -> matchesNameExact(item, lowerName))
+                .mapToInt(InventoryItem::quantity)
+                .sum();
+    }
+
+    /**
+     * Returns the first item whose name exactly matches (case-insensitive),
+     * or {@code null} if not found.
+     *
+     * @param name the exact name to match
+     * @return the matching item, or {@code null}
+     */
+    public InventoryItem getFirstExact(String name) {
+        String lowerName = name.toLowerCase();
+        return getItems().stream()
+                .filter(item -> matchesNameExact(item, lowerName))
+                .findFirst().orElse(null);
+    }
+
+    /**
+     * Returns all items whose name exactly matches (case-insensitive).
+     *
+     * @param name the exact name to match
+     * @return list of matching items
+     */
+    public List<InventoryItem> getAllExact(String name) {
+        String lowerName = name.toLowerCase();
+        return getItems().stream()
+                .filter(item -> matchesNameExact(item, lowerName))
+                .toList();
+    }
+
     /**
      * Get the number of free (empty) slots.
      */

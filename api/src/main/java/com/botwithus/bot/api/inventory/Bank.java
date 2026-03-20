@@ -1,6 +1,8 @@
 package com.botwithus.bot.api.inventory;
 
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.log.BotLogger;
+import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.model.GameAction;
 import com.botwithus.bot.api.model.InventoryItem;
@@ -24,6 +26,8 @@ import static com.botwithus.bot.api.inventory.ComponentHelper.queueComponentActi
  * use the RPC variable-reading methods.</p>
  */
 public final class Bank {
+
+    private static final BotLogger log = LoggerFactory.getLogger(Bank.class);
 
     public static final int INVENTORY_ID = 95;
     public static final int INTERFACE_ID = 517;
@@ -104,13 +108,14 @@ public final class Bank {
     }
 
     /**
-     * Checks if the bank contains the specified item.
+     * Checks if the bank contains the specified item with quantity &gt; 0.
+     * <p>Placeholder slots (qty 0) return {@code false}.</p>
      *
      * @param itemId the item ID to look for
-     * @return {@code true} if the item is in the bank
+     * @return {@code true} if the item is in the bank with at least 1 quantity
      */
     public boolean contains(int itemId) {
-        return container.contains(itemId);
+        return container.count(itemId) > 0;
     }
 
     /**
@@ -121,17 +126,29 @@ public final class Bank {
      * @return {@code true} if enough of the item is in the bank
      */
     public boolean contains(int itemId, int amount) {
-        return container.contains(itemId, amount);
+        return container.count(itemId) >= amount;
     }
 
     /**
-     * Checks if the bank contains an item whose name contains the given string (case-insensitive).
+     * Checks if the bank contains an item whose name exactly matches (case-insensitive)
+     * with quantity &gt; 0. Placeholder slots (qty 0) return {@code false}.
+     *
+     * @param name the exact item name to search for
+     * @return {@code true} if a matching item is in the bank
+     */
+    public boolean contains(String name) {
+        return container.countExact(name) > 0;
+    }
+
+    /**
+     * Checks if the bank contains an item whose name contains the given substring (case-insensitive)
+     * with quantity &gt; 0. Placeholder slots (qty 0) return {@code false}.
      *
      * @param name the name substring to search for
      * @return {@code true} if a matching item is in the bank
      */
-    public boolean contains(String name) {
-        return container.contains(name);
+    public boolean containsPartial(String name) {
+        return container.count(name) > 0;
     }
 
     /**
@@ -145,12 +162,22 @@ public final class Bank {
     }
 
     /**
-     * Counts the total quantity of items whose name contains the given string (case-insensitive).
+     * Counts the total quantity of items whose name exactly matches (case-insensitive).
+     *
+     * @param name the exact item name to search for
+     * @return the total quantity of matching items
+     */
+    public int count(String name) {
+        return container.countExact(name);
+    }
+
+    /**
+     * Counts the total quantity of items whose name contains the given substring (case-insensitive).
      *
      * @param name the name substring to search for
      * @return the total quantity of matching items
      */
-    public int count(String name) {
+    public int countPartial(String name) {
         return container.count(name);
     }
 
@@ -285,7 +312,7 @@ public final class Bank {
      * Deposit all carried items.
      */
     public boolean depositAll() {
-        if (!isOpen()) return false;
+        if (!isOpen() || backpackIsEmpty()) return false;
         return interactByOption("Deposit carried items");
     }
 
@@ -372,9 +399,9 @@ public final class Bank {
      * Deposit an item by ID with the specified transfer amount.
      */
     public boolean deposit(int itemId, TransferAmount amount) {
-        if (!isOpen()) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot deposit: bank is not open"); return false; }
         Component comp = findBackpackItem(itemId);
-        if (comp == null) return false;
+        if (comp == null) { log.warn("[Bank] Cannot deposit item {}: not found in backpack", itemId); return false; }
         int optionIndex = mapDepositOption(amount);
         if (optionIndex < 0) return false;
         return queueComponentAction(api, comp, optionIndex);
@@ -395,7 +422,8 @@ public final class Bank {
      * @return {@code true} if all actions were queued successfully
      */
     public boolean deposit(int itemId, int amount) {
-        if (!isOpen() || amount <= 0) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot deposit: bank is not open"); return false; }
+        if (amount <= 0) { log.warn("[Bank] Cannot deposit item {}: amount must be > 0", itemId); return false; }
         int remaining = amount;
         while (remaining > 0) {
             Component comp = findBackpackItem(itemId);
@@ -444,7 +472,8 @@ public final class Bank {
      * If the current mode is not ALL, switches to ALL first so all options are available.</p>
      */
     public boolean withdraw(int itemId, TransferAmount amount) {
-        if (!isOpen() || !container.contains(itemId)) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot withdraw: bank is not open"); return false; }
+        if (!contains(itemId)) { log.warn("[Bank] Cannot withdraw item {}: not in bank or quantity is 0", itemId); return false; }
         Component comp = findBankItem(itemId);
         if (comp == null) return false;
 
@@ -487,7 +516,9 @@ public final class Bank {
      * @return {@code true} if all actions were queued successfully
      */
     public boolean withdraw(int itemId, int amount) {
-        if (!isOpen() || !container.contains(itemId) || amount <= 0) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot withdraw: bank is not open"); return false; }
+        if (!contains(itemId)) { log.warn("[Bank] Cannot withdraw item {}: not in bank or quantity is 0", itemId); return false; }
+        if (amount <= 0) { log.warn("[Bank] Cannot withdraw item {}: amount must be > 0", itemId); return false; }
         // Ensure mode=ALL so all right-click options are available
         if (transferMode() != TransferAmount.ALL) {
             setTransferMode(TransferAmount.ALL);
@@ -528,9 +559,9 @@ public final class Bank {
      * @return {@code true} if the action was queued
      */
     public boolean withdraw(String name, TransferAmount amount) {
-        if (!isOpen()) return false;
-        InventoryItem item = container.getFirst(name);
-        if (item == null) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot withdraw: bank is not open"); return false; }
+        InventoryItem item = container.getFirstExact(name);
+        if (item == null) { log.warn("[Bank] Cannot withdraw '{}': not found in bank", name); return false; }
         return withdraw(item.itemId(), amount);
     }
 
@@ -543,9 +574,9 @@ public final class Bank {
      * @see #withdraw(int, int)
      */
     public boolean withdraw(String name, int amount) {
-        if (!isOpen()) return false;
-        InventoryItem item = container.getFirst(name);
-        if (item == null) return false;
+        if (!isOpen()) { log.warn("[Bank] Cannot withdraw: bank is not open"); return false; }
+        InventoryItem item = container.getFirstExact(name);
+        if (item == null) { log.warn("[Bank] Cannot withdraw '{}': not found in bank", name); return false; }
         return withdraw(item.itemId(), amount);
     }
 

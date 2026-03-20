@@ -6,152 +6,115 @@ import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 
 /**
- * Bank API test — withdraw(int) and deposit(int) with Swordfish (ID 373).
- * <p>Prerequisites: open bank with Swordfish in bank and EMPTY backpack.</p>
+ * Bank API test — empty slot holder edge case with Anchovies.
+ * <p>Prerequisites: open bank with Anchovies slot (0 qty) in bank.</p>
  */
 @ScriptManifest(
         name = "Xapi Test",
         version = "1.0",
         author = "Xapi",
-        description = "Bank API test — withdraw/deposit custom amounts",
+        description = "Bank API test — empty slot holder edge case",
         category = ScriptCategory.UTILITY
 )
 public class TestScript implements BotScript {
 
     private static final BotLogger log = LoggerFactory.getLogger(TestScript.class);
-    private static final int SWORDFISH_ID = 373;
 
     private Bank bank;
     private int step = 0;
-    private int passed = 0;
-    private int failed = 0;
 
     @Override
     public void onStart(ScriptContext ctx) {
         this.bank = new Bank(ctx.getGameAPI());
-        log.info("[BankTest] Started — open bank with Swordfish in bank, empty backpack");
+        log.info("[BankTest] Started — testing empty slot holder (Anchovies)");
     }
 
     @Override
     public int onLoop() {
         switch (step) {
 
-            // ---- Prereqs ----
             case 0 -> {
                 log.info("[BankTest] === Prereqs ===");
                 if (!bank.isOpen()) {
                     log.error("[BankTest] Bank is NOT open!");
                     return -1;
                 }
-                check("Bank is open", true);
-                check("Bank contains Swordfish", bank.contains(SWORDFISH_ID));
-                if (!bank.contains(SWORDFISH_ID)) return -1;
-                bank.depositAll();
+                log.info("[BankTest] Bank is open");
                 step++;
-                return 2000;
+                return 1000;
             }
+
+            // ---- Test contains() ----
             case 1 -> {
-                check("Backpack empty", bank.backpackIsEmpty());
+                log.info("[BankTest] === contains(\"Anchovies\") ===");
+                boolean containsById = bank.contains("Anchovies");
+                log.info("[BankTest] contains(\"Anchovies\") = {}", containsById);
                 step++;
                 return 1000;
             }
 
-            // ---- Withdraw 19 (blocking call with internal delays) ----
+            // ---- Test count() ----
             case 2 -> {
-                log.info("[BankTest] === withdraw(SWORDFISH, 19) ===");
-                boolean result = bank.withdraw(SWORDFISH_ID, 19);
-                check("withdraw(19) returned true", result);
+                log.info("[BankTest] === count(\"Anchovies\") ===");
+                int count = bank.count("Anchovies");
+                log.info("[BankTest] count(\"Anchovies\") = {}", count);
                 step++;
-                return 2000;
+                return 1000;
             }
+
+            // ---- Test withdraw with TransferAmount ----
             case 3 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Withdraw 19: backpack=19", bp == 19);
-                log.info("[BankTest] Backpack: {} (expected 19)", bp);
+                log.info("[BankTest] === withdraw(\"Anchovies\", ONE) ===");
+                try {
+                    boolean result = bank.withdraw("Anchovies", Bank.TransferAmount.ONE);
+                    log.info("[BankTest] withdraw(\"Anchovies\", ONE) = {}", result);
+                } catch (Exception e) {
+                    log.error("[BankTest] withdraw(\"Anchovies\", ONE) threw: {}", e.getMessage());
+                }
                 step++;
                 return 1000;
             }
 
-            // ---- Deposit 4 (blocking call with internal delays) ----
+            // ---- Test withdraw with int amount ----
             case 4 -> {
-                log.info("[BankTest] === deposit(SWORDFISH, 4) ===");
-                boolean result = bank.deposit(SWORDFISH_ID, 4);
-                check("deposit(4) returned true", result);
+                log.info("[BankTest] === withdraw(\"Anchovies\", 5) ===");
+                try {
+                    boolean result = bank.withdraw("Anchovies", 5);
+                    log.info("[BankTest] withdraw(\"Anchovies\", 5) = {}", result);
+                } catch (Exception e) {
+                    log.error("[BankTest] withdraw(\"Anchovies\", 5) threw: {}", e.getMessage());
+                }
                 step++;
-                return 2000;
+                return 1000;
             }
+
+            // ---- Test withdrawAll ----
             case 5 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Deposit 4: backpack=15", bp == 15);
-                log.info("[BankTest] Backpack: {} (expected 15)", bp);
+                log.info("[BankTest] === withdrawAll(\"Anchovies\") ===");
+                try {
+                    boolean result = bank.withdrawAll("Anchovies");
+                    log.info("[BankTest] withdrawAll(\"Anchovies\") = {}", result);
+                } catch (Exception e) {
+                    log.error("[BankTest] withdrawAll(\"Anchovies\") threw: {}", e.getMessage());
+                }
                 step++;
                 return 1000;
             }
 
-            // ---- Deposit 9 (blocking call with internal delays) ----
+            // ---- Test backpack state ----
             case 6 -> {
-                log.info("[BankTest] === deposit(SWORDFISH, 9) ===");
-                boolean result = bank.deposit(SWORDFISH_ID, 9);
-                check("deposit(9) returned true", result);
+                log.info("[BankTest] === backpackCount(\"Anchovies\" area) ===");
+                int bpSlots = bank.backpackOccupiedSlots();
+                boolean bpEmpty = bank.backpackIsEmpty();
+                log.info("[BankTest] backpackOccupiedSlots = {}", bpSlots);
+                log.info("[BankTest] backpackIsEmpty = {}", bpEmpty);
                 step++;
-                return 2000;
+                return 1000;
             }
+
             case 7 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Deposit 9: backpack=6", bp == 6);
-                log.info("[BankTest] Backpack: {} (expected 6)", bp);
-                step++;
-                return 1000;
-            }
-
-            // ---- Withdraw 22 (blocking call with internal delays) ----
-            case 8 -> {
-                log.info("[BankTest] === withdraw(SWORDFISH, 22) ===");
-                boolean result = bank.withdraw(SWORDFISH_ID, 22);
-                check("withdraw(22) returned true", result);
-                step++;
-                return 2000;
-            }
-            case 9 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Withdraw 22: backpack=28", bp == 28);
-                log.info("[BankTest] Backpack: {} (expected 28 = 6 + 22)", bp);
-                step++;
-                return 1000;
-            }
-
-            // ---- Deposit 13 (blocking call with internal delays) ----
-            case 10 -> {
-                log.info("[BankTest] === deposit(SWORDFISH, 13) ===");
-                boolean result = bank.deposit(SWORDFISH_ID, 13);
-                check("deposit(13) returned true", result);
-                step++;
-                return 2000;
-            }
-            case 11 -> {
-                int bp = bank.backpackCount(SWORDFISH_ID);
-                check("Deposit 13: backpack=15", bp == 15);
-                log.info("[BankTest] Backpack: {} (expected 15 = 28 - 13)", bp);
-                step++;
-                return 1000;
-            }
-
-            // ---- Cleanup ----
-            case 12 -> {
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-            case 13 -> {
-                bank.setTransferMode(Bank.TransferAmount.ONE);
-                bank.close();
-                step++;
-                return 2000;
-            }
-            case 14 -> {
-                check("Bank is closed", !bank.isOpen());
                 log.info("[BankTest] ==============================");
-                log.info("[BankTest] TEST COMPLETE: {} passed, {} failed", passed, failed);
+                log.info("[BankTest] TEST COMPLETE — check logs for errors/exceptions");
                 log.info("[BankTest] ==============================");
                 return -1;
             }
@@ -160,18 +123,8 @@ public class TestScript implements BotScript {
         }
     }
 
-    private void check(String name, boolean condition) {
-        if (condition) {
-            passed++;
-            log.info("[BankTest] PASS: {}", name);
-        } else {
-            failed++;
-            log.error("[BankTest] FAIL: {}", name);
-        }
-    }
-
     @Override
     public void onStop() {
-        log.info("[BankTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);
+        log.info("[BankTest] Stopped at step {}", step);
     }
 }
