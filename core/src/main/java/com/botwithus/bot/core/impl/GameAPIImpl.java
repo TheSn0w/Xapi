@@ -1179,6 +1179,11 @@ public class GameAPIImpl implements GameAPI {
     }
 
     @Override
+    public Map<String, Object> getItemTypeRaw(int id) {
+        return rpc.callSync("get_item_type", Map.of("id", id));
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public NpcType getNpcType(int id) {
         Map<String, Object> r = rpc.callSync("get_npc_type", Map.of("id", id));

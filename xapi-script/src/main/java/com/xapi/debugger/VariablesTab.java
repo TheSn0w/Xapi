@@ -6,6 +6,7 @@ import com.botwithus.bot.api.model.ItemVar;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiTableFlags;
 
 import java.time.Instant;
@@ -31,8 +32,43 @@ final class VariablesTab {
         boolean wSVP = script.showVarps;
         if (ImGui.checkbox("Varps##vf", wSVP)) { script.showVarps = !wSVP; script.settingsDirty = true; }
         ImGui.sameLine();
+        boolean itemVarDisabled = Boolean.FALSE.equals(script.itemVarSystemAvailable);
+        if (itemVarDisabled) ImGui.beginDisabled();
         boolean wSIV = script.showItemVarbits;
-        if (ImGui.checkbox("ItemVar##vf", wSIV)) { script.showItemVarbits = !wSIV; script.settingsDirty = true; }
+        if (ImGui.checkbox("ItemVar##vf", wSIV)) {
+            script.showItemVarbits = !wSIV;
+            script.settingsDirty = true;
+            if (!wSIV) { // toggling ON — reset error count
+                script.itemVarErrorLogCount = 0;
+            }
+        }
+        if (itemVarDisabled && ImGui.isItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+            ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 0.2f, 0.2f, 1.0f);
+            ImGui.beginTooltip();
+            ImGui.setWindowFontScale(1.2f);
+            ImGui.text("This account does not qualify for item vars yet");
+            ImGui.setWindowFontScale(1.0f);
+            ImGui.endTooltip();
+            ImGui.popStyleColor();
+        }
+        if (itemVarDisabled) ImGui.endDisabled();
+        ImGui.sameLine();
+        if (ImGui.button("Re-check##itemvar")) {
+            script.resetItemVarProbe();
+        }
+        if (ImGui.isItemHovered()) {
+            if (itemVarDisabled) {
+                ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 0.2f, 0.2f, 1.0f);
+                ImGui.beginTooltip();
+                ImGui.setWindowFontScale(1.2f);
+                ImGui.text("This account does not qualify for item vars yet");
+                ImGui.setWindowFontScale(1.0f);
+                ImGui.endTooltip();
+                ImGui.popStyleColor();
+            } else {
+                ImGui.setTooltip("Re-probe item var system (use after obtaining a varbit item)");
+            }
+        }
         ImGui.sameLine();
         ImGui.text("|");
         ImGui.sameLine();

@@ -6,6 +6,7 @@ import com.botwithus.bot.api.query.EntityFilter;
 import com.botwithus.bot.api.query.InventoryFilter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Primary interface for interacting with the game client over the pipe RPC.
@@ -1163,6 +1164,15 @@ public interface GameAPI {
      * @return the item type definition
      */
     ItemType getItemType(int id);
+
+    /**
+     * Returns the raw RPC response for an item type query, exposing all fields
+     * the server sends (including any not mapped into {@link ItemType}).
+     *
+     * @param id the item ID
+     * @return the raw response map with all server-provided fields
+     */
+    Map<String, Object> getItemTypeRaw(int id);
 
     /**
      * Returns an NPC definition from the game cache.

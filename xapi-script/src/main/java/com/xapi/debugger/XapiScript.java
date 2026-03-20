@@ -41,8 +41,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -152,10 +155,16 @@ public class XapiScript implements BotScript {
 
     // Item varbits cache (equipment items with their vars)
     volatile List<ItemVarEntry> itemVarCache = List.of();
-    volatile boolean showItemVarbits = true;
+    volatile boolean showItemVarbits = false;
 
     // Previous item varbit snapshot for change detection (slot:varId -> value)
     private volatile Map<String, Integer> previousItemVarSnapshot = Map.of();
+    // Item var system probe state: null=untested, true/false=tested for current player
+    volatile Boolean itemVarSystemAvailable = null;
+    private volatile String itemVarPlayerName = null;
+    private static final Path ITEMVAR_ACCOUNTS_FILE = Path.of("xapi_itemvar_accounts.json");
+    volatile int itemVarErrorLogCount = 0;
+    private static final int ITEM_VAR_ERROR_LOG_MAX = 20;
 
     // Interface event tracking
     final List<InterfaceEvent> interfaceEventLog = new CopyOnWriteArrayList<>();
@@ -607,7 +616,9 @@ public class XapiScript implements BotScript {
                     default -> { continue; }
                 }
                 pinnedCurrentValues.put(key, value);
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                logItemVarError("pollPinnedVars key=" + key, e);
+            }
         }
     }
 
@@ -885,88 +896,209 @@ public class XapiScript implements BotScript {
             inspectInterfaceId = -1; // Reset -- one-shot fetch
         }
 
-        // Collect item varbits for equipped items
-        collectItemVarbits(api);
+        // Collect item varbits for equipped items (guarded — may crash game client)
+        if (showItemVarbits) {
+            collectItemVarbits(api);
+        } else {
+            itemVarCache = List.of();
+            previousItemVarSnapshot = Map.of();
+        }
     }
 
+    /**
+     * Collects item varbits for all equipped items. Uses a single-probe approach:
+     * on first call per player, tries one getItemVars call to check if the item var
+     * system is initialized for this account. Result is persisted to disk so we
+     * never crash the same account twice.
+     */
     private void collectItemVarbits(GameAPI api) {
-        // Equipment slot indices matching Equipment.Slot enum
         int[] slotIndices = {0, 1, 2, 3, 4, 5, 7, 9, 10, 12, 13, 14, 17};
         String[] slotNames = {"Head", "Cape", "Neck", "Weapon", "Body", "Shield",
                 "Legs", "Hands", "Feet", "Ring", "Ammo", "Aura", "Pocket"};
 
+        // Need player name for persistence
+        LocalPlayer lp = localPlayerData;
+        if (lp == null || lp.name() == null || lp.name().isEmpty()) return;
+        String playerName = lp.name().toLowerCase();
+
+        // Detect player switch mid-session
+        if (!playerName.equals(itemVarPlayerName)) {
+            itemVarSystemAvailable = null;
+            itemVarPlayerName = playerName;
+        }
+
+        // Probe if untested
+        if (itemVarSystemAvailable == null) {
+            Boolean persisted = loadItemVarStatus(playerName);
+            if (persisted != null) {
+                itemVarSystemAvailable = persisted;
+            } else {
+                // Find first equipped item to probe with
+                int probeSlot = -1;
+                for (int idx : slotIndices) {
+                    try {
+                        InventoryItem item = api.getInventoryItem(94, idx);
+                        if (item != null && item.itemId() > 0) { probeSlot = idx; break; }
+                    } catch (Exception ignored) {}
+                }
+                if (probeSlot < 0) return; // No equipped items — can't probe yet
+
+                try {
+                    api.getItemVars(94, probeSlot); // may crash pipe if system not initialized
+                    itemVarSystemAvailable = true;
+                    saveItemVarStatus(playerName, true);
+                    log.info("Item var system available for player '{}'", playerName);
+                } catch (Exception e) {
+                    itemVarSystemAvailable = false;
+                    saveItemVarStatus(playerName, false);
+                    logItemVarError("probe getItemVars(94, " + probeSlot + ") for player '" + playerName + "'", e);
+                    log.warn("Item var system NOT available for player '{}' — disabled", playerName);
+                    itemVarCache = List.of();
+                    previousItemVarSnapshot = Map.of();
+                    return;
+                }
+            }
+        }
+
+        if (!itemVarSystemAvailable) {
+            itemVarCache = List.of();
+            previousItemVarSnapshot = Map.of();
+            return;
+        }
+
+        // System is available — collect varbits for all equipped items
         List<ItemVarEntry> entries = new ArrayList<>();
-        Map<String, Integer> currentSnapshot = new HashMap<>();
+        Map<String, Integer> newSnapshot = new HashMap<>();
 
         for (int s = 0; s < slotIndices.length; s++) {
             int slotIdx = slotIndices[s];
             try {
-                InventoryItem item = api.getInventoryItem(94, slotIdx); // 94 = equipment
+                InventoryItem item = api.getInventoryItem(94, slotIdx);
                 if (item == null || item.itemId() <= 0) continue;
 
                 List<ItemVar> vars = api.getItemVars(94, slotIdx);
                 if (vars == null || vars.isEmpty()) continue;
 
-                // Resolve item name
+                // Filter to vars with varId > 0
+                List<ItemVar> meaningful = new ArrayList<>();
+                for (ItemVar v : vars) {
+                    if (v.varId() > 0) meaningful.add(v);
+                }
+                if (meaningful.isEmpty()) continue;
+
+                // Get item name
                 String itemName = "";
                 try {
-                    ItemType it = api.getItemType(item.itemId());
-                    if (it != null && it.name() != null) itemName = it.name();
+                    ItemType type = api.getItemType(item.itemId());
+                    if (type != null && type.name() != null) itemName = type.name();
                 } catch (Exception ignored) {}
 
-                entries.add(new ItemVarEntry(slotNames[s], item.itemId(), itemName, slotIdx, vars));
+                entries.add(new ItemVarEntry(slotNames[s], item.itemId(), itemName, slotIdx, meaningful));
 
                 // Build snapshot for change detection
-                for (ItemVar v : vars) {
-                    String key = slotIdx + ":" + v.varId();
-                    currentSnapshot.put(key, v.value());
+                for (ItemVar v : meaningful) {
+                    newSnapshot.put(slotIdx + ":" + v.varId(), v.value());
                 }
-            } catch (Exception ignored) {}
-        }
-        itemVarCache = List.copyOf(entries);
-
-        // Detect item varbit changes and log them
-        {
-            Map<String, Integer> prev = previousItemVarSnapshot;
-
-            // Check for changed or new values
-            for (Map.Entry<String, Integer> entry : currentSnapshot.entrySet()) {
-                String key = entry.getKey();
-                int newVal = entry.getValue();
-                Integer oldVal = prev.get(key);
-                if (oldVal == null) oldVal = 0;
-                if (oldVal != newVal) {
-                    // Parse slot:varId from key
-                    String[] parts = key.split(":");
-                    int slotIdx = Integer.parseInt(parts[0]);
-                    int varId = Integer.parseInt(parts[1]);
-                    // Encode as combined ID: slot * 100000 + varId for unique identification
-                    int combinedId = slotIdx * 100000 + varId;
-                    VarChange vc = new VarChange("itemvar", combinedId, oldVal, newVal,
-                            System.currentTimeMillis(), currentTick);
-                    varLog.add(vc);
-                    varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
-                    varChangeCount.merge("itemvar:" + combinedId, 1, Integer::sum);
-                }
-            }
-
-            // Check for removed values (item unequipped)
-            for (Map.Entry<String, Integer> entry : prev.entrySet()) {
-                if (!currentSnapshot.containsKey(entry.getKey()) && entry.getValue() != 0) {
-                    String[] parts = entry.getKey().split(":");
-                    int slotIdx = Integer.parseInt(parts[0]);
-                    int varId = Integer.parseInt(parts[1]);
-                    int combinedId = slotIdx * 100000 + varId;
-                    VarChange vc = new VarChange("itemvar", combinedId, entry.getValue(), 0,
-                            System.currentTimeMillis(), currentTick);
-                    varLog.add(vc);
-                    varsByTick.computeIfAbsent(currentTick, k -> new CopyOnWriteArrayList<>()).add(vc);
-                    varChangeCount.merge("itemvar:" + combinedId, 1, Integer::sum);
-                }
+            } catch (Exception e) {
+                logItemVarError("collectItemVarbits slot=" + slotNames[s] + " slotIdx=" + slotIdx, e);
             }
         }
 
-        previousItemVarSnapshot = currentSnapshot;
+        // Detect changes and log as VarChange entries
+        Map<String, Integer> oldSnapshot = previousItemVarSnapshot;
+        for (Map.Entry<String, Integer> entry : newSnapshot.entrySet()) {
+            Integer oldVal = oldSnapshot.get(entry.getKey());
+            if (oldVal != null && !oldVal.equals(entry.getValue())) {
+                String[] parts = entry.getKey().split(":");
+                int slot = Integer.parseInt(parts[0]);
+                int varId = Integer.parseInt(parts[1]);
+                int compositeId = slot * 100000 + varId;
+                varLog.add(new VarChange("itemvar", compositeId, oldVal, entry.getValue(),
+                        System.currentTimeMillis(), currentTick));
+                String countKey = "itemvar:" + compositeId;
+                varChangeCount.merge(countKey, 1, Integer::sum);
+            }
+        }
+
+        itemVarCache = entries;
+        previousItemVarSnapshot = newSnapshot;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Boolean loadItemVarStatus(String playerName) {
+        try {
+            if (!Files.exists(ITEMVAR_ACCOUNTS_FILE)) return null;
+            String json = Files.readString(ITEMVAR_ACCOUNTS_FILE);
+            Map<String, Map<String, Object>> accounts = GSON.fromJson(json, Map.class);
+            if (accounts == null || !accounts.containsKey(playerName)) return null;
+            Map<String, Object> entry = accounts.get(playerName);
+            Object available = entry.get("available");
+            if (available instanceof Boolean b) return b;
+            return null;
+        } catch (Exception e) {
+            log.debug("Failed to load item var accounts: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void saveItemVarStatus(String playerName, boolean available) {
+        try {
+            Map<String, Map<String, Object>> accounts;
+            if (Files.exists(ITEMVAR_ACCOUNTS_FILE)) {
+                String json = Files.readString(ITEMVAR_ACCOUNTS_FILE);
+                accounts = GSON.fromJson(json, Map.class);
+                if (accounts == null) accounts = new LinkedHashMap<>();
+            } else {
+                accounts = new LinkedHashMap<>();
+            }
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("available", available);
+            entry.put("lastChecked", LocalDateTime.now().toString());
+            accounts.put(playerName, entry);
+            Files.writeString(ITEMVAR_ACCOUNTS_FILE, GSON.toJson(accounts));
+        } catch (Exception e) {
+            log.debug("Failed to save item var account status: {}", e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    void resetItemVarProbe() {
+        itemVarSystemAvailable = null;
+        itemVarErrorLogCount = 0;
+        // Remove current player from persistent file
+        String player = itemVarPlayerName;
+        if (player == null) return;
+        try {
+            if (!Files.exists(ITEMVAR_ACCOUNTS_FILE)) return;
+            String json = Files.readString(ITEMVAR_ACCOUNTS_FILE);
+            Map<String, Map<String, Object>> accounts = GSON.fromJson(json, Map.class);
+            if (accounts != null && accounts.remove(player) != null) {
+                Files.writeString(ITEMVAR_ACCOUNTS_FILE, GSON.toJson(accounts));
+            }
+        } catch (Exception e) {
+            log.debug("Failed to reset item var probe: {}", e.getMessage());
+        }
+    }
+
+    private void logItemVarError(String context, Exception e) {
+        int count = ++itemVarErrorLogCount;
+        if (count > ITEM_VAR_ERROR_LOG_MAX + 1) return;
+        try {
+            Path logFile = Path.of("logs", "xapi_itemvar_errors.log");
+            Files.createDirectories(logFile.getParent());
+            String msg;
+            if (count > ITEM_VAR_ERROR_LOG_MAX) {
+                msg = "[%s] Further item varbit errors suppressed (limit=%d)\n".formatted(
+                        LocalDateTime.now(), ITEM_VAR_ERROR_LOG_MAX);
+            } else {
+                String stackTrace = Arrays.stream(e.getStackTrace()).limit(10)
+                        .map(st -> "  at " + st).collect(Collectors.joining("\n"));
+                msg = "[%s] %s: %s\n%s\n".formatted(
+                        LocalDateTime.now(), context, e.getMessage(), stackTrace);
+            }
+            Files.writeString(logFile, msg, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (Exception ignored) {}
     }
 
     private void fetchEntityInfoBatch(GameAPI api, List<Entity> entities, Map<Integer, EntityInfo> target, int cap) {
