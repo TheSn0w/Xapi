@@ -9,15 +9,14 @@ import com.botwithus.bot.api.model.Component;
 import java.util.List;
 
 /**
- * Bank API test harness — tests withdraw + transfer mode with Swordfish (ID 373).
+ * Bank API test — withdraw(int) and deposit(int) with Swordfish (ID 373).
  * <p>Prerequisites: open bank with Swordfish in bank and EMPTY backpack.</p>
- * <p>Uses interface 517 component 15 to read backpack while bank is open.</p>
  */
 @ScriptManifest(
         name = "Xapi Test",
         version = "1.0",
         author = "Xapi",
-        description = "Bank API test — open bank with Swordfish, empty backpack",
+        description = "Bank API test — withdraw/deposit custom amounts",
         category = ScriptCategory.UTILITY
 )
 public class TestScript implements BotScript {
@@ -44,9 +43,9 @@ public class TestScript implements BotScript {
     public int onLoop() {
         switch (step) {
 
-            // ---- Step 1: Prereqs ----
+            // ---- Prereqs ----
             case 0 -> {
-                log.info("[BankTest] === Step 1: Prereqs ===");
+                log.info("[BankTest] === Prereqs ===");
                 if (!bank.isOpen()) {
                     log.error("[BankTest] Bank is NOT open!");
                     return -1;
@@ -54,7 +53,6 @@ public class TestScript implements BotScript {
                 check("Bank is open", true);
                 check("Bank contains Swordfish", bank.contains(SWORDFISH_ID));
                 if (!bank.contains(SWORDFISH_ID)) return -1;
-                log.info("[BankTest] Swordfish in bank: {}", bank.count(SWORDFISH_ID));
                 bank.depositAll();
                 step++;
                 return 2000;
@@ -65,278 +63,99 @@ public class TestScript implements BotScript {
                 return 1000;
             }
 
-            // ---- Step 2: Set transfer mode to 1, verify, withdraw 1 ----
+            // ---- Withdraw 19 (blocking call with internal delays) ----
             case 2 -> {
-                log.info("[BankTest] === Step 2: setTransferMode(ONE) ===");
-                boolean result = bank.setTransferMode(Bank.TransferAmount.ONE);
-                check("setTransferMode(ONE) returns true", result);
+                log.info("[BankTest] === withdraw(SWORDFISH, 19) ===");
+                boolean result = bank.withdraw(SWORDFISH_ID, 19);
+                check("withdraw(19) returned true", result);
                 step++;
                 return 2000;
             }
             case 3 -> {
-                Bank.TransferAmount mode = bank.transferMode();
-                check("transferMode() == ONE", mode == Bank.TransferAmount.ONE);
-                log.info("[BankTest] transferMode after set: {}", mode);
-
-                log.info("[BankTest] Withdraw 1 (mode=ONE, should use opt 1)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ONE);
-                step++;
-                return 2000;
-            }
-            case 4 -> {
                 int bp = countBackpackSwordfish();
-                check("W1 from mode ONE: backpack=1", bp == 1);
-                log.info("[BankTest] Backpack: {} (expected 1)", bp);
-                bank.depositAll();
+                check("Withdraw 19: backpack=19", bp == 19);
+                log.info("[BankTest] Backpack: {} (expected 19)", bp);
+                step++;
+                return 1000;
+            }
+
+            // ---- Deposit 4 (blocking call with internal delays) ----
+            case 4 -> {
+                log.info("[BankTest] === deposit(SWORDFISH, 4) ===");
+                boolean result = bank.deposit(SWORDFISH_ID, 4);
+                check("deposit(4) returned true", result);
                 step++;
                 return 2000;
             }
-
-            // ---- Step 3: Set transfer mode to 5, verify, withdraw 1 and 5 ----
             case 5 -> {
-                log.info("[BankTest] === Step 3: setTransferMode(FIVE) ===");
-                bank.setTransferMode(Bank.TransferAmount.FIVE);
+                int bp = countBackpackSwordfish();
+                check("Deposit 4: backpack=15", bp == 15);
+                log.info("[BankTest] Backpack: {} (expected 15)", bp);
                 step++;
-                return 2000;
+                return 1000;
             }
-            case 6 -> {
-                Bank.TransferAmount mode = bank.transferMode();
-                check("transferMode() == FIVE", mode == Bank.TransferAmount.FIVE);
-                log.info("[BankTest] transferMode after set: {}", mode);
 
-                log.info("[BankTest] Withdraw 1 (mode=FIVE, should use opt 2)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ONE);
+            // ---- Deposit 9 (blocking call with internal delays) ----
+            case 6 -> {
+                log.info("[BankTest] === deposit(SWORDFISH, 9) ===");
+                boolean result = bank.deposit(SWORDFISH_ID, 9);
+                check("deposit(9) returned true", result);
                 step++;
                 return 2000;
             }
             case 7 -> {
                 int bp = countBackpackSwordfish();
-                check("W1 from mode FIVE: backpack=1", bp == 1);
-                log.info("[BankTest] Backpack: {} (expected 1)", bp);
-                bank.depositAll();
+                check("Deposit 9: backpack=6", bp == 6);
+                log.info("[BankTest] Backpack: {} (expected 6)", bp);
                 step++;
-                return 2000;
+                return 1000;
             }
+
+            // ---- Withdraw 22 (blocking call with internal delays) ----
             case 8 -> {
-                log.info("[BankTest] Withdraw 5 (mode=FIVE, should use opt 1)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.FIVE);
+                log.info("[BankTest] === withdraw(SWORDFISH, 22) ===");
+                boolean result = bank.withdraw(SWORDFISH_ID, 22);
+                check("withdraw(22) returned true", result);
                 step++;
                 return 2000;
             }
             case 9 -> {
                 int bp = countBackpackSwordfish();
-                check("W5 from mode FIVE: backpack=5", bp == 5);
-                log.info("[BankTest] Backpack: {} (expected 5)", bp);
-                bank.depositAll();
+                check("Withdraw 22: backpack=28", bp == 28);
+                log.info("[BankTest] Backpack: {} (expected 28 = 6 + 22)", bp);
                 step++;
-                return 2000;
+                return 1000;
             }
 
-            // ---- Step 4: Set transfer mode to 10, verify, withdraw 1, 5, 10 ----
+            // ---- Deposit 13 (blocking call with internal delays) ----
             case 10 -> {
-                log.info("[BankTest] === Step 4: setTransferMode(TEN) ===");
-                bank.setTransferMode(Bank.TransferAmount.TEN);
+                log.info("[BankTest] === deposit(SWORDFISH, 13) ===");
+                boolean result = bank.deposit(SWORDFISH_ID, 13);
+                check("deposit(13) returned true", result);
                 step++;
                 return 2000;
             }
             case 11 -> {
-                Bank.TransferAmount mode = bank.transferMode();
-                check("transferMode() == TEN", mode == Bank.TransferAmount.TEN);
-                log.info("[BankTest] transferMode after set: {}", mode);
-
-                log.info("[BankTest] Withdraw 1 (mode=TEN, should use opt 2)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ONE);
-                step++;
-                return 2000;
-            }
-            case 12 -> {
                 int bp = countBackpackSwordfish();
-                check("W1 from mode TEN: backpack=1", bp == 1);
-                log.info("[BankTest] Backpack: {} (expected 1)", bp);
+                check("Deposit 13: backpack=15", bp == 15);
+                log.info("[BankTest] Backpack: {} (expected 15 = 28 - 13)", bp);
+                step++;
+                return 1000;
+            }
+
+            // ---- Cleanup ----
+            case 12 -> {
                 bank.depositAll();
                 step++;
                 return 2000;
             }
             case 13 -> {
-                log.info("[BankTest] Withdraw 5 (mode=TEN, should use opt 3)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.FIVE);
-                step++;
-                return 2000;
-            }
-            case 14 -> {
-                int bp = countBackpackSwordfish();
-                check("W5 from mode TEN: backpack=5", bp == 5);
-                log.info("[BankTest] Backpack: {} (expected 5)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-            case 15 -> {
-                log.info("[BankTest] Withdraw 10 (mode=TEN, should use opt 1)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.TEN);
-                step++;
-                return 2000;
-            }
-            case 16 -> {
-                int bp = countBackpackSwordfish();
-                check("W10 from mode TEN: backpack=10", bp == 10);
-                log.info("[BankTest] Backpack: {} (expected 10)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-
-            // ---- Step 5: Set transfer mode to ALL, verify, withdraw 1, 5, 10 ----
-            case 17 -> {
-                log.info("[BankTest] === Step 5: setTransferMode(ALL) ===");
-                bank.setTransferMode(Bank.TransferAmount.ALL);
-                step++;
-                return 2000;
-            }
-            case 18 -> {
-                Bank.TransferAmount mode = bank.transferMode();
-                check("transferMode() == ALL", mode == Bank.TransferAmount.ALL);
-                log.info("[BankTest] transferMode after set: {}", mode);
-
-                log.info("[BankTest] Withdraw 1 (mode=ALL, should use opt 2)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ONE);
-                step++;
-                return 2000;
-            }
-            case 19 -> {
-                int bp = countBackpackSwordfish();
-                check("W1 from mode ALL: backpack=1", bp == 1);
-                log.info("[BankTest] Backpack: {} (expected 1)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-            case 20 -> {
-                log.info("[BankTest] Withdraw 5 (mode=ALL, should use opt 3)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.FIVE);
-                step++;
-                return 2000;
-            }
-            case 21 -> {
-                int bp = countBackpackSwordfish();
-                check("W5 from mode ALL: backpack=5", bp == 5);
-                log.info("[BankTest] Backpack: {} (expected 5)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-            case 22 -> {
-                log.info("[BankTest] Withdraw 10 (mode=ALL, should use opt 4)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.TEN);
-                step++;
-                return 2000;
-            }
-            case 23 -> {
-                int bp = countBackpackSwordfish();
-                check("W10 from mode ALL: backpack=10", bp == 10);
-                log.info("[BankTest] Backpack: {} (expected 10)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-            case 24 -> {
-                log.info("[BankTest] Withdraw ALL (mode=ALL, should use opt 7)");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ALL);
-                step++;
-                return 2000;
-            }
-            case 25 -> {
-                int bp = countBackpackSwordfish();
-                check("W-ALL from mode ALL: backpack=28", bp == 28);
-                log.info("[BankTest] Backpack: {} (expected 28, capped by slots)", bp);
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-
-            // ================ DEPOSIT AMOUNT TESTS ================
-            // Test deposit(itemId, amount) from mode=FIVE to check if deposit options shift
-
-            // ---- Withdraw 28 swordfish to fill backpack ----
-            case 26 -> {
-                log.info("[BankTest] === Deposit Tests: Fill backpack first ===");
-                bank.withdraw(SWORDFISH_ID, Bank.TransferAmount.ALL);
-                step++;
-                return 2000;
-            }
-            case 27 -> {
-                int bp = countBackpackSwordfish();
-                check("Backpack filled with 28 swordfish", bp == 28);
-                log.info("[BankTest] Backpack: {} (expected 28)", bp);
-
-                // Set mode to FIVE (not ALL) to test if deposit options shift
-                log.info("[BankTest] === setTransferMode(FIVE) for deposit tests ===");
-                bank.setTransferMode(Bank.TransferAmount.FIVE);
-                step++;
-                return 2000;
-            }
-
-            // ---- Deposit 1 from mode FIVE ----
-            case 28 -> {
-                check("transferMode() == FIVE", bank.transferMode() == Bank.TransferAmount.FIVE);
-                log.info("[BankTest] Deposit 1 (mode=FIVE)");
-                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.ONE);
-                step++;
-                return 2000;
-            }
-            case 29 -> {
-                int bp = countBackpackSwordfish();
-                check("D1 from mode FIVE: backpack=27", bp == 27);
-                log.info("[BankTest] Backpack: {} (expected 27)", bp);
-                step++;
-                return 1000;
-            }
-
-            // ---- Deposit 5 from mode FIVE ----
-            case 30 -> {
-                log.info("[BankTest] Deposit 5 (mode=FIVE)");
-                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.FIVE);
-                step++;
-                return 2000;
-            }
-            case 31 -> {
-                int bp = countBackpackSwordfish();
-                check("D5 from mode FIVE: backpack=22", bp == 22);
-                log.info("[BankTest] Backpack: {} (expected 22)", bp);
-                step++;
-                return 1000;
-            }
-
-            // ---- Deposit 10 from mode FIVE ----
-            case 32 -> {
-                log.info("[BankTest] Deposit 10 (mode=FIVE)");
-                bank.deposit(SWORDFISH_ID, Bank.TransferAmount.TEN);
-                step++;
-                return 2000;
-            }
-            case 33 -> {
-                int bp = countBackpackSwordfish();
-                check("D10 from mode FIVE: backpack=12", bp == 12);
-                log.info("[BankTest] Backpack: {} (expected 12)", bp);
-
-                // Deposit rest
-                bank.depositAll();
-                step++;
-                return 2000;
-            }
-
-            // ---- Restore mode to 1, close, summary ----
-            case 34 -> {
                 bank.setTransferMode(Bank.TransferAmount.ONE);
-                step++;
-                return 2000;
-            }
-            case 35 -> {
                 bank.close();
                 step++;
                 return 2000;
             }
-            case 36 -> {
+            case 14 -> {
                 check("Bank is closed", !bank.isOpen());
                 log.info("[BankTest] ==============================");
                 log.info("[BankTest] TEST COMPLETE: {} passed, {} failed", passed, failed);

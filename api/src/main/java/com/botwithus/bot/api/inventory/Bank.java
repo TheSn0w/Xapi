@@ -9,6 +9,7 @@ import com.botwithus.bot.api.query.ComponentFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -308,7 +309,7 @@ public final class Bank {
      * Deposit an item by ID with the specified transfer amount.
      */
     public boolean deposit(int itemId, TransferAmount amount) {
-        if (!isOpen() || !container.contains(itemId)) return false;
+        if (!isOpen()) return false;
         Component comp = findBackpackItem(itemId);
         if (comp == null) return false;
         int optionIndex = mapDepositOption(amount);
@@ -317,10 +318,45 @@ public final class Bank {
     }
 
     /**
+     * Deposit an exact number of an item, blocking until complete.
+     * <p>Composes the amount from fixed deposits (10, 5, 1) with random delays
+     * (400–700ms) between each action. Sleeps on the current (virtual) thread.</p>
+     *
+     * <pre>{@code
+     * // Deposits 9: D5 → sleep → D1×4
+     * bank.deposit(SWORDFISH_ID, 9);
+     * }</pre>
+     *
+     * @param itemId the item ID to deposit
+     * @param amount the exact number to deposit (must be &gt; 0)
+     * @return {@code true} if all actions were queued successfully
+     */
+    public boolean deposit(int itemId, int amount) {
+        if (!isOpen() || amount <= 0) return false;
+        int remaining = amount;
+        while (remaining > 0) {
+            Component comp = findBackpackItem(itemId);
+            if (comp == null) return false;
+            if (remaining >= 10) {
+                queueComponentAction(api, comp, mapDepositOption(TransferAmount.TEN));
+                remaining -= 10;
+            } else if (remaining >= 5) {
+                queueComponentAction(api, comp, mapDepositOption(TransferAmount.FIVE));
+                remaining -= 5;
+            } else {
+                queueComponentAction(api, comp, mapDepositOption(TransferAmount.ONE));
+                remaining -= 1;
+            }
+            if (remaining > 0) sleep(randomDelay());
+        }
+        return true;
+    }
+
+    /**
      * Start a deposit-X interaction for an item (opens the input dialog).
      */
     public boolean startDepositX(int itemId) {
-        if (!isOpen() || !container.contains(itemId)) return false;
+        if (!isOpen()) return false;
         Component comp = findBackpackItem(itemId);
         if (comp == null) return false;
         return queueComponentAction(api, comp, 6);
@@ -374,20 +410,50 @@ public final class Bank {
     }
 
     /**
+     * Withdraw an exact number of an item, blocking until complete.
+     * <p>Composes the amount from fixed withdrawals (10, 5, 1) with random delays
+     * (400–700ms) between each action. Sleeps on the current (virtual) thread.</p>
+     *
+     * <pre>{@code
+     * // Withdraws 19: W10 → sleep → W5 → sleep → W1×4
+     * bank.withdraw(SWORDFISH_ID, 19);
+     * }</pre>
+     *
+     * @param itemId the item ID to withdraw
+     * @param amount the exact number to withdraw (must be &gt; 0)
+     * @return {@code true} if all actions were queued successfully
+     */
+    public boolean withdraw(int itemId, int amount) {
+        if (!isOpen() || !container.contains(itemId) || amount <= 0) return false;
+        // Ensure mode=ALL so all right-click options are available
+        if (transferMode() != TransferAmount.ALL) {
+            setTransferMode(TransferAmount.ALL);
+            sleep(randomDelay());
+        }
+        int remaining = amount;
+        while (remaining > 0) {
+            Component comp = findBankItem(itemId);
+            if (comp == null) return false;
+            if (remaining >= 10) {
+                queueComponentAction(api, comp, 4); // W10
+                remaining -= 10;
+            } else if (remaining >= 5) {
+                queueComponentAction(api, comp, 3); // W5
+                remaining -= 5;
+            } else {
+                queueComponentAction(api, comp, 2); // W1
+                remaining -= 1;
+            }
+            if (remaining > 0) sleep(randomDelay());
+        }
+        return true;
+    }
+
+    /**
      * Withdraw all of an item by ID.
      */
     public boolean withdrawAll(int itemId) {
         return withdraw(itemId, TransferAmount.ALL);
-    }
-
-    /**
-     * Start a withdraw-X interaction (opens the input dialog).
-     */
-    public boolean startWithdrawX(int itemId) {
-        if (!isOpen() || !container.contains(itemId)) return false;
-        Component comp = findBankItem(itemId);
-        if (comp == null) return false;
-        return queueComponentAction(api, comp, 6);
     }
 
     /**
@@ -399,6 +465,21 @@ public final class Bank {
      * @return {@code true} if the action was queued
      */
     public boolean withdraw(String name, TransferAmount amount) {
+        if (!isOpen()) return false;
+        InventoryItem item = container.getFirst(name);
+        if (item == null) return false;
+        return withdraw(item.itemId(), amount);
+    }
+
+    /**
+     * Withdraw an exact number of an item by name, blocking until complete.
+     *
+     * @param name   the item name substring to search for
+     * @param amount the exact number to withdraw
+     * @return {@code true} if all actions were queued successfully
+     * @see #withdraw(int, int)
+     */
+    public boolean withdraw(String name, int amount) {
         if (!isOpen()) return false;
         InventoryItem item = container.getFirst(name);
         if (item == null) return false;
@@ -576,30 +657,31 @@ public final class Bank {
     // ========================== Helpers ==========================
 
     /**
-     * Find a component in the bank grid that holds the given item.
+     * Find a component in the bank grid (component 201) that holds the given item.
      */
     private Component findBankItem(int itemId) {
         List<Component> comps = api.queryComponents(ComponentFilter.builder()
                 .interfaceId(INTERFACE_ID)
                 .itemId(itemId)
                 .build());
-        // Filter to the bank grid component specifically
+        // Strictly match bank grid: componentId == 201
         return comps.stream()
-                .filter(c -> c.componentId() == BANK_COMPONENT || c.subComponentId() >= 0)
-                .findFirst().orElse(comps.isEmpty() ? null : comps.getFirst());
+                .filter(c -> c.componentId() == BANK_COMPONENT)
+                .findFirst().orElse(null);
     }
 
     /**
-     * Find a component in the backpack section of the bank interface.
+     * Find a component in the backpack section (component 15) of the bank interface.
      */
     private Component findBackpackItem(int itemId) {
         List<Component> comps = api.queryComponents(ComponentFilter.builder()
                 .interfaceId(INTERFACE_ID)
                 .itemId(itemId)
                 .build());
+        // Strictly match backpack: componentId == 15
         return comps.stream()
-                .filter(c -> c.componentId() == BACKPACK_COMPONENT || c.subComponentId() >= 0)
-                .findFirst().orElse(comps.isEmpty() ? null : comps.getFirst());
+                .filter(c -> c.componentId() == BACKPACK_COMPONENT)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -643,6 +725,19 @@ public final class Bank {
         };
     }
 
+    /** Random delay between 400–700ms for human-like interaction pacing. */
+    private static int randomDelay() {
+        return ThreadLocalRandom.current().nextInt(400, 701);
+    }
+
+    /** Sleep the current (virtual) thread. */
+    private static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     // ========================== Enums ==========================
 
