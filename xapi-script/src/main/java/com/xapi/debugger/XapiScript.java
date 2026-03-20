@@ -627,11 +627,11 @@ public class XapiScript implements BotScript {
     private void saveSettings() {
         try {
             XapiSettings settings = new XapiSettings(
-                    recording, blocking, false,
+                    recording, false, false,
                     true, true, true,
                     Arrays.copyOf(categoryFilters, categoryFilters.length),
                     new boolean[7],
-                    showVarbits, showVarps, false, false, showItemVarbits,
+                    showVarbits, showVarps, false, false, false,
                     varFilterText.get(), "",
                     new HashSet<>(pinnedVars), new HashMap<>(varAnnotations),
                     useNamesForGeneration, scriptClassName.get(),
@@ -653,7 +653,7 @@ public class XapiScript implements BotScript {
             if (s == null) return;
 
             recording = s.recording();
-            blocking = s.blocking();
+            // blocking is NOT loaded — always starts as false (safe default)
 
             if (s.categoryFilters() != null) {
                 System.arraycopy(s.categoryFilters(), 0, categoryFilters, 0,
@@ -663,7 +663,7 @@ public class XapiScript implements BotScript {
             showVarbits = s.showVarbits();
             showVarps = s.showVarps();
             // showVarcs/showVarcStrs removed — varc tracking disabled until API supports events
-            showItemVarbits = s.showItemVarbits();
+            // showItemVarbits is NOT loaded — always starts as false (crash safety)
 
             if (s.varFilterText() != null) varFilterText.set(s.varFilterText());
             // varcWatchIds removed — varc tracking disabled until API supports events

@@ -6,7 +6,11 @@ import com.botwithus.bot.api.model.GameAction;
 import com.botwithus.bot.api.model.InventoryItem;
 import com.botwithus.bot.api.query.ComponentFilter;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.botwithus.bot.api.inventory.ComponentHelper.componentHash;
 import static com.botwithus.bot.api.inventory.ComponentHelper.queueComponentAction;
@@ -22,8 +26,8 @@ public final class Bank {
 
     public static final int INVENTORY_ID = 95;
     public static final int INTERFACE_ID = 517;
-    /** Bank item grid component. */
-    public static final int BANK_COMPONENT = 195;
+    /** Bank item grid component (interface 517, component 201). */
+    public static final int BANK_COMPONENT = 201;
     /** Backpack items shown inside the bank interface. */
     public static final int BACKPACK_COMPONENT = 15;
     /** Withdraw-X / Deposit-X input dialog interface. */
@@ -47,6 +51,10 @@ public final class Bank {
     private static final int HASH_PRESETS_BUTTON = INTERFACE_ID << 16 | 177;
     /** Preset grid component — sub-components 1-10 are preset slots. */
     private static final int PRESET_COMPONENT = 119;
+    /** Close button: interface 517, component 317. */
+    private static final int HASH_CLOSE_BUTTON = INTERFACE_ID << 16 | 317;
+    /** Withdraw mode toggle (Item/Note): interface 517, component 127. */
+    private static final int HASH_WITHDRAW_MODE_TOGGLE = INTERFACE_ID << 16 | 127;
 
     private final GameAPI api;
     private final InventoryContainer container;
@@ -154,6 +162,59 @@ public final class Bank {
         return container.getItems();
     }
 
+    /**
+     * Checks if the bank contains ALL of the specified items.
+     *
+     * @param itemIds the item IDs to check
+     * @return {@code true} if every item is present in the bank
+     */
+    public boolean containsAll(int... itemIds) {
+        for (int id : itemIds) {
+            if (!contains(id)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the bank contains ANY of the specified items.
+     *
+     * @param itemIds the item IDs to check
+     * @return {@code true} if at least one item is present
+     */
+    public boolean containsAny(int... itemIds) {
+        for (int id : itemIds) {
+            if (contains(id)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the bank has no items.
+     *
+     * @return {@code true} if the bank is empty
+     */
+    public boolean isEmpty() {
+        return container.isEmpty();
+    }
+
+    /**
+     * Checks if the bank has no free slots.
+     *
+     * @return {@code true} if the bank is full
+     */
+    public boolean isFull() {
+        return container.isFull();
+    }
+
+    /**
+     * Returns the number of distinct items (occupied slots) in the bank.
+     *
+     * @return the count of occupied bank slots
+     */
+    public int getCount() {
+        return container.occupiedSlots();
+    }
+
     // ========================== Deposit Methods ==========================
 
     /**
@@ -196,6 +257,54 @@ public final class Bank {
     }
 
     /**
+     * Deposit all carried items except those with the specified item IDs.
+     * Useful for keeping supplies (food, potions) while depositing loot.
+     *
+     * @param exceptItemIds item IDs to keep in the backpack
+     * @return {@code true} if at least one item was deposited
+     */
+    public boolean depositAllExcept(int... exceptItemIds) {
+        if (!isOpen()) return false;
+        Set<Integer> keepSet = IntStream.of(exceptItemIds).boxed().collect(Collectors.toSet());
+        List<InventoryItem> backpackItems = new InventoryContainer(api, Backpack.INVENTORY_ID).getItems();
+        boolean deposited = false;
+        for (InventoryItem item : backpackItems) {
+            if (keepSet.contains(item.itemId())) continue;
+            Component comp = findBackpackItem(item.itemId());
+            if (comp != null) {
+                queueComponentAction(api, comp, 7); // 7 = deposit All
+                deposited = true;
+            }
+        }
+        return deposited;
+    }
+
+    /**
+     * Deposit all carried items except those whose names match (case-insensitive substring).
+     * Useful for keeping supplies by name (e.g. "Shark", "Prayer potion").
+     *
+     * @param exceptNames item name substrings to keep
+     * @return {@code true} if at least one item was deposited
+     */
+    public boolean depositAllExcept(String... exceptNames) {
+        if (!isOpen()) return false;
+        Set<String> keepNames = Arrays.stream(exceptNames).map(String::toLowerCase).collect(Collectors.toSet());
+        List<InventoryItem> backpackItems = new InventoryContainer(api, Backpack.INVENTORY_ID).getItems();
+        boolean deposited = false;
+        for (InventoryItem item : backpackItems) {
+            var type = api.getItemType(item.itemId());
+            if (type != null && type.name() != null
+                    && keepNames.stream().anyMatch(n -> type.name().toLowerCase().contains(n))) continue;
+            Component comp = findBackpackItem(item.itemId());
+            if (comp != null) {
+                queueComponentAction(api, comp, 7); // 7 = deposit All
+                deposited = true;
+            }
+        }
+        return deposited;
+    }
+
+    /**
      * Deposit an item by ID with the specified transfer amount.
      */
     public boolean deposit(int itemId, TransferAmount amount) {
@@ -231,12 +340,35 @@ public final class Bank {
 
     /**
      * Withdraw an item by ID with the specified transfer amount.
+     * <p>Uses the right-click option indices which are fixed when mode=ALL:
+     * opt2=W1, opt3=W5, opt4=W10, opt5=WX, opt7=WAll.
+     * If the current mode is not ALL, switches to ALL first so all options are available.</p>
      */
     public boolean withdraw(int itemId, TransferAmount amount) {
         if (!isOpen() || !container.contains(itemId)) return false;
         Component comp = findBankItem(itemId);
         if (comp == null) return false;
-        int optionIndex = mapWithdrawOption(amount);
+
+        // Withdraw-All is always option 7 regardless of mode
+        if (amount == TransferAmount.ALL) {
+            return queueComponentAction(api, comp, 7);
+        }
+        // Withdraw-X is always option 5 regardless of mode
+        if (amount == TransferAmount.CUSTOM) {
+            return queueComponentAction(api, comp, 5);
+        }
+
+        // For W1/W5/W10: ensure mode is ALL so all right-click options are available
+        // Mode=ALL gives: opt2=W1, opt3=W5, opt4=W10
+        if (transferMode() != TransferAmount.ALL) {
+            setTransferMode(TransferAmount.ALL);
+        }
+        int optionIndex = switch (amount) {
+            case ONE -> 2;
+            case FIVE -> 3;
+            case TEN -> 4;
+            default -> -1;
+        };
         if (optionIndex < 0) return false;
         return queueComponentAction(api, comp, optionIndex);
     }
@@ -256,6 +388,31 @@ public final class Bank {
         Component comp = findBankItem(itemId);
         if (comp == null) return false;
         return queueComponentAction(api, comp, 6);
+    }
+
+    /**
+     * Withdraw an item by name with the specified transfer amount.
+     * Finds the first bank item whose name contains the given string (case-insensitive).
+     *
+     * @param name   the item name substring to search for
+     * @param amount the transfer amount
+     * @return {@code true} if the action was queued
+     */
+    public boolean withdraw(String name, TransferAmount amount) {
+        if (!isOpen()) return false;
+        InventoryItem item = container.getFirst(name);
+        if (item == null) return false;
+        return withdraw(item.itemId(), amount);
+    }
+
+    /**
+     * Withdraw all of an item by name.
+     *
+     * @param name the item name substring to search for
+     * @return {@code true} if the action was queued
+     */
+    public boolean withdrawAll(String name) {
+        return withdraw(name, TransferAmount.ALL);
     }
 
     // ========================== Presets ==========================
@@ -380,6 +537,31 @@ public final class Bank {
     }
 
     /**
+     * Sets the withdraw mode (item or noted form).
+     * Clicks the toggle button on the bank interface to switch modes.
+     *
+     * @param mode the desired withdraw mode
+     * @return {@code true} if the mode was set or already matches
+     */
+    public boolean setWithdrawMode(WithdrawMode mode) {
+        if (!isOpen()) return false;
+        if (withdrawMode() == mode) return true;
+        api.queueAction(new GameAction(ActionTypes.COMPONENT, 1, -1, HASH_WITHDRAW_MODE_TOGGLE));
+        return true;
+    }
+
+    /**
+     * Closes the bank interface.
+     *
+     * @return {@code true} if the close action was queued (or bank was already closed)
+     */
+    public boolean close() {
+        if (!isOpen()) return true;
+        api.queueAction(new GameAction(ActionTypes.COMPONENT, 1, -1, HASH_CLOSE_BUTTON));
+        return true;
+    }
+
+    /**
      * Returns the current bank interface setting (transfer or presets mode).
      *
      * @return the bank setting
@@ -461,16 +643,6 @@ public final class Bank {
         };
     }
 
-    private int mapWithdrawOption(TransferAmount amount) {
-        return switch (amount) {
-            case ONE -> 1;
-            case FIVE -> 3;
-            case TEN -> 4;
-            case CUSTOM -> 5;
-            case ALL -> 7;
-            default -> -1;
-        };
-    }
 
     // ========================== Enums ==========================
 
