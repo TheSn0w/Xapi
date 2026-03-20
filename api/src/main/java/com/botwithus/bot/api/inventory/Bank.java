@@ -39,6 +39,7 @@ public final class Bank {
     public static final int INPUT_INTERFACE = 1469;
 
     // Varbit IDs used by the bank interface
+    private static final int VARBIT_ACTIVE_TAB = 45141;
     private static final int VARBIT_HIDDEN_OPTION = 45189;
     private static final int VARBIT_SIDE_VIEW = 45139;
     private static final int VARBIT_BANK_SETTING = 45191;
@@ -53,6 +54,8 @@ public final class Bank {
     private static final int VARP_WITHDRAW_MODE = 160;
 
     // Component hashes for specific bank buttons
+    /** "View all" tab button: interface 517, component 165. */
+    private static final int HASH_VIEW_ALL_TAB = INTERFACE_ID << 16 | 165;
     private static final int HASH_PRESETS_BUTTON = INTERFACE_ID << 16 | 177;
     /** Preset grid component — sub-components 1-10 are preset slots. */
     private static final int PRESET_COMPONENT = 119;
@@ -115,6 +118,7 @@ public final class Bank {
      * @return {@code true} if the item is in the bank with at least 1 quantity
      */
     public boolean contains(int itemId) {
+        if (isOpen()) ensureViewAllTab();
         return container.count(itemId) > 0;
     }
 
@@ -126,6 +130,7 @@ public final class Bank {
      * @return {@code true} if enough of the item is in the bank
      */
     public boolean contains(int itemId, int amount) {
+        if (isOpen()) ensureViewAllTab();
         return container.count(itemId) >= amount;
     }
 
@@ -137,6 +142,7 @@ public final class Bank {
      * @return {@code true} if a matching item is in the bank
      */
     public boolean contains(String name) {
+        if (isOpen()) ensureViewAllTab();
         return container.countExact(name) > 0;
     }
 
@@ -148,6 +154,7 @@ public final class Bank {
      * @return {@code true} if a matching item is in the bank
      */
     public boolean containsPartial(String name) {
+        if (isOpen()) ensureViewAllTab();
         return container.count(name) > 0;
     }
 
@@ -158,6 +165,7 @@ public final class Bank {
      * @return the total quantity
      */
     public int count(int itemId) {
+        if (isOpen()) ensureViewAllTab();
         return container.count(itemId);
     }
 
@@ -168,6 +176,7 @@ public final class Bank {
      * @return the total quantity of matching items
      */
     public int count(String name) {
+        if (isOpen()) ensureViewAllTab();
         return container.countExact(name);
     }
 
@@ -178,6 +187,7 @@ public final class Bank {
      * @return the total quantity of matching items
      */
     public int countPartial(String name) {
+        if (isOpen()) ensureViewAllTab();
         return container.count(name);
     }
 
@@ -187,6 +197,7 @@ public final class Bank {
      * @return a list of bank items
      */
     public List<InventoryItem> getItems() {
+        if (isOpen()) ensureViewAllTab();
         return container.getItems();
     }
 
@@ -746,6 +757,29 @@ public final class Bank {
             case 1 -> BankSetting.PRESETS;
             default -> BankSetting.TRANSFER;
         };
+    }
+
+    /**
+     * Check if the "View all" tab is currently active.
+     *
+     * @return {@code true} if the View all tab is selected
+     */
+    public boolean isViewAllTab() {
+        return api.getVarbit(VARBIT_ACTIVE_TAB) == 1;
+    }
+
+    /**
+     * Switch to the "View all" tab if not already on it.
+     * This ensures all bank items are visible regardless of which tab the user had open.
+     *
+     * @return {@code true} if the View all tab is now active
+     */
+    public boolean ensureViewAllTab() {
+        if (isViewAllTab()) return true;
+        log.info("[Bank] Switching to 'View all' tab");
+        api.queueAction(new GameAction(ActionTypes.COMPONENT, 1, -1, HASH_VIEW_ALL_TAB));
+        sleep(randomDelay());
+        return isViewAllTab();
     }
 
     // ========================== Helpers ==========================
