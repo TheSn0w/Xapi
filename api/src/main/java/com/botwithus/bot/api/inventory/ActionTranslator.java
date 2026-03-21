@@ -67,6 +67,11 @@ public final class ActionTranslator {
             return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
         }
 
+        // Dialogue (30) — p3 is packed iface:comp just like COMPONENT
+        if (actionId == ActionTypes.DIALOGUE) {
+            return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
+        }
+
         // Container action (1007) — same layout as COMPONENT (e.g. wood box "Empty" at bank)
         if (actionId == ActionTypes.CONTAINER_ACTION) {
             return formatComponentCode(actionId, p1, p2, p3, entityName, optionName, raw);
@@ -122,6 +127,11 @@ public final class ActionTranslator {
             return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
         }
 
+        // Dialogue (30) — p3 is packed iface:comp just like COMPONENT
+        if (actionId == ActionTypes.DIALOGUE) {
+            return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
+        }
+
         // Container action (1007) — same layout as COMPONENT
         if (actionId == ActionTypes.CONTAINER_ACTION) {
             return formatComponentCode(actionId, p1, p2, p3, null, null, raw);
@@ -130,11 +140,6 @@ public final class ActionTranslator {
         // Walk (23)
         if (actionId == ActionTypes.WALK) {
             return "// WALK to (" + p2 + ", " + p3 + ", " + p1 + ")\n" + raw;
-        }
-
-        // Dialogue (30)
-        if (actionId == ActionTypes.DIALOGUE) {
-            return "// DIALOGUE option " + p1 + "\n" + raw;
         }
 
         // Select NPC (8)
@@ -214,8 +219,9 @@ public final class ActionTranslator {
         }
 
         String interact;
-        if (actionId == ActionTypes.SELECT_COMPONENT_ITEM || actionId == ActionTypes.CONTAINER_ACTION) {
-            // Action 58/1007 — must queue with the correct action type, not 57
+        if (actionId == ActionTypes.SELECT_COMPONENT_ITEM || actionId == ActionTypes.CONTAINER_ACTION
+                || actionId == ActionTypes.DIALOGUE) {
+            // Action 58/1007/30 — must queue with the correct action type, not 57
             interact = "comp -> api.queueAction(new GameAction(" + actionId + ", " + p1
                     + ", comp.subComponentId(), ComponentHelper.componentHash(comp)))";
         } else if (p2 >= 0) {
@@ -578,7 +584,8 @@ public final class ActionTranslator {
     private static boolean isComponentAction(int actionId) {
         return actionId == ActionTypes.COMPONENT
                 || actionId == ActionTypes.SELECT_COMPONENT_ITEM
-                || actionId == ActionTypes.CONTAINER_ACTION;
+                || actionId == ActionTypes.CONTAINER_ACTION
+                || actionId == ActionTypes.DIALOGUE;
     }
 
     private static boolean isEntityAction(int actionId) {

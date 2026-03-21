@@ -57,28 +57,15 @@ final class SmithingTab {
         // Active smithing section (always rendered when actively smithing)
         renderActiveSmithing();
 
+        // Live state (Property/Value table) — always visible
+        renderLiveState();
+
         if (!open) {
             ImGui.spacing();
             ImGui.textColored(0.6f, 0.6f, 0.6f, 1f,
-                    "Open the smithing interface at an anvil or smelting at a furnace to see interface data.");
-            ImGui.spacing();
-            renderActionCodeSection();
+                    "Open the smithing interface at an anvil or smelting at a furnace to see grids & action codes.");
             return;
         }
-
-        ImGui.spacing();
-        ImGui.separator();
-        ImGui.spacing();
-
-        // Varp/varbit monitor
-        renderVarps();
-
-        ImGui.spacing();
-        ImGui.separator();
-        ImGui.spacing();
-
-        // Current selection
-        renderCurrentSelection();
 
         ImGui.spacing();
         ImGui.separator();
@@ -242,73 +229,47 @@ final class SmithingTab {
         ImGui.spacing();
     }
 
-    private void renderVarps() {
-        if (ImGui.collapsingHeader("Varps & Varbits (Live)", ImGuiTreeNodeFlags.DefaultOpen)) {
+    private void renderLiveState() {
+        if (ImGui.collapsingHeader("Live State", ImGuiTreeNodeFlags.DefaultOpen)) {
             int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
-            if (ImGui.beginTable("##smith_varps", 3, flags)) {
-                ImGui.tableSetupColumn("Variable", 0, 1.5f);
-                ImGui.tableSetupColumn("ID", 0, 0.5f);
-                ImGui.tableSetupColumn("Value", 0, 1f);
+            if (ImGui.beginTable("##smith_state", 2, flags)) {
+                ImGui.tableSetupColumn("Property", 0, 1.5f);
+                ImGui.tableSetupColumn("Value", 0, 2f);
                 ImGui.tableHeadersRow();
 
-                varpRow("Material (dbrow)", "varp", 8331, script.smithMaterialDbrow);
-                varpRow("Product (dbrow)", "varp", 8332, script.smithProductDbrow);
-                varpRow("Selected Item", "varp", 8333, script.smithSelectedItem);
-                varpRow("Location", "varp", 8334, script.smithLocation);
-                varpRow("Quantity/XP", "varp", 8336, script.smithQuantity);
-                varpRow("Quality Tier", "varbit", 43239, script.smithQualityTier);
-                varpRow("Outfit Bonus 1", "varbit", 47760, script.smithOutfitBonus1);
-                varpRow("Outfit Bonus 2", "varbit", 47761, script.smithOutfitBonus2);
-                varpRow("Heat Efficiency", "varbit", 20138, script.smithHeatEfficiency);
+                stateRow("Mode", script.smithIsSmelting ? "Smelting" : "Smithing");
+
+                int selectedId = script.smithSelectedItem;
+                String selectedName = script.smithProductName;
+                stateRow("Selected Item", selectedName != null && selectedId > 0
+                        ? selectedName + " (ID: " + selectedId + ")" : String.valueOf(selectedId));
+                stateRow("Product Name", selectedName != null ? selectedName : "—");
+                stateRow("Quantity", String.valueOf(script.smithQuantity));
+                stateRow("Quality Tier", script.smithQualityTier + " (" + script.smithQualityName + ")");
+                stateRow("Material (dbrow)", String.valueOf(script.smithMaterialDbrow));
+                stateRow("Product (dbrow)", String.valueOf(script.smithProductDbrow));
+                stateRow("Location", String.valueOf(script.smithLocation));
+                stateRow("Outfit Bonus 1", String.valueOf(script.smithOutfitBonus1));
+                stateRow("Outfit Bonus 2", String.valueOf(script.smithOutfitBonus2));
+                stateRow("Heat Efficiency", String.valueOf(script.smithHeatEfficiency));
+                stateRow("Exceeds Backpack", String.valueOf(script.smithExceedsBackpack));
+                stateRow("Full Blacksmith Outfit", String.valueOf(script.smithFullOutfit));
+                stateRow("Varrock Armour", String.valueOf(script.smithVarrockArmour));
+
+                List<Integer> bonuses = script.smithActiveBonuses;
+                stateRow("Active Bonuses", bonuses.isEmpty() ? "None" : bonuses.toString());
 
                 ImGui.endTable();
             }
         }
     }
 
-    private void varpRow(String name, String type, int id, int value) {
+    private void stateRow(String property, String value) {
         ImGui.tableNextRow();
         ImGui.tableSetColumnIndex(0);
-        ImGui.text(name);
+        ImGui.text(property);
         ImGui.tableSetColumnIndex(1);
-        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, String.valueOf(id));
-        ImGui.tableSetColumnIndex(2);
-        ImGui.text(String.valueOf(value));
-        String code = type.equals("varbit") ? "api.getVarbit(" + id + ")" : "api.getVarp(" + id + ")";
-        if (ImGui.isItemHovered() && ImGui.isMouseClicked(0)) ImGui.setClipboardText(code);
-        if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy: " + code);
-    }
-
-    private void renderCurrentSelection() {
-        ImGui.text("Selected Item: ");
-        ImGui.sameLine();
-        int selectedId = script.smithSelectedItem;
-        if (selectedId > 0) {
-            String name = script.smithProductName;
-            ImGui.textColored(0.5f, 0.9f, 1f, 1f,
-                    (name != null ? name : "???") + "  (ID: " + selectedId + ")");
-            if (ImGui.isItemHovered() && ImGui.isMouseClicked(0)) ImGui.setClipboardText(String.valueOf(selectedId));
-            if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy item ID");
-        } else {
-            ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "None");
-        }
-
-        ImGui.text("Quantity: ");
-        ImGui.sameLine();
-        int qty = script.smithQuantity;
-        if (qty > 28) {
-            ImGui.textColored(0.2f, 1f, 0.5f, 1f, String.valueOf(qty) + " (exceeds backpack — bank sending active)");
-        } else {
-            ImGui.text(String.valueOf(qty));
-        }
-
-        // Bonus equipment indicator
-        List<Integer> bonuses = script.smithActiveBonuses;
-        if (!bonuses.isEmpty()) {
-            ImGui.text("Active Bonuses: ");
-            ImGui.sameLine();
-            ImGui.textColored(0.4f, 1f, 0.4f, 1f, bonuses.size() + " item(s) equipped");
-        }
+        ImGui.textColored(0.5f, 0.9f, 1f, 1f, value);
     }
 
     private void renderQualityTiers() {

@@ -43,15 +43,6 @@ final class ProductionTab {
             ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "IDLE");
         }
 
-        if (!open && !script.progressOpen) {
-            ImGui.spacing();
-            ImGui.textColored(0.6f, 0.6f, 0.6f, 1f,
-                    "Open a production interface in-game (e.g. use knife on logs, herb on vial) to see data here.");
-            ImGui.spacing();
-            renderActionCodeSection();
-            return;
-        }
-
         ImGui.spacing();
         ImGui.separator();
         ImGui.spacing();

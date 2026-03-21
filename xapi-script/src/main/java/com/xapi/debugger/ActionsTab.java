@@ -72,6 +72,26 @@ final class ActionsTab {
         if (ImGui.smallButton("Copy All")) {
             copyAllActions();
         }
+        ImGui.sameLine();
+        if (ImGui.smallButton("Clear All")) {
+            ImGui.openPopup("##clear_actions_confirm");
+        }
+        if (ImGui.beginPopup("##clear_actions_confirm")) {
+            ImGui.text("Clear all " + script.actionLog.size() + " actions?");
+            if (ImGui.button("Yes, clear")) {
+                script.actionLog.clear();
+                script.snapshotLog.clear();
+                script.lastActionSize = -1;
+                script.trimmedActionCount = 0;
+                script.actionsDirty = true;
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.sameLine();
+            if (ImGui.button("Cancel##clr")) {
+                ImGui.closeCurrentPopup();
+            }
+            ImGui.endPopup();
+        }
 
         // ── Toolbar row 2: Columns popup + Compact + Auto-scroll ──
         if (ImGui.smallButton("Columns")) {
@@ -403,6 +423,7 @@ final class ActionsTab {
         if (findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0) return script.categoryFilters[3];
         if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM
                 || actionId == ActionTypes.CONTAINER_ACTION
+                || actionId == ActionTypes.DIALOGUE
                 || actionId == ActionTypes.COMP_ON_PLAYER) return script.categoryFilters[4];
         if (actionId == ActionTypes.WALK) return script.categoryFilters[5];
         return script.categoryFilters[6];

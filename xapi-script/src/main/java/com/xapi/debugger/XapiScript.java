@@ -21,6 +21,7 @@ import com.botwithus.bot.api.entities.Player;
 import com.botwithus.bot.api.entities.SceneObjects;
 import com.botwithus.bot.api.entities.SceneObject;
 import com.botwithus.bot.api.entities.EntityContext;
+import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.query.ComponentFilter;
 import com.botwithus.bot.api.query.EntityFilter;
 import com.botwithus.bot.api.query.InventoryFilter;
@@ -160,12 +161,20 @@ public class XapiScript implements BotScript {
     final List<ActionSnapshot> snapshotLog = new CopyOnWriteArrayList<>();
 
     // Per-tick entity/type caches for action resolution (avoids redundant RPC per action)
-    private int resolveTickCache = -1;
-    private List<Entity> cachedNpcs;
-    private List<Entity> cachedPlayers;
-    private final HashMap<Integer, NpcType> npcTypeCache = new HashMap<>();
-    private final HashMap<Integer, LocationType> locTypeCache = new HashMap<>();
-    private final HashMap<Integer, ItemType> itemTypeCache = new HashMap<>();
+    private volatile int resolveTickCache = -1;
+    private volatile List<Entity> cachedNpcs;
+    private volatile List<Entity> cachedPlayers;
+    private final ConcurrentHashMap<Integer, NpcType> npcTypeCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, LocationType> locTypeCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ItemType> itemTypeCache = new ConcurrentHashMap<>();
+
+    // Offline game cache (loaded from JSON dump files at startup — eliminates RPC timing issues)
+    final GameCacheData gameCache = new GameCacheData();
+    // Pre-resolved action names: populated in onLoop() while interfaces are open (timing-proof)
+    private record ActionCacheKey(int actionId, int p1, int p2, int p3) {}
+    private final ConcurrentHashMap<ActionCacheKey, String[]> preResolvedActions = new ConcurrentHashMap<>();
+    // Track which interfaces we've already cached component options for
+    private final Set<Integer> cachedInterfaceOptions = ConcurrentHashMap.newKeySet();
 
     // Pinned variables (survive clears)
     final Set<String> pinnedVars = ConcurrentHashMap.newKeySet(); // "varbit:1234", "varp:567"
@@ -224,6 +233,9 @@ public class XapiScript implements BotScript {
     volatile List<SmithingTab.SmithingTabEntry> smithMaterialEntries = List.of();
     volatile List<SmithingTab.SmithingTabEntry> smithProductEntries = List.of();
     volatile List<Integer> smithActiveBonuses = List.of();
+    volatile boolean smithExceedsBackpack;
+    volatile boolean smithFullOutfit;
+    volatile boolean smithVarrockArmour;
 
     // Active smithing progress (independent of interface 37 being open)
     volatile boolean activelySmithing;
@@ -278,6 +290,7 @@ public class XapiScript implements BotScript {
     // indices: 0=NPC, 1=Object, 2=GroundItem, 3=Player, 4=Component, 5=Walk, 6=Other
     boolean useNamesForGeneration = true;
     final float[] replaySpeedArr = {1.0f};
+    private int selectedTab = 0;
     String[] sessionFiles = new String[0];
     private long lastSessionScan;
 
@@ -319,6 +332,16 @@ public class XapiScript implements BotScript {
         loadSettings();
         loadAutoSave();
 
+        // Load offline game cache (locations, items, NPCs) for timing-proof name resolution.
+        // Runs on a background thread so script start isn't blocked by ~96MB of JSON parsing.
+        Thread.ofVirtual().name("xapi-cache-loader").start(() -> {
+            try {
+                gameCache.load();
+            } catch (Exception e) {
+                log.error("Failed to load game cache: {}", e.getMessage());
+            }
+        });
+
         // Force-sync blocking state to game client on start (selective blocking is per-action, not client-wide)
         try {
             gameApi.setActionsBlocked(blocking);
@@ -357,15 +380,63 @@ public class XapiScript implements BotScript {
 
     private void onActionExecuted(ActionExecutedEvent e) {
         if (recording || blocking) {
+            log.debug("ACTION EVENT: id={} p1={} p2={} p3={} type={}",
+                    e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3(),
+                    ActionTypes.nameOf(e.getActionId()));
+
+            // 0. Capture the mini menu RIGHT NOW — cursor is still over the clicked item.
+            //    This is the most reliable source for CS2-dynamic option text (Withdraw-1, Deposit-1, etc.)
+            //    because getComponentOptions() returns EMPTY for container widgets.
+            try {
+                var liveMenu = ctx.getGameAPI().getMiniMenu();
+                if (liveMenu != null && !liveMenu.isEmpty()) {
+                    lastMiniMenu = liveMenu;
+                    // Also pre-resolve all entries while data is fresh
+                    for (var entry : liveMenu) {
+                        var mk = new ActionCacheKey(entry.actionId(), entry.param1(), entry.param2(), entry.param3());
+                        String optText = entry.optionText();
+                        String entName = null;
+                        if (entry.itemId() > 0) {
+                            entName = lookupItemName(ctx.getGameAPI(), entry.itemId());
+                        }
+                        preResolvedActions.put(mk, new String[]{entName, optText});
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            // 1. Check pre-resolved cache (now includes the live menu we just captured)
+            var aKey = new ActionCacheKey(e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+            String[] preResolved = preResolvedActions.get(aKey);
+
+            // 2. Live resolution as fallback (works for objects, NPCs, or cache miss)
             String[] names = resolveNames(ctx.getGameAPI(),
                     e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+            log.debug("RESOLVED: entity='{}' option='{}'", names[0], names[1]);
 
-            // Try to resolve option text and item name from the cached mini menu snapshot
-            String[] menuMatch = matchMiniMenu(e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
-            if (menuMatch != null) {
-                if (names[1] == null || names[1].isEmpty()) names[1] = menuMatch[0]; // optionText
-                if (names[0] == null || names[0].isEmpty()) names[0] = menuMatch[1]; // itemName
+            // 3. Pre-resolved data fills gaps (entity name, option text from mini menu)
+            if (preResolved != null) {
+                log.debug("PRE-RESOLVED: entity='{}' option='{}'", preResolved[0], preResolved[1]);
+                if (names[0] == null || names[0].isEmpty()) names[0] = preResolved[0];
+                if (names[1] == null || names[1].isEmpty()) names[1] = preResolved[1];
             }
+
+            // 4. Mini menu match as additional fallback (searches current + recent snapshots)
+            if (names[1] == null || names[1].isEmpty() || names[0] == null || names[0].isEmpty()) {
+                String[] menuMatch = matchMiniMenu(e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+                if (menuMatch != null) {
+                    log.debug("MENU MATCH: optionText='{}' itemName='{}'", menuMatch[0], menuMatch[1]);
+                    if (names[1] == null || names[1].isEmpty()) names[1] = menuMatch[0];
+                    if (names[0] == null || names[0].isEmpty()) names[0] = menuMatch[1];
+                }
+            }
+
+            // 5. For component actions where entity is still null, use interface name as context
+            if ((names[0] == null || names[0].isEmpty()) && isComponentAction(e.getActionId()) && gameCache.isLoaded()) {
+                int packed = e.getParam3();
+                int ifaceId = packed >>> 16;
+                names[0] = gameCache.getInterfaceName(ifaceId);
+            }
+            log.debug("FINAL NAMES: entity='{}' option='{}'", names[0], names[1]);
 
             int px = 0, py = 0, pp = 0, pa = -1;
             boolean pm = false;
@@ -406,32 +477,89 @@ public class XapiScript implements BotScript {
 
     /**
      * Matches an action against the cached mini menu to find option text and item name.
+     * Searches the current menu first, then recent menu snapshots (last 500).
      * Returns {optionText, itemName} or null if no match.
      */
     private String[] matchMiniMenu(int actionId, int p1, int p2, int p3) {
         try {
+            // 1. Check current mini menu (exact match)
             List<MiniMenuEntry> menu = lastMiniMenu;
-            if (menu == null || menu.isEmpty()) return null;
-            for (MiniMenuEntry entry : menu) {
-                if (entry.actionId() == actionId
-                        && entry.param1() == p1
-                        && entry.param2() == p2
-                        && entry.param3() == p3) {
-                    String optionText = entry.optionText();
-                    String itemName = null;
-                    // Resolve item name from the menu entry's itemId if available
-                    if (entry.itemId() > 0) {
-                        try {
-                            var itemType = ctx.getGameAPI().getItemType(entry.itemId());
-                            if (itemType != null && itemType.name() != null) {
-                                itemName = itemType.name();
-                            }
-                        } catch (Exception ignored) {}
+            String[] result = searchMenuEntries(menu, actionId, p1, p2, p3);
+            if (result != null) return result;
+
+            // 2. Search recent menu snapshots (exact match, most recent first)
+            for (int i = menuLog.size() - 1; i >= 0 && i >= menuLog.size() - 50; i--) {
+                MenuSnapshot snap = menuLog.get(i);
+                result = searchMenuEntries(snap.entries(), actionId, p1, p2, p3);
+                if (result != null) return result;
+            }
+
+            // 3. Relaxed container match: same (actionId, p1, p3) but ANY slot (p2).
+            //    Within a container, all slots share the same option labels (Withdraw-1, Deposit-All, etc.)
+            //    so we can borrow the optionText from a different slot in the same container.
+            if (isComponentAction(actionId)) {
+                // Try current menu first
+                result = searchMenuEntriesRelaxed(menu, actionId, p1, p3);
+                if (result != null) return result;
+
+                // Then recent snapshots
+                for (int i = menuLog.size() - 1; i >= 0 && i >= menuLog.size() - 50; i--) {
+                    MenuSnapshot snap = menuLog.get(i);
+                    result = searchMenuEntriesRelaxed(snap.entries(), actionId, p1, p3);
+                    if (result != null) return result;
+                }
+
+                // Also search preResolvedActions for relaxed match (same actionId, p1, p3, any p2)
+                for (var entry : preResolvedActions.entrySet()) {
+                    var key = entry.getKey();
+                    if (key.actionId() == actionId && key.p1() == p1 && key.p3() == p3) {
+                        String[] val = entry.getValue();
+                        if (val != null && val[1] != null && !val[1].isEmpty()) {
+                            // Return option text only (entity name doesn't transfer across slots)
+                            return new String[]{val[1], null};
+                        }
                     }
-                    return new String[]{optionText, itemName};
                 }
             }
         } catch (Exception ignored) {}
+        return null;
+    }
+
+    private String[] searchMenuEntries(List<MiniMenuEntry> entries, int actionId, int p1, int p2, int p3) {
+        if (entries == null || entries.isEmpty()) return null;
+        for (MiniMenuEntry entry : entries) {
+            if (entry.actionId() == actionId
+                    && entry.param1() == p1
+                    && entry.param2() == p2
+                    && entry.param3() == p3) {
+                String optionText = entry.optionText();
+                String itemName = null;
+                if (entry.itemId() > 0) {
+                    itemName = lookupItemName(ctx.getGameAPI(), entry.itemId());
+                }
+                return new String[]{optionText, itemName};
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Relaxed container search: matches (actionId, p1, p3) ignoring p2 (slot index).
+     * All items in a container share the same option labels, so the optionText from any slot applies.
+     * Returns {optionText, null} — entity name is NOT transferred (it's slot-specific).
+     */
+    private String[] searchMenuEntriesRelaxed(List<MiniMenuEntry> entries, int actionId, int p1, int p3) {
+        if (entries == null || entries.isEmpty()) return null;
+        for (MiniMenuEntry entry : entries) {
+            if (entry.actionId() == actionId
+                    && entry.param1() == p1
+                    && entry.param3() == p3) {
+                String optionText = entry.optionText();
+                if (optionText != null && !optionText.isEmpty()) {
+                    return new String[]{optionText, null};
+                }
+            }
+        }
         return null;
     }
 
@@ -469,20 +597,22 @@ public class XapiScript implements BotScript {
     private String[] resolveNames(GameAPI api, int actionId, int p1, int p2, int p3) {
         try {
             int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, actionId);
-            if (npcSlot > 0) return resolveNpc(api, p1, npcSlot);
+            if (npcSlot > 0) { log.debug("resolveNames: NPC path, slot={}", npcSlot); return resolveNpc(api, p1, npcSlot); }
 
             int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, actionId);
-            if (objSlot > 0) return resolveObject(api, p1, objSlot);
+            if (objSlot > 0) { log.debug("resolveNames: OBJECT path, slot={}, typeId={}", objSlot, p1); return resolveObject(api, p1, objSlot); }
 
             int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId);
-            if (giSlot > 0) return resolveGroundItem(api, p1, giSlot);
+            if (giSlot > 0) { log.debug("resolveNames: GROUND_ITEM path, slot={}", giSlot); return resolveGroundItem(api, p1, giSlot); }
 
             int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, actionId);
-            if (playerSlot > 0) return resolvePlayer(api, p1);
+            if (playerSlot > 0) { log.debug("resolveNames: PLAYER path"); return resolvePlayer(api, p1); }
 
-            if (actionId == ActionTypes.COMPONENT) return resolveComponent(api, p1, p2, p3);
-            if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) return resolveComponent(api, p1, p2, p3);
-            if (actionId == ActionTypes.CONTAINER_ACTION) return resolveComponent(api, p1, p2, p3);
+            if (actionId == ActionTypes.COMPONENT) { log.debug("resolveNames: COMPONENT path"); return resolveComponent(api, p1, p2, p3); }
+            if (actionId == ActionTypes.SELECT_COMPONENT_ITEM) { log.debug("resolveNames: SELECT_COMP_ITEM path"); return resolveComponent(api, p1, p2, p3); }
+            if (actionId == ActionTypes.CONTAINER_ACTION) { log.debug("resolveNames: CONTAINER_ACTION path"); return resolveComponent(api, p1, p2, p3); }
+            if (actionId == ActionTypes.DIALOGUE) { log.debug("resolveNames: DIALOGUE path"); return resolveComponent(api, p1, p2, p3); }
+            log.debug("resolveNames: NO MATCH for actionId={}", actionId);
         } catch (Exception e) {
             log.debug("Name resolution failed for action {}: {}", actionId, e.getMessage());
         }
@@ -500,11 +630,62 @@ public class XapiScript implements BotScript {
                 if (npc.serverIndex() == serverIndex) {
                     String name = npc.name();
                     String option = null;
+
+                    // 1. Try offline cache first (instant, timing-proof)
+                    if (gameCache.isLoaded()) {
+                        try {
+                            var baseNpc = gameCache.getNpc(npc.typeId());
+                            if (baseNpc != null) {
+                                int varValue = -1;
+                                if (baseNpc.varbitId() != -1) {
+                                    try { varValue = api.getVarbit(baseNpc.varbitId()); } catch (Exception ignored) {}
+                                } else if (baseNpc.varpId() != -1) {
+                                    try { varValue = api.getVarp(baseNpc.varpId()); } catch (Exception ignored) {}
+                                }
+                                var resolved = gameCache.resolveNpc(npc.typeId(), varValue);
+                                if (resolved != null) {
+                                    if (name == null || name.isEmpty()) name = resolved.name();
+                                    if (resolved.actions() != null && optionSlot - 1 >= 0
+                                            && optionSlot - 1 < resolved.actions().size()) {
+                                        option = resolved.actions().get(optionSlot - 1);
+                                    }
+                                    if (name != null && !name.isEmpty()) {
+                                        return new String[]{name, option};
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    // 2. Fallback to RPC
                     try {
                         NpcType type = npcTypeCache.computeIfAbsent(npc.typeId(), id -> {
                             try { return api.getNpcType(id); } catch (Exception e) { return null; }
                         });
-                        if (type != null && type.options() != null && optionSlot - 1 < type.options().size()) {
+                        if (type != null && (type.options() == null || type.options().stream().allMatch(s -> s == null || s.isEmpty()))
+                                && (type.varbitId() != -1 || type.varpId() != -1)
+                                && type.transforms() != null && !type.transforms().isEmpty()) {
+                            int value = -1;
+                            if (type.varbitId() != -1) {
+                                try { value = api.getVarbit(type.varbitId()); } catch (Exception ignored) {}
+                            } else if (type.varpId() != -1) {
+                                try { value = api.getVarp(type.varpId()); } catch (Exception ignored) {}
+                            }
+                            if (value >= 0) {
+                                int transformedId = value < type.transforms().size()
+                                        ? type.transforms().get(value) : type.transforms().getLast();
+                                if (transformedId != -1 && transformedId != npc.typeId()) {
+                                    NpcType resolved = npcTypeCache.computeIfAbsent(transformedId, id -> {
+                                        try { return api.getNpcType(id); } catch (Exception e) { return null; }
+                                    });
+                                    if (resolved != null) {
+                                        type = resolved;
+                                        if (name == null || name.isEmpty()) name = resolved.name();
+                                    }
+                                }
+                            }
+                        }
+                        if (type != null && type.options() != null && optionSlot - 1 >= 0 && optionSlot - 1 < type.options().size()) {
                             option = type.options().get(optionSlot - 1);
                         }
                     } catch (Exception ignored) {}
@@ -516,23 +697,97 @@ public class XapiScript implements BotScript {
     }
 
     private String[] resolveObject(GameAPI api, int typeId, int optionSlot) {
+        log.info("resolveObject: typeId={} optionSlot={}", typeId, optionSlot);
+
+        // 1. Try offline cache first (instant, no RPC, timing-proof)
+        if (gameCache.isLoaded()) {
+            try {
+                var baseLoc = gameCache.getLocation(typeId);
+                if (baseLoc != null) {
+                    // Resolve transform using var value from RPC (cheap call, always available)
+                    int varValue = -1;
+                    if (baseLoc.varbitId() != -1) {
+                        try { varValue = api.getVarbit(baseLoc.varbitId()); } catch (Exception ignored) {}
+                    } else if (baseLoc.varpId() != -1) {
+                        try { varValue = api.getVarp(baseLoc.varpId()); } catch (Exception ignored) {}
+                    }
+                    var resolved = gameCache.resolveLocation(typeId, varValue);
+                    if (resolved != null) {
+                        String name = resolved.name();
+                        String option = null;
+                        if (resolved.actions() != null && optionSlot - 1 >= 0
+                                && optionSlot - 1 < resolved.actions().size()) {
+                            option = resolved.actions().get(optionSlot - 1);
+                        }
+                        if (name != null && !name.isEmpty()) {
+                            log.info("resolveObject (cache): name='{}' option='{}'", name, option);
+                            return new String[]{name, option};
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.debug("resolveObject cache error: {}", e.getMessage());
+            }
+        }
+
+        // 2. Fallback to RPC (for cache miss or cache not loaded yet)
         try {
             LocationType type = locTypeCache.computeIfAbsent(typeId, id -> {
                 try { return api.getLocationType(id); } catch (Exception e) { return null; }
             });
             if (type != null) {
+                // Follow transform chain if base type has empty name (morphing objects)
+                if ((type.name() == null || type.name().isEmpty())
+                        && (type.varbitId() != -1 || type.varpId() != -1)
+                        && type.transforms() != null && !type.transforms().isEmpty()) {
+                    int value = -1;
+                    if (type.varbitId() != -1) {
+                        try { value = api.getVarbit(type.varbitId()); } catch (Exception ignored) {}
+                    } else if (type.varpId() != -1) {
+                        try { value = api.getVarp(type.varpId()); } catch (Exception ignored) {}
+                    }
+                    if (value >= 0) {
+                        int transformedId = value < type.transforms().size()
+                                ? type.transforms().get(value) : type.transforms().getLast();
+                        if (transformedId != -1 && transformedId != typeId) {
+                            LocationType resolved = locTypeCache.computeIfAbsent(transformedId, id -> {
+                                try { return api.getLocationType(id); } catch (Exception e) { return null; }
+                            });
+                            if (resolved != null && resolved.name() != null && !resolved.name().isEmpty()) {
+                                type = resolved;
+                            }
+                        }
+                    }
+                }
                 String name = type.name();
                 String option = null;
-                if (type.options() != null && optionSlot - 1 < type.options().size()) {
+                if (type.options() != null && optionSlot - 1 >= 0 && optionSlot - 1 < type.options().size()) {
                     option = type.options().get(optionSlot - 1);
                 }
+                log.info("resolveObject (RPC): name='{}' option='{}'", name, option);
                 return new String[]{name, option};
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            log.debug("resolveObject RPC error: {}", e.getMessage());
+        }
         return new String[]{null, null};
     }
 
     private String[] resolveGroundItem(GameAPI api, int itemId, int optionSlot) {
+        // 1. Try offline cache first (instant, no RPC)
+        if (gameCache.isLoaded()) {
+            var cached = gameCache.getItem(itemId);
+            if (cached != null && cached.name() != null && !cached.name().isEmpty()) {
+                String option = null;
+                if (cached.groundActions() != null && optionSlot - 1 >= 0
+                        && optionSlot - 1 < cached.groundActions().size()) {
+                    option = cached.groundActions().get(optionSlot - 1);
+                }
+                return new String[]{cached.name(), option};
+            }
+        }
+
+        // 2. Fallback to RPC
         try {
             ItemType type = itemTypeCache.computeIfAbsent(itemId, id -> {
                 try { return api.getItemType(id); } catch (Exception e) { return null; }
@@ -540,7 +795,8 @@ public class XapiScript implements BotScript {
             if (type != null) {
                 String name = type.name();
                 String option = null;
-                if (type.groundOptions() != null && optionSlot - 1 < type.groundOptions().size()) {
+                if (type.groundOptions() != null && optionSlot - 1 >= 0
+                        && optionSlot - 1 < type.groundOptions().size()) {
                     option = type.groundOptions().get(optionSlot - 1);
                 }
                 return new String[]{name, option};
@@ -570,16 +826,43 @@ public class XapiScript implements BotScript {
             int ifaceId = packedHash >>> 16;
             int compId = packedHash & 0xFFFF;
 
-            // Resolve option name
+            // Resolve option name (cache survives interface closing)
             String optionName = null;
-            List<String> options = api.getComponentOptions(ifaceId, compId);
+            String cacheKey = ifaceId + ":" + compId;
+            List<String> options = null;
+            try { options = api.getComponentOptions(ifaceId, compId); } catch (Exception ignored) {}
+            log.debug("resolveComponent iface:{} comp:{} sub:{} optIdx:{} liveOptions:{}",
+                    ifaceId, compId, subComponent, optionIndex,
+                    options != null ? options : "null");
+            if (options != null && !options.isEmpty()) {
+                componentOptionsCache.put(cacheKey, options);
+            } else {
+                options = componentOptionsCache.get(cacheKey);
+                log.debug("resolveComponent cached options for {}:{} = {}", ifaceId, compId,
+                        options != null ? options : "null");
+            }
             log.debug("resolveComponent iface:{} comp:{} sub:{} optIdx:{} options:{}",
                     ifaceId, compId, subComponent, optionIndex, options);
             if (options != null && optionIndex - 1 >= 0 && optionIndex - 1 < options.size()) {
                 optionName = options.get(optionIndex - 1);
             }
+            // Fallback: DIALOGUE (30) uses 0-based option index
+            if (optionName == null && options != null && optionIndex >= 0 && optionIndex < options.size()) {
+                optionName = options.get(optionIndex);
+            }
+            // Fallback: offline interface cache (timing-proof — loaded from game cache dump)
+            if (optionName == null && gameCache.isLoaded()) {
+                List<String> cachedOpts = gameCache.getWidgetOptions(ifaceId, compId);
+                if (cachedOpts != null) {
+                    if (optionIndex - 1 >= 0 && optionIndex - 1 < cachedOpts.size()) {
+                        optionName = cachedOpts.get(optionIndex - 1);
+                    } else if (optionIndex >= 0 && optionIndex < cachedOpts.size()) {
+                        optionName = cachedOpts.get(optionIndex);
+                    }
+                }
+            }
 
-            // Resolve item name from the sub-component (slot)
+            // Resolve entity name from the sub-component (slot) or component text
             String entityName = null;
             if (subComponent >= 0) {
                 try {
@@ -592,10 +875,7 @@ public class XapiScript implements BotScript {
                                 log.debug("resolveComponent found child sub:{} itemId:{} type:{}",
                                         child.subComponentId(), child.itemId(), child.type());
                                 if (child.itemId() > 0) {
-                                    var itemType = api.getItemType(child.itemId());
-                                    if (itemType != null && itemType.name() != null) {
-                                        entityName = itemType.name();
-                                    }
+                                    entityName = lookupItemName(api, child.itemId());
                                 }
                                 break;
                             }
@@ -603,11 +883,70 @@ public class XapiScript implements BotScript {
                     }
                 } catch (Exception ignored) {}
             }
+            // Fallback: getComponentItem RPC for sub-components with itemId=0
+            if (entityName == null && subComponent >= 0) {
+                try {
+                    var compItem = api.getComponentItem(ifaceId, compId, subComponent);
+                    if (compItem != null && compItem.itemId() > 0) {
+                        entityName = lookupItemName(api, compItem.itemId());
+                    }
+                } catch (Exception ignored) {}
+            }
+            // For non-container components (sub=-1), try component text as entity name
+            if (entityName == null && subComponent < 0) {
+                try {
+                    String text = api.getComponentText(ifaceId, compId);
+                    if (text != null && !text.isEmpty()) {
+                        entityName = text.replaceAll("<[^>]+>", "").trim(); // strip HTML tags
+                    }
+                } catch (Exception ignored) {}
+                // Fallback: offline interface cache for component text
+                if (entityName == null && gameCache.isLoaded()) {
+                    String cachedText = gameCache.getWidgetText(ifaceId, compId);
+                    if (cachedText != null && !cachedText.isEmpty()) {
+                        entityName = cachedText.replaceAll("<[^>]+>", "").trim();
+                    }
+                }
+            }
+
+            // Final fallback: use interface name as entity context when we have an option but no entity
+            // e.g. "Close" on bank → "Close -> Bank"
+            if (entityName == null && optionName != null && gameCache.isLoaded()) {
+                entityName = gameCache.getInterfaceName(ifaceId);
+            }
 
             log.debug("resolveComponent result: entity={} option={}", entityName, optionName);
             return new String[]{entityName, optionName};
         } catch (Exception ignored) {}
         return new String[]{null, null};
+    }
+
+    /**
+     * Looks up an item name, trying the offline cache first then RPC fallback.
+     */
+    private String lookupItemName(GameAPI api, int itemId) {
+        // 1. Offline cache (instant)
+        if (gameCache.isLoaded()) {
+            var cached = gameCache.getItem(itemId);
+            if (cached != null && cached.name() != null && !cached.name().isEmpty()) {
+                return cached.name();
+            }
+        }
+        // 2. RPC fallback
+        try {
+            ItemType type = itemTypeCache.computeIfAbsent(itemId, id -> {
+                try { return api.getItemType(id); } catch (Exception e) { return null; }
+            });
+            if (type != null && type.name() != null) return type.name();
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    private static boolean isComponentAction(int actionId) {
+        return actionId == ActionTypes.COMPONENT
+                || actionId == ActionTypes.SELECT_COMPONENT_ITEM
+                || actionId == ActionTypes.CONTAINER_ACTION
+                || actionId == ActionTypes.DIALOGUE;
     }
 
     private static int findSlot(int[] options, int actionId) {
@@ -659,13 +998,44 @@ public class XapiScript implements BotScript {
         try { playerStats = api.getPlayerStats(); } catch (Exception ignored) {}
         try { openInterfaces = api.getOpenInterfaces(); } catch (Exception ignored) { openInterfaces = List.of(); }
 
+        // Pre-cache component options for ALL open interfaces (timing-proof).
+        // When an interface opens, we cache every component's options immediately.
+        // This ensures onActionExecuted always finds cached data even if the interface
+        // closes on click (e.g. Close button, Dialogue, crafting confirm).
+        try {
+            Set<Integer> currentOpen = new java.util.HashSet<>();
+            for (var oi : openInterfaces) currentOpen.add(oi.interfaceId());
+            for (int ifaceId : currentOpen) {
+                if (cachedInterfaceOptions.add(ifaceId)) { // Only on first open
+                    try {
+                        List<Component> comps = api.queryComponents(
+                                ComponentFilter.builder().interfaceId(ifaceId).build());
+                        if (comps != null) {
+                            for (Component c : comps) {
+                                String key = c.interfaceId() + ":" + c.componentId();
+                                if (!componentOptionsCache.containsKey(key)) {
+                                    try {
+                                        List<String> opts = api.getComponentOptions(c.interfaceId(), c.componentId());
+                                        if (opts != null && !opts.isEmpty()) {
+                                            componentOptionsCache.put(key, opts);
+                                        }
+                                    } catch (Exception ignored) {}
+                                }
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            cachedInterfaceOptions.retainAll(currentOpen);
+        } catch (Exception ignored) {}
+
         collectProductionData(api);
         collectProductionProgressData(api);
         collectSmithingData(api);
         collectActiveSmithingData(api);
         collectInventoryDiff(api);
 
-        // Mini menu poll
+        // Mini menu poll + pre-resolve action names while interfaces are still open
         try {
             var menu = api.getMiniMenu();
             if (menu != null && !menu.isEmpty()) {
@@ -677,6 +1047,55 @@ public class XapiScript implements BotScript {
                     lastMiniMenuHash = hash;
                     menuLog.add(new MenuSnapshot(System.currentTimeMillis(), currentTick, List.copyOf(menu)));
                     while (menuLog.size() > 500) menuLog.remove(0);
+                }
+                // Pre-resolve names for EVERY menu entry while interfaces are open.
+                // This eliminates timing issues: onActionExecuted just does a cache lookup.
+                for (var entry : menu) {
+                    var aKey = new ActionCacheKey(entry.actionId(), entry.param1(), entry.param2(), entry.param3());
+                    String optionText = entry.optionText();
+                    String entityName = null;
+
+                    int aid = entry.actionId();
+                    if (isComponentAction(aid)) {
+                        int packed = entry.param3();
+                        int iface = packed >>> 16;
+                        int comp = packed & 0xFFFF;
+                        int sub = entry.param2();
+
+                        // Cache component options while interface is alive
+                        String optKey = iface + ":" + comp;
+                        if (!componentOptionsCache.containsKey(optKey)) {
+                            try {
+                                List<String> opts = api.getComponentOptions(iface, comp);
+                                if (opts != null && !opts.isEmpty()) componentOptionsCache.put(optKey, opts);
+                            } catch (Exception ignored) {}
+                        }
+
+                        // Resolve entity name
+                        if (sub >= 0) {
+                            // Sub-component: get item via getComponentItem RPC
+                            try {
+                                var compItem = api.getComponentItem(iface, comp, sub);
+                                if (compItem != null && compItem.itemId() > 0) {
+                                    entityName = lookupItemName(api, compItem.itemId());
+                                }
+                            } catch (Exception ignored) {}
+                        } else {
+                            // No sub: try component text
+                            try {
+                                String text = api.getComponentText(iface, comp);
+                                if (text != null && !text.isEmpty()) {
+                                    entityName = text.replaceAll("<[^>]+>", "").trim();
+                                }
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                    // Fallback: mini menu's own itemId for entity name
+                    if (entityName == null && entry.itemId() > 0) {
+                        entityName = lookupItemName(api, entry.itemId());
+                    }
+
+                    preResolvedActions.put(aKey, new String[]{entityName, optionText});
                 }
             }
         } catch (Exception ignored) {}
@@ -1270,6 +1689,9 @@ public class XapiScript implements BotScript {
                 smithMaterialEntries = List.of();
                 smithProductEntries = List.of();
                 smithActiveBonuses = List.of();
+                smithExceedsBackpack = false;
+                smithFullOutfit = false;
+                smithVarrockArmour = false;
                 return;
             }
 
@@ -1365,6 +1787,12 @@ public class XapiScript implements BotScript {
                 } catch (Exception ignored) {}
             }
             smithActiveBonuses = List.copyOf(active);
+
+            // Exceeds backpack, outfit, armour checks
+            Smithing smithingApi = new Smithing(api);
+            smithExceedsBackpack = smithingApi.canExceedBackpackLimit();
+            smithFullOutfit = smithingApi.isWearingBlacksmithOutfit();
+            smithVarrockArmour = smithingApi.isWearingVarrockArmour();
 
         } catch (Exception e) {
             log.debug("Smithing data collection failed: {}", e.getMessage());
@@ -1949,56 +2377,50 @@ public class XapiScript implements BotScript {
     private void renderUI() {
         if (actionsTab == null) { ImGui.text("Initialising..."); return; }
         try {
-            renderControls();
+            // Evenly space tabs across the full width using custom buttons as tabs
+            String[] tabNames = {"Actions", "Variables", "Chat", "Player", "Entities",
+                    "Interfaces", "Inventory", "Production", "Smithing", "Settings"};
+            float availWidth = ImGui.getContentRegionAvailX();
+            float tabWidth = availWidth / tabNames.length;
 
-            ImGui.spacing();
+            for (int i = 0; i < tabNames.length; i++) {
+                if (i > 0) ImGui.sameLine(0, 0);
+                boolean isSelected = (selectedTab == i);
+                if (isSelected) {
+                    ImGui.pushStyleColor(ImGuiCol.Button, 0.2f, 0.45f, 0.65f, 1f);
+                    ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.25f, 0.5f, 0.7f, 1f);
+                    ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.2f, 0.45f, 0.65f, 1f);
+                } else {
+                    ImGui.pushStyleColor(ImGuiCol.Button, 0.15f, 0.15f, 0.18f, 1f);
+                    ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.25f, 0.25f, 0.3f, 1f);
+                    ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.2f, 0.4f, 0.6f, 1f);
+                }
+                if (ImGui.button(tabNames[i] + "##tab" + i, tabWidth, 0)) {
+                    selectedTab = i;
+                }
+                ImGui.popStyleColor(3);
+            }
+
             ImGui.separator();
-            ImGui.spacing();
 
-            // Show counts in a status line above tabs
+            // Render selected tab content
+            switch (selectedTab) {
+                case 0 -> { try { actionsTab.render(); } catch (Exception e) { log.error("Actions tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 1 -> { try { variablesTab.render(); } catch (Exception e) { log.error("Variables tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 2 -> { try { chatTab.render(); } catch (Exception e) { log.error("Chat tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 3 -> { try { playerTab.render(); } catch (Exception e) { log.error("Player tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 4 -> { try { entitiesTab.render(); } catch (Exception e) { log.error("Entities tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 5 -> { try { interfacesTab.render(); } catch (Exception e) { log.error("Interfaces tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 6 -> { try { inventoryTab.render(); } catch (Exception e) { log.error("Inventory tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 7 -> { try { productionTab.render(); } catch (Exception e) { log.error("Production tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 8 -> { try { smithingTab.render(); } catch (Exception e) { log.error("Smithing tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 9 -> { try { renderControls(); } catch (Exception e) { log.error("Settings tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+            }
+
+            // Status line below tabs
             ImGui.textColored(0.6f, 0.6f, 0.6f, 0.8f,
                     String.format("Actions: %d  |  Variables: %d  |  Chat: %d",
                             actionLog.size(), varLog.size(), chatLog.size()));
-
-            if (ImGui.beginTabBar("xapi_tabs")) {
-                if (ImGui.beginTabItem("Actions")) {
-                    try { actionsTab.render(); } catch (Exception e) { log.error("Actions tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Variables")) {
-                    try { variablesTab.render(); } catch (Exception e) { log.error("Variables tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Chat")) {
-                    try { chatTab.render(); } catch (Exception e) { log.error("Chat tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Player")) {
-                    try { playerTab.render(); } catch (Exception e) { log.error("Player tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Entities")) {
-                    try { entitiesTab.render(); } catch (Exception e) { log.error("Entities tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Interfaces")) {
-                    try { interfacesTab.render(); } catch (Exception e) { log.error("Interfaces tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Inventory")) {
-                    try { inventoryTab.render(); } catch (Exception e) { log.error("Inventory tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Production")) {
-                    try { productionTab.render(); } catch (Exception e) { log.error("Production tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                if (ImGui.beginTabItem("Smithing")) {
-                    try { smithingTab.render(); } catch (Exception e) { log.error("Smithing tab error", e); ImGui.text("Error: " + e.getMessage()); }
-                    ImGui.endTabItem();
-                }
-                ImGui.endTabBar();
-            }
         } catch (Exception e) {
             log.error("renderUI error", e);
             try { ImGui.text("UI Error: " + e.getMessage()); } catch (Exception ignored) {}
@@ -2063,6 +2485,21 @@ public class XapiScript implements BotScript {
 
             if (blocking) { ImGui.sameLine(); ImGui.textColored(0.9f, 0.2f, 0.2f, 1f, "  ACTIONS BLOCKED"); }
 
+        }
+
+        // Game Cache status
+        if (ImGui.collapsingHeader("Game Cache", ImGuiTreeNodeFlags.DefaultOpen)) {
+            if (gameCache.isLoaded()) {
+                ImGui.textColored(0.2f, 0.9f, 0.4f, 1f, "Loaded");
+                ImGui.sameLine();
+                ImGui.text(String.format("  %,d locations | %,d items | %,d NPCs | %,d interfaces (%,d widgets)",
+                        gameCache.locationCount(), gameCache.itemCount(), gameCache.npcCount(),
+                        gameCache.interfaceCount(), gameCache.widgetCount()));
+            } else if (gameCache.getLoadError() != null) {
+                ImGui.textColored(0.9f, 0.3f, 0.2f, 1f, "Error: " + gameCache.getLoadError());
+            } else {
+                ImGui.textColored(0.9f, 0.9f, 0.2f, 1f, "Loading...");
+            }
         }
 
         // Session management
