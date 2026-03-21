@@ -21,6 +21,10 @@ public final class Interfaces {
     public static final int WORLD_MAP = 1587;
     public static final int LOGOUT = 182;
     public static final int SETTINGS = 1433;
+    public static final int PRODUCTION = 1370;
+    public static final int PRODUCTION_GRID = 1371;
+    public static final int PRODUCTION_PROGRESS = 1251;
+    public static final int SMITHING = 37;
 
     /** Packs into the format used by the game client for component addressing. */
     public static int componentHash(int interfaceId, int componentId) {

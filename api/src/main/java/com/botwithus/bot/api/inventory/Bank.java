@@ -1,6 +1,6 @@
 package com.botwithus.bot.api.inventory;
 
-import com.botwithus.bot.api.antiban.DelayEngine;
+import com.botwithus.bot.api.antiban.Delays;
 import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
@@ -853,19 +853,11 @@ public final class Bank {
         };
     }
 
-    /** Ex-Gaussian delay for human-like interaction pacing (~350–700ms, right-skewed). */
-    private static int randomDelay() {
-        return (int) Math.max(250, Math.min(1200, Math.round(DelayEngine.exGaussianSample(400, 60, 80))));
-    }
+    /** @see com.botwithus.bot.api.antiban.Delays#randomDelay() */
+    private static int randomDelay() { return Delays.randomDelay(); }
 
-    /** Sleep the current (virtual) thread. */
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+    /** @see com.botwithus.bot.api.antiban.Delays#sleep(long) */
+    private static void sleep(int ms) { Delays.sleep(ms); }
 
     // ========================== Enums ==========================
 

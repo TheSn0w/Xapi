@@ -32,7 +32,10 @@ public class ActionDebugPanel implements GuiPanel {
 
     @Override
     public void render(CliContext ctx) {
-        ActionDebugger debugger = ActionDebugger.get();
+        var activeConn = ctx.getActiveConnection();
+        ActionDebugger debugger = activeConn != null
+                ? ActionDebugger.forConnection(activeConn.getName())
+                : ActionDebugger.global();
 
         ImGui.spacing();
 

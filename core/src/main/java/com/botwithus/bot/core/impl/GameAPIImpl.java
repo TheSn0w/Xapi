@@ -14,9 +14,11 @@ import static com.botwithus.bot.core.impl.MapHelper.*;
 public class GameAPIImpl implements GameAPI {
 
     private final RpcClient rpc;
+    private final ActionDebugger actionDebugger;
 
     public GameAPIImpl(RpcClient rpc) {
         this.rpc = rpc;
+        this.actionDebugger = ActionDebugger.forConnection(rpc.getConnectionName());
     }
 
     // ========================== System ==========================
@@ -77,7 +79,7 @@ public class GameAPIImpl implements GameAPI {
 
     @Override
     public void queueAction(GameAction action) {
-        if (!ActionDebugger.get().onAction(action)) {
+        if (!actionDebugger.onAction(action)) {
             return;
         }
         rpc.callSync("queue_action", Map.of(
@@ -90,7 +92,7 @@ public class GameAPIImpl implements GameAPI {
 
     @Override
     public int queueActions(List<GameAction> actions) {
-        ActionDebugger debugger = ActionDebugger.get();
+        ActionDebugger debugger = actionDebugger;
         List<GameAction> allowed = actions.stream()
                 .filter(debugger::onAction)
                 .toList();

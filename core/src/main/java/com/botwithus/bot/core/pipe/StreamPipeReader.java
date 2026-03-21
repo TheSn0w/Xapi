@@ -3,12 +3,11 @@ package com.botwithus.bot.core.pipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -28,7 +27,8 @@ public class StreamPipeReader implements AutoCloseable {
     private final String pipePath;
     private final Consumer<byte[]> frameCallback;
     private Consumer<String> errorCallback;
-    private volatile boolean running;
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean closed = new AtomicBoolean(false);
     private RandomAccessFile pipeFile;
 
     public StreamPipeReader(String pipeName, Consumer<byte[]> frameCallback) {
@@ -45,8 +45,8 @@ public class StreamPipeReader implements AutoCloseable {
      * Opens the pipe and starts reading frames on a virtual thread.
      */
     public void start() {
-        if (running) return;
-        running = true;
+        if (!running.compareAndSet(false, true)) return;
+        closed.set(false);
         Thread.ofVirtual().name("stream-reader").start(this::readLoop);
     }
 
@@ -59,7 +59,7 @@ public class StreamPipeReader implements AutoCloseable {
             reportError("Stream pipe connected: " + pipePath);
 
             byte[] header = new byte[4];
-            while (running) {
+            while (running.get()) {
                 readFully(header);
                 int length = ByteBuffer.wrap(header)
                         .order(ByteOrder.LITTLE_ENDIAN)
@@ -70,16 +70,16 @@ public class StreamPipeReader implements AutoCloseable {
                 }
                 byte[] frame = new byte[length];
                 readFully(frame);
-                if (running) {
+                if (running.get()) {
                     frameCallback.accept(frame);
                 }
             }
         } catch (IOException e) {
-            if (running) {
+            if (running.get()) {
                 reportError("Stream pipe error: " + e.getMessage());
             }
         } finally {
-            running = false;
+            running.set(false);
             closePipe();
         }
     }
@@ -101,6 +101,7 @@ public class StreamPipeReader implements AutoCloseable {
     }
 
     private void closePipe() {
+        if (!closed.compareAndSet(false, true)) return;
         if (pipeFile != null) {
             try { pipeFile.close(); } catch (IOException e) {
                 log.error("Error closing stream pipe: {}", e.getMessage());
@@ -109,12 +110,12 @@ public class StreamPipeReader implements AutoCloseable {
     }
 
     public boolean isRunning() {
-        return running;
+        return running.get();
     }
 
     @Override
     public void close() {
-        running = false;
+        running.set(false);
         closePipe();
     }
 }

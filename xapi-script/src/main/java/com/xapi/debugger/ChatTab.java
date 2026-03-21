@@ -52,7 +52,11 @@ final class ChatTab {
                 }
                 displayed++;
                 ImGui.tableNextRow();
-                if (script.hasActionOnTick(ce.gameTick())) ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.4f, 0.2f, 0.2f));
+                if (ce.gameTick() == script.selectedActionTick) {
+                    ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.6f, 0.2f, 0.3f));
+                } else if (script.hasActionOnTick(ce.gameTick())) {
+                    ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.4f, 0.2f, 0.2f));
+                }
 
                 ImGui.tableSetColumnIndex(0); ImGui.text(String.valueOf(displayed));
                 ImGui.tableSetColumnIndex(1); ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(ce.timestamp()), ZoneId.systemDefault()).format(XapiScript.TIME_FMT));

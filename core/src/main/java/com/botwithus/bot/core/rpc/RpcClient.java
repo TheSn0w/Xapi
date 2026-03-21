@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 import com.botwithus.bot.core.runtime.ConnectionContext;
 
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -43,8 +45,10 @@ public class RpcClient implements AutoCloseable {
     private final Condition dataAvailable = pipeLock.newCondition();
 
     private Consumer<Map<String, Object>> eventHandler;
-    private volatile boolean running;
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private String connectionName;
+    private static final int MAX_EVENT_CONCURRENCY = 100;
+    private final Semaphore eventSemaphore = new Semaphore(MAX_EVENT_CONCURRENCY);
 
     private long timeoutMs = 10_000;
     private RetryPolicy retryPolicy = RetryPolicy.NONE;
@@ -87,8 +91,7 @@ public class RpcClient implements AutoCloseable {
      * {@link #setEventHandler} and before any RPC calls.
      */
     public void start() {
-        if (running) return;
-        running = true;
+        if (!running.compareAndSet(false, true)) return;
         String connName = this.connectionName;
         Thread.ofVirtual().name("rpc-reader").start(() -> {
             if (connName != null) {
@@ -141,7 +144,7 @@ public class RpcClient implements AutoCloseable {
 
     @Override
     public void close() {
-        running = false;
+        running.set(false);
         pipe.close();
     }
 
@@ -159,7 +162,7 @@ public class RpcClient implements AutoCloseable {
      * becomes idle again.</p>
      */
     private void readerLoop() {
-        while (running && pipe.isOpen()) {
+        while (running.get() && pipe.isOpen()) {
             try {
                 if (pipe.available() > 0 && pipeLock.tryLock()) {
                     try {
@@ -186,15 +189,15 @@ public class RpcClient implements AutoCloseable {
                     }
                 }
             } catch (PipeException e) {
-                if (running) {
-                    running = false;
+                if (running.get()) {
+                    running.set(false);
                 }
                 break;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
-                if (running) {
+                if (running.get()) {
                     log.error("Reader error: {}", e.getMessage());
                 }
             }
@@ -206,10 +209,8 @@ public class RpcClient implements AutoCloseable {
      * matching ID arrives. Events received in between are dispatched on
      * virtual threads. Holds the pipe lock for the entire duration.
      *
-     * <p>Uses blocking {@link PipeClient#readMessage()} directly rather than
-     * polling with {@code available()} + sleep, since we hold the lock
-     * exclusively and the server responds in microseconds. A watchdog thread
-     * enforces the timeout by closing the pipe if the deadline expires.</p>
+     * <p>Polls {@link PipeClient#available()} before reading so the timeout
+     * fires even if the pipe would otherwise block indefinitely.</p>
      */
     private Map<String, Object> doCall(String method, Map<String, Object> params) {
         int id = idCounter.getAndIncrement();
@@ -229,11 +230,14 @@ public class RpcClient implements AutoCloseable {
 
             // Read messages until we get the response matching our request ID.
             // Any event messages that arrive first are dispatched asynchronously.
-            // Blocking read is safe here — we hold the lock exclusively and the
-            // server typically responds within microseconds.
+            // Poll available() before blocking read so timeout fires if the pipe stalls.
             while (true) {
-                if (System.nanoTime() > deadlineNanos) {
-                    throw new RpcTimeoutException(method, timeoutMs);
+                // Wait for data with timeout enforcement
+                while (pipe.available() == 0) {
+                    if (System.nanoTime() > deadlineNanos) {
+                        throw new RpcTimeoutException(method, timeoutMs);
+                    }
+                    Thread.sleep(1);
                 }
 
                 byte[] responseBytes = pipe.readMessage();
@@ -272,7 +276,7 @@ public class RpcClient implements AutoCloseable {
                 return result;
             } catch (RpcTimeoutException e) {
                 error = true;
-                metrics.recordCall(method, System.nanoTime() - startNanos, true);
+                lastException = e;
                 throw e;
             } catch (RpcException e) {
                 error = true;
@@ -287,7 +291,7 @@ public class RpcClient implements AutoCloseable {
             } finally {
                 if (!error) {
                     metrics.recordCall(method, System.nanoTime() - startNanos, false);
-                } else if (lastException != null && i == attempts - 1) {
+                } else if (lastException instanceof RpcTimeoutException || i == attempts - 1) {
                     metrics.recordCall(method, System.nanoTime() - startNanos, true);
                 }
             }
@@ -304,12 +308,21 @@ public class RpcClient implements AutoCloseable {
     private void dispatchEventAsync(Map<String, Object> msg) {
         Consumer<Map<String, Object>> handler = this.eventHandler;
         if (handler != null) {
+            if (!eventSemaphore.tryAcquire()) {
+                log.warn("Event dispatch backpressure: {} concurrent handlers, dropping event: {}",
+                        MAX_EVENT_CONCURRENCY, msg.get("event"));
+                return;
+            }
             String connName = this.connectionName;
             Thread.startVirtualThread(() -> {
-                if (connName != null) {
-                    ConnectionContext.set(connName);
+                try {
+                    if (connName != null) {
+                        ConnectionContext.set(connName);
+                    }
+                    handler.accept(msg);
+                } finally {
+                    eventSemaphore.release();
                 }
-                handler.accept(msg);
             });
         }
     }

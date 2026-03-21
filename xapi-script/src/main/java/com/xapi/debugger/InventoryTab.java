@@ -6,6 +6,8 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiTableFlags;
 
+import imgui.type.ImString;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 final class InventoryTab {
 
     private final XapiScript script;
+    private final ImString filterText = new ImString(256);
     private int lastLogSize = -1;
 
     InventoryTab(XapiScript s) {
@@ -22,6 +25,12 @@ final class InventoryTab {
     void render() {
         List<InventoryChange> log = script.inventoryLog;
 
+        ImGui.text("Filter:");
+        ImGui.sameLine();
+        ImGui.pushItemWidth(200);
+        ImGui.inputText("##inv_filter", filterText);
+        ImGui.popItemWidth();
+        ImGui.sameLine();
         if (ImGui.smallButton("Clear##inv_clear")) {
             script.inventoryLog.clear();
             lastLogSize = -1;
@@ -49,8 +58,14 @@ final class InventoryTab {
             ImGui.tableSetupScrollFreeze(0, 1);
             ImGui.tableHeadersRow();
 
+            String filter = filterText.get().toLowerCase();
             for (int i = 0; i < log.size(); i++) {
                 InventoryChange ic = log.get(i);
+                if (!filter.isEmpty()) {
+                    String name = ic.itemName() != null ? ic.itemName().toLowerCase() : "";
+                    String id = String.valueOf(ic.itemId());
+                    if (!name.contains(filter) && !id.contains(filter)) continue;
+                }
                 int delta = ic.newQty() - ic.oldQty();
 
                 ImGui.tableNextRow();

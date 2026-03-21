@@ -5,6 +5,7 @@ import static com.xapi.debugger.XapiData.*;
 import com.botwithus.bot.api.model.ItemVar;
 
 import imgui.ImGui;
+import imgui.ImGuiListClipper;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiTableFlags;
@@ -19,6 +20,7 @@ import java.util.List;
 final class VariablesTab {
 
     private final XapiScript script;
+    private final List<Integer> displayIndices = new ArrayList<>();
 
     VariablesTab(XapiScript s) {
         this.script = s;
@@ -171,6 +173,18 @@ final class VariablesTab {
             ImGui.separator();
         }
 
+        // -- Pre-filter var log into display indices --
+        displayIndices.clear();
+        for (int i = 0; i < vars.size(); i++) {
+            VarChange vc = vars.get(i);
+            if ("varbit".equals(vc.type()) && !script.showVarbits) continue;
+            if ("varp".equals(vc.type()) && !script.showVarps) continue;
+            if ("varc".equals(vc.type()) || "varcstr".equals(vc.type())) continue;
+            if ("itemvar".equals(vc.type()) && !script.showItemVarbits) continue;
+            if (watchIds.length > 0 && !inWatchlist(vc.varId(), watchIds)) continue;
+            displayIndices.add(i);
+        }
+
         // -- Main Var Change Log --
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
                 | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;
@@ -189,85 +203,85 @@ final class VariablesTab {
             ImGui.tableSetupScrollFreeze(0, 1);
             ImGui.tableHeadersRow();
 
-            int displayed = 0;
-            for (int i = 0; i < vars.size(); i++) {
-                VarChange vc = vars.get(i);
+            ImGuiListClipper clipper = new ImGuiListClipper();
+            clipper.begin(displayIndices.size());
+            while (clipper.step()) {
+                for (int row = clipper.getDisplayStart(); row < clipper.getDisplayEnd(); row++) {
+                    int i = displayIndices.get(row);
+                    if (i >= vars.size()) continue;
+                    VarChange vc = vars.get(i);
 
-                // Type filter
-                if ("varbit".equals(vc.type()) && !script.showVarbits) continue;
-                if ("varp".equals(vc.type()) && !script.showVarps) continue;
-                if ("varc".equals(vc.type()) || "varcstr".equals(vc.type())) continue; // varc disabled until API event support
-                if ("itemvar".equals(vc.type()) && !script.showItemVarbits) continue;
+                    ImGui.tableNextRow();
 
-                if (watchIds.length > 0 && !inWatchlist(vc.varId(), watchIds)) continue;
-                displayed++;
-                ImGui.tableNextRow();
+                    if (vc.gameTick() == script.selectedActionTick) {
+                        ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.6f, 0.2f, 0.3f));
+                    } else if (script.hasActionOnTick(vc.gameTick())) {
+                        ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.4f, 0.2f, 0.2f));
+                    }
 
-                if (script.hasActionOnTick(vc.gameTick())) {
-                    ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.4f, 0.2f, 0.2f));
-                }
+                    // Pin button
+                    ImGui.tableSetColumnIndex(0);
+                    String pinKey = vc.type() + ":" + vc.varId();
+                    boolean isPinned = script.pinnedVars.contains(pinKey);
+                    if (isPinned) {
+                        ImGui.pushStyleColor(ImGuiCol.Text, 0.9f, 0.8f, 0.3f, 1f);
+                        if (ImGui.smallButton("*##pin_" + i)) { script.pinnedVars.remove(pinKey); script.settingsDirty = true; }
+                        ImGui.popStyleColor();
+                    } else {
+                        if (ImGui.smallButton("+##pin_" + i)) { script.pinnedVars.add(pinKey); script.settingsDirty = true; }
+                    }
 
-                // Pin button
-                ImGui.tableSetColumnIndex(0);
-                String pinKey = vc.type() + ":" + vc.varId();
-                boolean isPinned = script.pinnedVars.contains(pinKey);
-                if (isPinned) {
-                    ImGui.pushStyleColor(ImGuiCol.Text, 0.9f, 0.8f, 0.3f, 1f);
-                    if (ImGui.smallButton("*##pin_" + i)) { script.pinnedVars.remove(pinKey); script.settingsDirty = true; }
-                    ImGui.popStyleColor();
-                } else {
-                    if (ImGui.smallButton("+##pin_" + i)) { script.pinnedVars.add(pinKey); script.settingsDirty = true; }
-                }
+                    ImGui.tableSetColumnIndex(1); ImGui.text(String.valueOf(row + 1));
+                    ImGui.tableSetColumnIndex(2); ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(vc.timestamp()), ZoneId.systemDefault()).format(XapiScript.TIME_FMT));
+                    ImGui.tableSetColumnIndex(3); ImGui.text(String.valueOf(vc.gameTick()));
 
-                ImGui.tableSetColumnIndex(1); ImGui.text(String.valueOf(displayed));
-                ImGui.tableSetColumnIndex(2); ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(vc.timestamp()), ZoneId.systemDefault()).format(XapiScript.TIME_FMT));
-                ImGui.tableSetColumnIndex(3); ImGui.text(String.valueOf(vc.gameTick()));
+                    ImGui.tableSetColumnIndex(4);
+                    if ("varbit".equals(vc.type())) ImGui.textColored(0.4f, 0.8f, 1f, 1f, vc.type());
+                    else if ("varp".equals(vc.type())) ImGui.textColored(1f, 0.7f, 0.4f, 1f, vc.type());
+                    else if ("itemvar".equals(vc.type())) ImGui.textColored(0.9f, 0.6f, 0.9f, 1f, vc.type());
+                    else ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, vc.type());
 
-                ImGui.tableSetColumnIndex(4);
-                if ("varbit".equals(vc.type())) ImGui.textColored(0.4f, 0.8f, 1f, 1f, vc.type());
-                else if ("varp".equals(vc.type())) ImGui.textColored(1f, 0.7f, 0.4f, 1f, vc.type());
-                else if ("itemvar".equals(vc.type())) ImGui.textColored(0.9f, 0.6f, 0.9f, 1f, vc.type());
-                else ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, vc.type());
-
-                ImGui.tableSetColumnIndex(5);
-                String varCode = getVarCode(vc.type(), vc.varId());
-                String varIdDisplay;
-                if ("itemvar".equals(vc.type())) {
-                    int slot = vc.varId() / 100000;
-                    int itemVarId = vc.varId() % 100000;
-                    varIdDisplay = "S" + slot + ":" + itemVarId;
-                } else {
-                    varIdDisplay = String.valueOf(vc.varId());
-                }
-                ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
-                if (ImGui.selectable(varIdDisplay + "##var_" + i)) ImGui.setClipboardText(varCode);
-                ImGui.popStyleColor();
-                if (ImGui.isItemHovered()) {
+                    ImGui.tableSetColumnIndex(5);
+                    String varCode = getVarCode(vc.type(), vc.varId());
+                    String varIdDisplay;
                     if ("itemvar".equals(vc.type())) {
                         int slot = vc.varId() / 100000;
                         int itemVarId = vc.varId() % 100000;
-                        ImGui.setTooltip("Click to copy: " + varCode + "\nSlot: " + slot + " | Varbit: " + itemVarId);
+                        varIdDisplay = "S" + slot + ":" + itemVarId;
                     } else {
-                        renderVarHistoryTooltip(vc.type(), vc.varId());
+                        varIdDisplay = String.valueOf(vc.varId());
+                    }
+                    ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+                    if (ImGui.selectable(varIdDisplay + "##var_" + i)) ImGui.setClipboardText(varCode);
+                    ImGui.popStyleColor();
+                    if (ImGui.isItemHovered()) {
+                        if ("itemvar".equals(vc.type())) {
+                            int slot = vc.varId() / 100000;
+                            int itemVarId = vc.varId() % 100000;
+                            ImGui.setTooltip("Click to copy: " + varCode + "\nSlot: " + slot + " | Varbit: " + itemVarId);
+                        } else {
+                            renderVarHistoryTooltip(vc.type(), vc.varId());
+                        }
+                    }
+
+                    ImGui.tableSetColumnIndex(6); ImGui.text(String.valueOf(vc.oldValue()));
+                    ImGui.tableSetColumnIndex(7);
+                    int delta = vc.newValue() - vc.oldValue();
+                    if (delta > 0) ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(vc.newValue()));
+                    else if (delta < 0) ImGui.textColored(0.9f, 0.3f, 0.3f, 1f, String.valueOf(vc.newValue()));
+                    else ImGui.text(String.valueOf(vc.newValue()));
+
+                    ImGui.tableSetColumnIndex(8);
+                    String deltaStr = delta >= 0 ? "+" + delta : String.valueOf(delta);
+                    Integer freq = script.varChangeCount.get(pinKey);
+                    if (freq != null && freq > 1) {
+                        ImGui.text(deltaStr + " (x" + freq + ")");
+                    } else {
+                        ImGui.text(deltaStr);
                     }
                 }
-
-                ImGui.tableSetColumnIndex(6); ImGui.text(String.valueOf(vc.oldValue()));
-                ImGui.tableSetColumnIndex(7);
-                int delta = vc.newValue() - vc.oldValue();
-                if (delta > 0) ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(vc.newValue()));
-                else if (delta < 0) ImGui.textColored(0.9f, 0.3f, 0.3f, 1f, String.valueOf(vc.newValue()));
-                else ImGui.text(String.valueOf(vc.newValue()));
-
-                ImGui.tableSetColumnIndex(8);
-                String deltaStr = delta >= 0 ? "+" + delta : String.valueOf(delta);
-                Integer freq = script.varChangeCount.get(pinKey);
-                if (freq != null && freq > 1) {
-                    ImGui.text(deltaStr + " (x" + freq + ")");
-                } else {
-                    ImGui.text(deltaStr);
-                }
             }
+            clipper.end();
 
             if (script.lastVarSize == -1) {
                 script.lastVarSize = vars.size();

@@ -505,9 +505,12 @@ public class ImGuiApp extends Application {
             ctx.getManagementRuntime().stopAll();
         }
 
-        // Clear action debugger state before disconnecting
-        ActionDebugger.get().setBlocking(false);
-        ActionDebugger.get().setRecording(false);
+        // Clear action debugger state for all connections before disconnecting
+        for (var conn : ctx.getConnections()) {
+            ActionDebugger debugger = ActionDebugger.forConnection(conn.getName());
+            debugger.setBlocking(false);
+            debugger.setRecording(false);
+        }
 
         // Force disconnect all — we're shutting down, don't skip running scripts
         // Connection.close() sends unblock RPC to the game client automatically

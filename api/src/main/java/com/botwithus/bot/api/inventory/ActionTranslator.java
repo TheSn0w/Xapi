@@ -234,12 +234,9 @@ public final class ActionTranslator {
         return highLevel + "  " + comment + "\n" + raw;
     }
 
-    /** Finds the 1-based slot index for an actionId in an options array, or -1. */
+    /** Delegates to {@link ActionTypes#findSlot(int[], int)}. */
     private static int findSlot(int[] options, int actionId) {
-        for (int i = 1; i < options.length; i++) {
-            if (options[i] == actionId) return i;
-        }
-        return -1;
+        return ActionTypes.findSlot(options, actionId);
     }
 
     private static boolean hasName(String s) { return s != null && !s.isEmpty(); }
@@ -491,52 +488,30 @@ public final class ActionTranslator {
 
     // ── Script generation helpers ────────────────────────────────────────
 
+    /** Entity type definitions for code generation: (queryPrefix, optionArray, idMethod). */
+    private record EntityDef(String queryPrefix, int[] options, String idMethod) {}
+    private static final EntityDef[] ENTITY_DEFS = {
+        new EntityDef("npcs", ActionTypes.NPC_OPTIONS, "index"),
+        new EntityDef("objects", ActionTypes.OBJECT_OPTIONS, "typeId"),
+        new EntityDef("groundItems", ActionTypes.GROUND_ITEM_OPTIONS, "itemId"),
+        new EntityDef("players", ActionTypes.PLAYER_OPTIONS, "index"),
+    };
+
     /** Returns [queryExpr, interactSuffix] for entity actions, or null. */
     private static String[] generateEntityParts(ActionEntry e) {
         int aid = e.actionId();
-
-        int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, aid);
-        if (npcSlot > 0) {
-            String query = hasName(e.entityName())
-                    ? "npcs.query().named(\"" + e.entityName() + "\").nearest()"
-                    : "npcs.query().index(" + e.param1() + ").nearest()";
-            String interact = hasName(e.optionName())
-                    ? ".interact(\"" + e.optionName() + "\")"
-                    : ".interact(" + npcSlot + ")";
-            return new String[]{query, interact};
+        for (EntityDef def : ENTITY_DEFS) {
+            int slot = findSlot(def.options, aid);
+            if (slot > 0) {
+                String query = hasName(e.entityName())
+                        ? def.queryPrefix + ".query().named(\"" + e.entityName() + "\").nearest()"
+                        : def.queryPrefix + ".query()." + def.idMethod + "(" + e.param1() + ").nearest()";
+                String interact = (hasName(e.optionName()) && !"players".equals(def.queryPrefix))
+                        ? ".interact(\"" + e.optionName() + "\")"
+                        : ".interact(" + slot + ")";
+                return new String[]{query, interact};
+            }
         }
-
-        int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, aid);
-        if (objSlot > 0) {
-            String query = hasName(e.entityName())
-                    ? "objects.query().named(\"" + e.entityName() + "\").nearest()"
-                    : "objects.query().typeId(" + e.param1() + ").nearest()";
-            String interact = hasName(e.optionName())
-                    ? ".interact(\"" + e.optionName() + "\")"
-                    : ".interact(" + objSlot + ")";
-            return new String[]{query, interact};
-        }
-
-        int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, aid);
-        if (giSlot > 0) {
-            String query = hasName(e.entityName())
-                    ? "groundItems.query().named(\"" + e.entityName() + "\").nearest()"
-                    : "groundItems.query().itemId(" + e.param1() + ").nearest()";
-            String interact = hasName(e.optionName())
-                    ? ".interact(\"" + e.optionName() + "\")"
-                    : ".interact(" + giSlot + ")";
-            return new String[]{query, interact};
-        }
-
-        int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, aid);
-        if (playerSlot > 0) {
-            String query = hasName(e.entityName())
-                    ? "players.query().named(\"" + e.entityName() + "\").nearest()"
-                    : "players.query().index(" + e.param1() + ").nearest()";
-            String interact = ".interact(" + playerSlot + ")";
-            return new String[]{query, interact};
-        }
-
         return null;
     }
 

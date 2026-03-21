@@ -124,4 +124,12 @@ public final class ActionTypes {
     public static String nameOf(int actionId) {
         return NAMES.getOrDefault(actionId, String.valueOf(actionId));
     }
+
+    /** Finds the 1-based slot index for an actionId in an options array, or -1. */
+    public static int findSlot(int[] options, int actionId) {
+        for (int i = 1; i < options.length; i++) {
+            if (options[i] == actionId) return i;
+        }
+        return -1;
+    }
 }

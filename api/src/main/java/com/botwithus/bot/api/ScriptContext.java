@@ -75,4 +75,11 @@ public interface ScriptContext {
      * @return the {@link Pace} instance
      */
     Pace getPace();
+
+    /**
+     * Returns the name of the connection this script is running on.
+     *
+     * @return the connection name, or {@code null} for unnamed connections
+     */
+    String getConnectionName();
 }

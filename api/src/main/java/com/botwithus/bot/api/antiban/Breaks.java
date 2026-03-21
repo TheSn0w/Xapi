@@ -196,14 +196,8 @@ public final class Breaks {
         }
     }
 
-    private static void sleep(long ms) {
-        if (ms <= 0) return;
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+    /** @see Delays#sleep(long) */
+    private static void sleep(long ms) { Delays.sleep(ms); }
 
     private long rollCooldown() {
         double scale = seed.breakCooldownScale();

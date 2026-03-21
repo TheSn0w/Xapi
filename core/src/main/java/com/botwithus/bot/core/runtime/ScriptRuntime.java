@@ -74,6 +74,7 @@ public class ScriptRuntime {
     public void stopAll() {
         for (ScriptRunner runner : runners) {
             runner.dispose();
+            runner.awaitStop(3000);
             log.info("Stopped script: {}", runner.getScriptName());
         }
         runners.clear();

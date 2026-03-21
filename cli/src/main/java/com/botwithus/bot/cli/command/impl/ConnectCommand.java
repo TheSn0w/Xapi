@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ConnectCommand implements Command {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectCommand.class);
+    private static final ExecutorService PROBE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override public String name() { return "connect"; }
     @Override public List<String> aliases() { return List.of("conn"); }
@@ -49,6 +52,9 @@ public class ConnectCommand implements Command {
     public CommandResult executeWithResult(ParsedCommand parsed, CliContext ctx) {
         String sub = parsed.arg(0);
         if (sub == null) {
+            if (parsed.hasFlag("all")) {
+                return connectAll(ctx);
+            }
             return autoConnect(ctx);
         } else {
             return switch (sub.toLowerCase()) {
@@ -251,7 +257,7 @@ public class ConnectCommand implements Command {
      */
     private PipeInfo probePipe(String pipeName) {
         try {
-            return CompletableFuture.supplyAsync(() -> probePipeBlocking(pipeName), java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor())
+            return CompletableFuture.supplyAsync(() -> probePipeBlocking(pipeName), PROBE_EXECUTOR)
                     .get(5, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             log.warn("probePipe timed out for {}", pipeName);
@@ -348,6 +354,25 @@ public class ConnectCommand implements Command {
         } catch (Exception e) {
             log.error("probeAndAutoStart failed for {}", connName, e);
         }
+    }
+
+    private CommandResult connectAll(CliContext ctx) {
+        if (lastScanResults == null || lastScanResults.isEmpty()) {
+            ctx.out().println("No scan results available. Run 'connect' or 'connect scan' first.");
+            return CommandResult.error("No scan results.");
+        }
+        int connected = 0;
+        for (PipeInfo info : lastScanResults) {
+            try {
+                ctx.connect(info.pipeName());
+                probeAndAutoStart(info.pipeName(), ctx);
+                connected++;
+            } catch (Exception e) {
+                ctx.out().println("Failed to connect to " + info.pipeName() + ": " + e.getMessage());
+            }
+        }
+        ctx.out().println("Connected to " + connected + " of " + lastScanResults.size() + " pipe(s).");
+        return CommandResult.ok("Connected to " + connected + " pipe(s).");
     }
 
     private void listConnections(CliContext ctx) {

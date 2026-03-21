@@ -10,6 +10,7 @@ import com.botwithus.bot.api.ScriptManifest;
 import com.botwithus.bot.api.event.*;
 import com.botwithus.bot.api.inventory.ActionTranslator;
 import com.botwithus.bot.api.inventory.ActionTypes;
+import com.botwithus.bot.api.inventory.Smithing;
 import com.botwithus.bot.api.model.*;
 import com.botwithus.bot.api.model.ItemVar;
 import com.botwithus.bot.api.model.InventoryItem;
@@ -66,6 +67,7 @@ public class XapiScript implements BotScript {
 
 
     private ScriptContext ctx;
+    private ActionDebugger actionDebugger;
 
     // ── Tab instances ────────────────────────────────────────────────────
 
@@ -76,6 +78,8 @@ public class XapiScript implements BotScript {
     private EntitiesTab entitiesTab;
     private InterfacesTab interfacesTab;
     private InventoryTab inventoryTab;
+    private ProductionTab productionTab;
+    private SmithingTab smithingTab;
 
     // ── Shared state (package-private for tab access) ────────────────────
 
@@ -96,6 +100,12 @@ public class XapiScript implements BotScript {
     volatile boolean exportRequested;
     volatile String importPath;
     volatile String lastExportStatus = "";
+
+    // Auto-save state
+    volatile boolean actionsDirty;
+    private long lastAutoSave;
+    private static final long AUTOSAVE_DEBOUNCE_MS = 10_000;
+    private Thread shutdownHook;
 
     // Replay state
     volatile boolean replaying;
@@ -149,6 +159,14 @@ public class XapiScript implements BotScript {
     private volatile int lastActionInventoryLogSize = 0;
     final List<ActionSnapshot> snapshotLog = new CopyOnWriteArrayList<>();
 
+    // Per-tick entity/type caches for action resolution (avoids redundant RPC per action)
+    private int resolveTickCache = -1;
+    private List<Entity> cachedNpcs;
+    private List<Entity> cachedPlayers;
+    private final HashMap<Integer, NpcType> npcTypeCache = new HashMap<>();
+    private final HashMap<Integer, LocationType> locTypeCache = new HashMap<>();
+    private final HashMap<Integer, ItemType> itemTypeCache = new HashMap<>();
+
     // Pinned variables (survive clears)
     final Set<String> pinnedVars = ConcurrentHashMap.newKeySet(); // "varbit:1234", "varp:567"
     final ConcurrentHashMap<String, Integer> pinnedCurrentValues = new ConcurrentHashMap<>();
@@ -180,6 +198,44 @@ public class XapiScript implements BotScript {
     final List<InterfaceEvent> interfaceEventLog = new CopyOnWriteArrayList<>();
     private volatile Set<Integer> previousOpenInterfaceIds = Set.of();
 
+    // Production interface state (collected in onLoop inspector cycle)
+    volatile boolean prodOpen;
+    volatile int prodSelectedItem, prodMaxQty, prodChosenQty;
+    volatile int prodCategoryEnum, prodProductListEnum, prodCategoryDropdown;
+    volatile boolean prodHasCategories;
+    volatile String prodSelectedName;
+    volatile List<ProductionTab.ProductionTabEntry> prodGridEntries = List.of();
+    volatile List<String> prodCategoryNames = List.of();
+
+    // Production progress (interface 1251) state
+    volatile boolean progressOpen;
+    volatile int progressTotal, progressRemaining, progressSpeedModifier;
+    volatile int progressProductId, progressVisibility;
+    volatile String progressProductName, progressTimeText, progressCounterText;
+    volatile int progressPercent;
+
+    // Smithing interface (37) state
+    volatile boolean smithOpen;
+    volatile boolean smithIsSmelting;
+    volatile int smithMaterialDbrow, smithProductDbrow, smithSelectedItem;
+    volatile int smithLocation, smithQuantity, smithQualityTier;
+    volatile int smithOutfitBonus1, smithOutfitBonus2, smithHeatEfficiency;
+    volatile String smithProductName, smithQualityName;
+    volatile List<SmithingTab.SmithingTabEntry> smithMaterialEntries = List.of();
+    volatile List<SmithingTab.SmithingTabEntry> smithProductEntries = List.of();
+    volatile List<Integer> smithActiveBonuses = List.of();
+
+    // Active smithing progress (independent of interface 37 being open)
+    volatile boolean activelySmithing;
+    volatile Smithing.UnfinishedItem activeSmithingItem;
+    volatile List<Smithing.UnfinishedItem> allUnfinishedItems = List.of();
+    volatile int smithMaxHeat;
+    volatile int smithHeatPercent;
+    volatile String smithHeatBand = "Zero";
+    volatile int smithProgressPerStrike;
+    volatile int smithReheatRate;
+    volatile String smithRawVarsDebug = "";
+
     // Entity facades (initialized in onStart)
     private Npcs npcs;
     private Players players;
@@ -196,6 +252,19 @@ public class XapiScript implements BotScript {
     volatile boolean saveSettingsRequested;
 
     // ── UI state (render thread only) ───────────────────────────────────
+
+    // Column visibility: #, Time, Tick, Action, Target, Intent, Vars, P1, P2, P3, Code
+    final boolean[] columnVisible = {true, true, true, true, true, true, true, true, true, true, true};
+    boolean autoScroll = true;
+
+    // Cross-tab linking: when user clicks an action row, highlight vars/chat on the same tick
+    volatile int selectedActionTick = -1;
+
+    // Max log entry cap (0 = unlimited)
+    int maxLogEntries = 5000;
+    volatile int trimmedActionCount;
+    volatile int trimmedVarCount;
+    volatile int trimmedChatCount;
 
     int lastActionSize = -1;
     int lastVarSize = -1;
@@ -226,6 +295,7 @@ public class XapiScript implements BotScript {
     @Override
     public void onStart(ScriptContext ctx) {
         this.ctx = ctx;
+        this.actionDebugger = ActionDebugger.forConnection(ctx.getConnectionName());
         log.info("Xapi action debugger v2.1 started");
 
         // Create tab instances
@@ -236,6 +306,8 @@ public class XapiScript implements BotScript {
         entitiesTab = new EntitiesTab(this);
         interfacesTab = new InterfacesTab(this);
         inventoryTab = new InventoryTab(this);
+        productionTab = new ProductionTab(this);
+        smithingTab = new SmithingTab(this);
 
         // Initialize entity facades
         GameAPI gameApi = ctx.getGameAPI();
@@ -243,8 +315,9 @@ public class XapiScript implements BotScript {
         players = new Players(gameApi);
         sceneObjects = new SceneObjects(gameApi);
 
-        // Load persistent settings
+        // Load persistent settings and restore last session
         loadSettings();
+        loadAutoSave();
 
         // Force-sync blocking state to game client on start (selective blocking is per-action, not client-wide)
         try {
@@ -264,12 +337,22 @@ public class XapiScript implements BotScript {
 
         try { Files.createDirectories(SESSION_DIR); } catch (IOException ignored) {}
 
+        // Last-resort save for hard kills (IntelliJ stop, SIGTERM)
+        shutdownHook = new Thread(this::doAutoSave, "xapi-shutdown-save");
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
     // ── Event handlers (event thread -- RPC safe) ────────────────────────
 
     private void onTick(TickEvent e) {
         currentTick = e.getTick();
+        // Invalidate per-tick entity caches
+        resolveTickCache = -1;
+        cachedNpcs = null;
+        cachedPlayers = null;
+        // Data collection is done in onLoop() to avoid backpressure —
+        // onTick fires every 600ms regardless of whether previous RPC calls finished,
+        // whereas onLoop naturally waits for the current iteration to complete.
     }
 
     private void onActionExecuted(ActionExecutedEvent e) {
@@ -299,6 +382,7 @@ public class XapiScript implements BotScript {
                     System.currentTimeMillis(), currentTick, false, "client",
                     names[0], names[1], px, py, pp, pa, pm
             ));
+            actionsDirty = true;
 
             // Build interaction snapshot from cached state (no RPC calls)
             try {
@@ -407,14 +491,19 @@ public class XapiScript implements BotScript {
 
     private String[] resolveNpc(GameAPI api, int serverIndex, int optionSlot) {
         try {
-            List<Entity> npcs = api.queryEntities(
-                    EntityFilter.builder().type("npc").maxResults(500).build());
-            for (Entity npc : npcs) {
+            if (cachedNpcs == null || resolveTickCache != currentTick) {
+                cachedNpcs = api.queryEntities(
+                        EntityFilter.builder().type("npc").maxResults(500).build());
+                resolveTickCache = currentTick;
+            }
+            for (Entity npc : cachedNpcs) {
                 if (npc.serverIndex() == serverIndex) {
                     String name = npc.name();
                     String option = null;
                     try {
-                        NpcType type = api.getNpcType(npc.typeId());
+                        NpcType type = npcTypeCache.computeIfAbsent(npc.typeId(), id -> {
+                            try { return api.getNpcType(id); } catch (Exception e) { return null; }
+                        });
                         if (type != null && type.options() != null && optionSlot - 1 < type.options().size()) {
                             option = type.options().get(optionSlot - 1);
                         }
@@ -428,7 +517,9 @@ public class XapiScript implements BotScript {
 
     private String[] resolveObject(GameAPI api, int typeId, int optionSlot) {
         try {
-            LocationType type = api.getLocationType(typeId);
+            LocationType type = locTypeCache.computeIfAbsent(typeId, id -> {
+                try { return api.getLocationType(id); } catch (Exception e) { return null; }
+            });
             if (type != null) {
                 String name = type.name();
                 String option = null;
@@ -443,7 +534,9 @@ public class XapiScript implements BotScript {
 
     private String[] resolveGroundItem(GameAPI api, int itemId, int optionSlot) {
         try {
-            ItemType type = api.getItemType(itemId);
+            ItemType type = itemTypeCache.computeIfAbsent(itemId, id -> {
+                try { return api.getItemType(id); } catch (Exception e) { return null; }
+            });
             if (type != null) {
                 String name = type.name();
                 String option = null;
@@ -458,9 +551,12 @@ public class XapiScript implements BotScript {
 
     private String[] resolvePlayer(GameAPI api, int serverIndex) {
         try {
-            List<Entity> players = api.queryEntities(
-                    EntityFilter.builder().type("player").maxResults(200).build());
-            for (Entity player : players) {
+            if (cachedPlayers == null || resolveTickCache != currentTick) {
+                cachedPlayers = api.queryEntities(
+                        EntityFilter.builder().type("player").maxResults(200).build());
+                resolveTickCache = currentTick;
+            }
+            for (Entity player : cachedPlayers) {
                 if (player.serverIndex() == serverIndex) {
                     return new String[]{player.name(), null};
                 }
@@ -515,10 +611,7 @@ public class XapiScript implements BotScript {
     }
 
     private static int findSlot(int[] options, int actionId) {
-        for (int i = 1; i < options.length; i++) {
-            if (options[i] == actionId) return i;
-        }
-        return -1;
+        return ActionTypes.findSlot(options, actionId);
     }
 
     // ── Script loop ──────────────────────────────────────────────────────
@@ -526,7 +619,7 @@ public class XapiScript implements BotScript {
     @Override
     public int onLoop() {
         GameAPI api = ctx.getGameAPI();
-        ActionDebugger debugger = ActionDebugger.get();
+        ActionDebugger debugger = actionDebugger;
         debugger.setRecording(recording);
         debugger.setBlocking(blocking);
 
@@ -561,49 +654,43 @@ public class XapiScript implements BotScript {
             doReplayStep(api);
         }
 
-        // Collect local player data (before inspector -- used for distance filter)
+        // Lightweight data collection (every loop iteration — ~600ms)
         try { localPlayerData = api.getLocalPlayer(); } catch (Exception ignored) {}
         try { playerStats = api.getPlayerStats(); } catch (Exception ignored) {}
+        try { openInterfaces = api.getOpenInterfaces(); } catch (Exception ignored) { openInterfaces = List.of(); }
 
-        // Inspector data collection (every ~3 ticks / 1.8s)
-        if (now - lastInspectorUpdate > 1800) {
-            lastInspectorUpdate = now;
-            collectInspectorData(api);
-        }
-
-        // Inventory diff
+        collectProductionData(api);
+        collectProductionProgressData(api);
+        collectSmithingData(api);
+        collectActiveSmithingData(api);
         collectInventoryDiff(api);
 
-        // Poll mini menu — cache the current right-click menu so we can match option text to actions
+        // Mini menu poll
         try {
             var menu = api.getMiniMenu();
             if (menu != null && !menu.isEmpty()) {
                 lastMiniMenu = menu;
-                // Track menu changes for history log
                 int hash = menu.stream()
                         .mapToInt(e -> Objects.hash(e.optionText(), e.actionId(), e.param1(), e.param2(), e.param3()))
                         .sum();
                 if (hash != lastMiniMenuHash) {
                     lastMiniMenuHash = hash;
                     menuLog.add(new MenuSnapshot(System.currentTimeMillis(), currentTick, List.copyOf(menu)));
-                    // Cap at 500 entries
                     while (menuLog.size() > 500) menuLog.remove(0);
                 }
             }
         } catch (Exception ignored) {}
 
-        // Poll pinned variable live values
         pollPinnedVars(api);
-
-        // Poll chat history as fallback
         pollChatHistory(api);
-
-        // Poll action history (captures manual player actions not seen by events)
         pollActionHistory(api);
-
-        // Poll interface events every tick (fast open/close detection)
         pollInterfaceEvents(api);
 
+        // Heavy inspector data collection (entity queries — every ~3 ticks / 1.8s)
+        if (now - lastInspectorUpdate > 1800) {
+            lastInspectorUpdate = now;
+            collectInspectorData(api);
+        }
 
         // Prune varsByTick to prevent unbounded growth
         if (varsByTick.size() > 5000) {
@@ -621,6 +708,22 @@ public class XapiScript implements BotScript {
             settingsDirty = false;
             lastSettingsSave = now;
             saveSettings();
+        }
+
+        // Trim logs if over max entry cap
+        if (maxLogEntries > 0) {
+            trimmedActionCount += trimLog(actionLog, maxLogEntries);
+            trimmedVarCount += trimLog(varLog, maxLogEntries);
+            trimmedChatCount += trimLog(chatLog, maxLogEntries);
+            trimLog(snapshotLog, maxLogEntries);
+            trimLog(inventoryLog, maxLogEntries);
+        }
+
+        // Auto-save when dirty, debounced to avoid excessive I/O
+        if (actionsDirty && now - lastAutoSave >= AUTOSAVE_DEBOUNCE_MS) {
+            actionsDirty = false;
+            lastAutoSave = now;
+            doAutoSave();
         }
 
         return 600;
@@ -665,12 +768,14 @@ public class XapiScript implements BotScript {
                     new HashSet<>(pinnedVars), new HashMap<>(varAnnotations),
                     useNamesForGeneration, scriptClassName.get(),
                     replaySpeedArr[0],
-                    entityDistanceFilter
+                    entityDistanceFilter,
+                    Arrays.copyOf(columnVisible, columnVisible.length),
+                    autoScroll
             );
             Files.writeString(SETTINGS_FILE, GSON.toJson(settings));
             log.debug("Settings saved to {}", SETTINGS_FILE);
         } catch (Exception e) {
-            log.debug("Failed to save settings: {}", e.getMessage());
+            log.warn("Failed to save settings: {}", e.getMessage());
         }
     }
 
@@ -709,9 +814,76 @@ public class XapiScript implements BotScript {
                 entityDistanceArr[0] = entityDistanceFilter;
             }
 
+            if (s.columnVisibility() != null) {
+                System.arraycopy(s.columnVisibility(), 0, columnVisible, 0,
+                        Math.min(s.columnVisibility().length, columnVisible.length));
+            }
+            autoScroll = s.autoScroll();
+
             log.info("Settings loaded from {}", SETTINGS_FILE);
         } catch (Exception e) {
             log.debug("Failed to load settings: {}", e.getMessage());
+        }
+    }
+
+    /** Trims a list to maxSize by bulk-replacing with the tail. Returns number removed. */
+    private static <T> int trimLog(List<T> list, int maxSize) {
+        int size = list.size();
+        if (size <= maxSize) return 0;
+        // Bulk snapshot-and-replace: 2 array copies instead of N individual remove(0) calls.
+        // CopyOnWriteArrayList doesn't support subList().clear(), so we snapshot, clear, and re-add.
+        List<T> keep = new ArrayList<>(list.subList(size - maxSize, size));
+        list.clear();
+        list.addAll(keep);
+        return size - maxSize;
+    }
+
+    // ── Auto-save ─────────────────────────────────────────────────────
+
+    private static final Path AUTOSAVE_FILE = SESSION_DIR.resolve("autosave.json");
+
+    private void doAutoSave() {
+        try {
+            SessionData session = new SessionData(
+                    new ArrayList<>(actionLog), new ArrayList<>(varLog), new ArrayList<>(chatLog),
+                    new ArrayList<>(snapshotLog),
+                    System.currentTimeMillis(), "autosave",
+                    lastSeenActionTimestamp
+            );
+            Files.writeString(AUTOSAVE_FILE, GSON.toJson(session));
+        } catch (Exception e) {
+            log.warn("Auto-save failed: {}", e.getMessage());
+        }
+    }
+
+    private void loadAutoSave() {
+        try {
+            if (!Files.exists(AUTOSAVE_FILE)) return;
+            String json = Files.readString(AUTOSAVE_FILE);
+            SessionData session = GSON.fromJson(json, SessionData.class);
+            if (session == null) return;
+            if (session.actions() != null && !session.actions().isEmpty()) {
+                actionLog.addAll(session.actions());
+            }
+            if (session.vars() != null && !session.vars().isEmpty()) {
+                varLog.addAll(session.vars());
+                for (VarChange vc : session.vars()) {
+                    varsByTick.computeIfAbsent(vc.gameTick(), k -> new CopyOnWriteArrayList<>()).add(vc);
+                }
+            }
+            if (session.chat() != null && !session.chat().isEmpty()) {
+                chatLog.addAll(session.chat());
+            }
+            if (session.snapshots() != null && !session.snapshots().isEmpty()) {
+                snapshotLog.addAll(session.snapshots());
+            }
+            if (session.lastSeenActionTimestamp() > 0) {
+                lastSeenActionTimestamp = session.lastSeenActionTimestamp();
+            }
+            log.info("Auto-save restored: {} actions, {} vars, {} chat",
+                    actionLog.size(), varLog.size(), chatLog.size());
+        } catch (Exception e) {
+            log.debug("Failed to load auto-save: {}", e.getMessage());
         }
     }
 
@@ -722,7 +894,8 @@ public class XapiScript implements BotScript {
             SessionData session = new SessionData(
                     new ArrayList<>(actionLog), new ArrayList<>(varLog), new ArrayList<>(chatLog),
                     new ArrayList<>(snapshotLog),
-                    System.currentTimeMillis(), "Xapi session export"
+                    System.currentTimeMillis(), "Xapi session export",
+                    lastSeenActionTimestamp
             );
             String filename = "session_" + new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date()) + ".json";
             Path file = SESSION_DIR.resolve(filename);
@@ -929,12 +1102,354 @@ public class XapiScript implements BotScript {
             inspectInterfaceId = -1; // Reset -- one-shot fetch
         }
 
+        // Production, progress, and smithing data now collected per-tick in onTick()
+
         // Collect item varbits for equipped items (guarded — may crash game client)
         if (showItemVarbits) {
             collectItemVarbits(api);
         } else {
             itemVarCache = List.of();
             previousItemVarSnapshot = Map.of();
+        }
+    }
+
+    /**
+     * Collects production interface state for the Production debug tab.
+     * All data is pre-fetched here (onLoop thread) so the render thread never calls RPC.
+     */
+    private void collectProductionData(GameAPI api) {
+        try {
+            boolean isOpen = api.isInterfaceOpen(1370);
+            prodOpen = isOpen;
+            if (!isOpen) {
+                prodSelectedItem = -1;
+                prodMaxQty = -1;
+                prodChosenQty = -1;
+                prodCategoryEnum = -1;
+                prodProductListEnum = -1;
+                prodCategoryDropdown = -1;
+                prodHasCategories = false;
+                prodSelectedName = null;
+                prodGridEntries = List.of();
+                prodCategoryNames = List.of();
+                return;
+            }
+
+            // Read varps
+            prodCategoryEnum = api.getVarp(1168);
+            prodProductListEnum = api.getVarp(1169);
+            prodSelectedItem = api.getVarp(1170);
+            prodCategoryDropdown = api.getVarp(7881);
+            prodMaxQty = api.getVarp(8846);
+            prodChosenQty = api.getVarp(8847);
+            prodHasCategories = prodCategoryEnum != -1 && prodCategoryDropdown != -1;
+
+            // Resolve selected product name
+            if (prodSelectedItem > 0) {
+                try {
+                    ItemType type = api.getItemType(prodSelectedItem);
+                    prodSelectedName = type != null ? type.name() : null;
+                } catch (Exception e) { prodSelectedName = null; }
+            } else {
+                prodSelectedName = null;
+            }
+
+            // Collect product grid entries
+            try {
+                List<Component> children = api.getComponentChildren(1371, 22);
+                List<ProductionTab.ProductionTabEntry> entries = new ArrayList<>();
+                for (int i = 0; i < children.size(); i++) {
+                    if (i % 4 == 2) { // Icon sub-component carries the itemId
+                        Component c = children.get(i);
+                        if (c.itemId() > 0) {
+                            String name = null;
+                            try {
+                                ItemType type = api.getItemType(c.itemId());
+                                if (type != null) name = type.name();
+                            } catch (Exception ignored) {}
+                            entries.add(new ProductionTab.ProductionTabEntry(i / 4, c.itemId(), name));
+                        }
+                    }
+                }
+                prodGridEntries = List.copyOf(entries);
+            } catch (Exception e) {
+                prodGridEntries = List.of();
+            }
+
+            // Collect category names from enum
+            if (prodHasCategories && prodCategoryDropdown > 0) {
+                try {
+                    var enumType = api.getEnumType(prodCategoryDropdown);
+                    if (enumType != null && enumType.entries() != null) {
+                        List<String> names = new ArrayList<>();
+                        for (var entry : enumType.entries().values()) {
+                            names.add(entry != null ? entry.toString() : "???");
+                        }
+                        prodCategoryNames = List.copyOf(names);
+                    } else {
+                        prodCategoryNames = List.of();
+                    }
+                } catch (Exception e) {
+                    prodCategoryNames = List.of();
+                }
+            } else {
+                prodCategoryNames = List.of();
+            }
+        } catch (Exception e) {
+            log.debug("Production data collection failed: {}", e.getMessage());
+            prodOpen = false;
+        }
+    }
+
+    /**
+     * Collects production progress state (interface 1251) for the Production debug tab.
+     */
+    private void collectProductionProgressData(GameAPI api) {
+        try {
+            boolean isOpen = api.isInterfaceOpen(1251);
+            int visibility = isOpen ? api.getVarp(3034) : 1;
+            boolean producing = isOpen && visibility != 1;
+            progressOpen = producing;
+            progressVisibility = visibility;
+
+            if (!producing) {
+                progressTotal = -1;
+                progressRemaining = -1;
+                progressSpeedModifier = -1;
+                progressProductId = -1;
+                progressProductName = null;
+                progressTimeText = null;
+                progressCounterText = null;
+                progressPercent = -1;
+                return;
+            }
+
+            progressTotal = api.getVarcInt(2228);
+            progressRemaining = api.getVarcInt(2229);
+            progressSpeedModifier = api.getVarcInt(2227);
+            progressProductId = api.getVarp(1175);
+            progressPercent = progressTotal > 0 ? ((progressTotal - progressRemaining) * 100) / progressTotal : 0;
+
+            if (progressProductId > 0) {
+                try {
+                    ItemType type = api.getItemType(progressProductId);
+                    progressProductName = type != null ? type.name() : null;
+                } catch (Exception e) { progressProductName = null; }
+            } else {
+                progressProductName = null;
+            }
+
+            try { progressTimeText = api.getComponentText(1251, 10); } catch (Exception e) { progressTimeText = null; }
+            try { progressCounterText = api.getComponentText(1251, 27); } catch (Exception e) { progressCounterText = null; }
+        } catch (Exception e) {
+            log.debug("Production progress data collection failed: {}", e.getMessage());
+            progressOpen = false;
+        }
+    }
+
+    /**
+     * Collects smithing/smelting interface state (interface 37) for the Smithing debug tab.
+     */
+    private void collectSmithingData(GameAPI api) {
+        try {
+            boolean isOpen = api.isInterfaceOpen(37);
+            smithOpen = isOpen;
+            if (!isOpen) {
+                smithIsSmelting = false;
+                smithMaterialDbrow = -1;
+                smithProductDbrow = -1;
+                smithSelectedItem = -1;
+                smithLocation = -1;
+                smithQuantity = -1;
+                smithQualityTier = -1;
+                smithOutfitBonus1 = 0;
+                smithOutfitBonus2 = 0;
+                smithHeatEfficiency = 0;
+                smithProductName = null;
+                smithQualityName = null;
+                smithMaterialEntries = List.of();
+                smithProductEntries = List.of();
+                smithActiveBonuses = List.of();
+                return;
+            }
+
+            // Read varps
+            smithMaterialDbrow = api.getVarp(8331);
+            smithProductDbrow = api.getVarp(8332);
+            smithSelectedItem = api.getVarp(8333);
+            smithLocation = api.getVarp(8334);
+            smithQuantity = api.getVarp(8336);
+
+            // Read varbits
+            smithQualityTier = api.getVarbit(43239);
+            smithOutfitBonus1 = api.getVarbit(47760);
+            smithOutfitBonus2 = api.getVarbit(47761);
+            smithHeatEfficiency = api.getVarbit(20138);
+
+            // Resolve quality name
+            smithQualityName = switch (smithQualityTier) {
+                case 0 -> "Base";
+                case 1 -> "+1";
+                case 2 -> "+2";
+                case 3 -> "+3";
+                case 4 -> "+4";
+                case 5 -> "+5";
+                case 50 -> "Burial";
+                default -> "Unknown (" + smithQualityTier + ")";
+            };
+
+            // Detect smelting mode — script 2600 sets comp(37,30) Y=39 for smelting, Y=69 for smithing
+            try {
+                var pos = api.getComponentPosition(37, 30);
+                smithIsSmelting = pos != null && pos.y() == 39;
+            } catch (Exception e) {
+                smithIsSmelting = false;
+            }
+
+            // Resolve product name from comp text
+            try {
+                smithProductName = api.getComponentText(37, 40);
+            } catch (Exception e) {
+                smithProductName = null;
+            }
+
+            // Collect material grid entries
+            int[] matGrids = {52, 62, 72, 82, 92};
+            List<SmithingTab.SmithingTabEntry> matEntries = new ArrayList<>();
+            for (int g = 0; g < matGrids.length; g++) {
+                try {
+                    List<Component> children = api.getComponentChildren(37, matGrids[g]);
+                    for (Component c : children) {
+                        if (c.itemId() > 0) {
+                            String name = null;
+                            try {
+                                ItemType type = api.getItemType(c.itemId());
+                                if (type != null) name = type.name();
+                            } catch (Exception ignored) {}
+                            matEntries.add(new SmithingTab.SmithingTabEntry(g, c.subComponentId(), c.itemId(), name));
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+            smithMaterialEntries = List.copyOf(matEntries);
+
+            // Collect product grid entries
+            int[] prodGrids = {103, 114, 125, 136, 147};
+            List<SmithingTab.SmithingTabEntry> prodEntries = new ArrayList<>();
+            for (int g = 0; g < prodGrids.length; g++) {
+                try {
+                    List<Component> children = api.getComponentChildren(37, prodGrids[g]);
+                    for (Component c : children) {
+                        if (c.itemId() > 0) {
+                            String name = null;
+                            try {
+                                ItemType type = api.getItemType(c.itemId());
+                                if (type != null) name = type.name();
+                            } catch (Exception ignored) {}
+                            prodEntries.add(new SmithingTab.SmithingTabEntry(g, c.subComponentId(), c.itemId(), name));
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+            smithProductEntries = List.copyOf(prodEntries);
+
+            // Detect active bonus items via equipment inventory queries
+            int[] bonusItems = {775, 25120, 25121, 25122, 25123, 25124, 32194, 11750, 11751, 11752, 19682};
+            List<Integer> active = new ArrayList<>();
+            for (int itemId : bonusItems) {
+                try {
+                    var items = api.queryInventoryItems(
+                            com.botwithus.bot.api.query.InventoryFilter.builder()
+                                    .inventoryId(94).itemId(itemId).build());
+                    if (items != null && !items.isEmpty()) active.add(itemId);
+                } catch (Exception ignored) {}
+            }
+            smithActiveBonuses = List.copyOf(active);
+
+        } catch (Exception e) {
+            log.debug("Smithing data collection failed: {}", e.getMessage());
+            smithOpen = false;
+        }
+    }
+
+    private void collectActiveSmithingData(GameAPI api) {
+        try {
+            Smithing smithingApi = new Smithing(api);
+
+            // Dump raw vars for first unfinished item found (debug)
+            StringBuilder rawDebug = new StringBuilder();
+            for (int slot = 0; slot < 28; slot++) {
+                try {
+                    if (!api.isInventoryItemValid(Smithing.BACKPACK_INVENTORY, slot)) continue;
+                    var item = api.getInventoryItem(Smithing.BACKPACK_INVENTORY, slot);
+                    if (item == null || item.itemId() != Smithing.UNFINISHED_SMITHING_ITEM) continue;
+                    var vars = api.getItemVars(Smithing.BACKPACK_INVENTORY, slot);
+                    rawDebug.append("Slot ").append(slot).append(" (id=").append(item.itemId()).append("): ");
+                    if (vars != null) {
+                        for (var v : vars) {
+                            rawDebug.append("v").append(v.varId()).append("=").append(v.value())
+                                    .append(" (0x").append(Integer.toHexString(v.value())).append(") ");
+                        }
+                    } else {
+                        rawDebug.append("null vars");
+                    }
+                    rawDebug.append("\n");
+                } catch (Exception ignored) {}
+            }
+            smithRawVarsDebug = rawDebug.toString();
+
+            // Scan backpack for all unfinished items (uses getItemVars)
+            List<Smithing.UnfinishedItem> unfinished = smithingApi.getAllUnfinishedItems();
+            allUnfinishedItems = unfinished;
+
+            boolean isActive = !unfinished.isEmpty();
+            activelySmithing = isActive;
+
+            if (!isActive) {
+                activeSmithingItem = null;
+                smithMaxHeat = 0;
+                smithHeatPercent = 0;
+                smithHeatBand = "Zero";
+                smithProgressPerStrike = 10;
+                smithReheatRate = 0;
+                return;
+            }
+
+            // Active item = first unfinished item in backpack
+            Smithing.UnfinishedItem active = unfinished.get(0);
+            activeSmithingItem = active;
+
+            // Heat calculations — use the active item's creating ID for max heat
+            int maxHeat = 0;
+            if (active.creatingItemId() > 0) {
+                maxHeat = smithingApi.getMaxHeatForItem(active.creatingItemId());
+            } else {
+                maxHeat = smithingApi.getMaxHeat();
+            }
+            smithMaxHeat = maxHeat;
+
+            int heatPct = maxHeat > 0 ? (active.currentHeat() * 100) / maxHeat : 0;
+            smithHeatPercent = heatPct;
+
+            if (heatPct >= 67) {
+                smithHeatBand = "High";
+                smithProgressPerStrike = 20;
+            } else if (heatPct >= 34) {
+                smithHeatBand = "Medium";
+                smithProgressPerStrike = 16;
+            } else if (heatPct >= 1) {
+                smithHeatBand = "Low";
+                smithProgressPerStrike = 13;
+            } else {
+                smithHeatBand = "Zero";
+                smithProgressPerStrike = 10;
+            }
+
+            smithReheatRate = smithingApi.getReheatingRate();
+
+        } catch (Exception e) {
+            log.debug("Active smithing data collection failed: {}", e.getMessage());
+            activelySmithing = false;
         }
     }
 
@@ -1295,6 +1810,23 @@ public class XapiScript implements BotScript {
                         entry.timestamp(), currentTick, false, "history",
                         names[0], names[1], px, py, pp, pa, pm
                 ));
+
+                // Build snapshot to maintain index alignment with actionLog
+                try {
+                    BackpackSnapshot bp = cachedBackpack;
+                    int openIface = resolveTopInterfaceId();
+                    TriggerSignals triggers = computeTriggers(bp, pa, pm);
+                    IntentHypothesis intent = IntentEngine.infer(
+                            entry.actionId(), names[0], names[1], bp, triggers, openIface);
+                    snapshotLog.add(new ActionSnapshot(bp, triggers, intent, openIface));
+                    previousBackpack = bp;
+                    previousOpenInterfaceId = openIface;
+                    previousPlayerAnim = pa;
+                    previousPlayerMoving = pm;
+                    lastActionInventoryLogSize = inventoryLog.size();
+                } catch (Exception ignored) {
+                    snapshotLog.add(null); // maintain index alignment
+                }
             }
         } catch (NoClassDefFoundError e) {
             actionHistoryAvailable = false;
@@ -1386,14 +1918,17 @@ public class XapiScript implements BotScript {
         log.info("Xapi stopped — {} actions, {} var changes, {} chat messages logged",
                 actionLog.size(), varLog.size(), chatLog.size());
 
+        // Remove shutdown hook — we're doing a clean stop, no need for the fallback
+        try { Runtime.getRuntime().removeShutdownHook(shutdownHook); } catch (Exception ignored) {}
 
-        // Save settings on stop
+        // Save settings and actions on stop
         saveSettings();
+        doAutoSave();
 
         // Always unblock on stop
         blocking = false;
-        ActionDebugger.get().setBlocking(false);
-        ActionDebugger.get().setRecording(false);
+        actionDebugger.setBlocking(false);
+        actionDebugger.setRecording(false);
         try {
             ctx.getGameAPI().setActionsBlocked(false);
         } catch (Exception e) {
@@ -1412,6 +1947,7 @@ public class XapiScript implements BotScript {
     public ScriptUI getUI() { return ui; }
 
     private void renderUI() {
+        if (actionsTab == null) { ImGui.text("Initialising..."); return; }
         try {
             renderControls();
 
@@ -1453,6 +1989,14 @@ public class XapiScript implements BotScript {
                     try { inventoryTab.render(); } catch (Exception e) { log.error("Inventory tab error", e); ImGui.text("Error: " + e.getMessage()); }
                     ImGui.endTabItem();
                 }
+                if (ImGui.beginTabItem("Production")) {
+                    try { productionTab.render(); } catch (Exception e) { log.error("Production tab error", e); ImGui.text("Error: " + e.getMessage()); }
+                    ImGui.endTabItem();
+                }
+                if (ImGui.beginTabItem("Smithing")) {
+                    try { smithingTab.render(); } catch (Exception e) { log.error("Smithing tab error", e); ImGui.text("Error: " + e.getMessage()); }
+                    ImGui.endTabItem();
+                }
                 ImGui.endTabBar();
             }
         } catch (Exception e) {
@@ -1489,14 +2033,29 @@ public class XapiScript implements BotScript {
 
             ImGui.sameLine();
             if (ImGui.button("Clear All")) {
-                actionLog.clear(); varLog.clear(); chatLog.clear();
-                snapshotLog.clear();
-                varsByTick.clear();
-                ActionDebugger.get().clear();
-                lastActionSize = -1; lastVarSize = -1; lastChatSize = -1;
-                inventoryLog.clear();
-                interfaceEventLog.clear();
-                // Don't clear pinnedVars, varChangeCount, or varAnnotations
+                ImGui.openPopup("##clear_confirm");
+            }
+            if (ImGui.beginPopup("##clear_confirm")) {
+                int total = actionLog.size() + varLog.size() + chatLog.size();
+                ImGui.text("Clear all " + total + " entries? This cannot be undone.");
+                if (ImGui.button("Yes, clear")) {
+                    actionLog.clear(); varLog.clear(); chatLog.clear();
+                    snapshotLog.clear();
+                    varsByTick.clear();
+                    actionDebugger.clear();
+                    lastActionSize = -1; lastVarSize = -1; lastChatSize = -1;
+                    inventoryLog.clear();
+                    interfaceEventLog.clear();
+                    trimmedActionCount = 0; trimmedVarCount = 0; trimmedChatCount = 0;
+                    // Don't clear pinnedVars, varChangeCount, or varAnnotations
+                    actionsDirty = true; // triggers autosave of empty state
+                    ImGui.closeCurrentPopup();
+                }
+                ImGui.sameLine();
+                if (ImGui.button("Cancel")) {
+                    ImGui.closeCurrentPopup();
+                }
+                ImGui.endPopup();
             }
 
             ImGui.sameLine();

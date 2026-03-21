@@ -19,14 +19,16 @@ public class ScriptContextImpl implements ScriptContext {
     private final SharedState sharedState;
     private final Navigation navigation;
     private final Pace pace;
+    private final String connectionName;
     private volatile ScriptManager scriptManager;
 
-    public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider, SharedState sharedState) {
+    public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider, SharedState sharedState, String connectionName) {
         this.gameAPI = gameAPI;
         this.eventBus = eventBus;
         this.messageBus = messageBus;
         this.clientProvider = clientProvider;
         this.sharedState = sharedState;
+        this.connectionName = connectionName;
         if (eventBus instanceof EventBusImpl eventBusImpl) {
             this.navigation = new Walker(gameAPI, eventBusImpl);
         } else {
@@ -35,8 +37,12 @@ public class ScriptContextImpl implements ScriptContext {
         this.pace = new Pace();
     }
 
+    public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider, SharedState sharedState) {
+        this(gameAPI, eventBus, messageBus, clientProvider, sharedState, null);
+    }
+
     public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider) {
-        this(gameAPI, eventBus, messageBus, clientProvider, new SharedStateImpl());
+        this(gameAPI, eventBus, messageBus, clientProvider, new SharedStateImpl(), null);
     }
 
     /**
@@ -70,4 +76,7 @@ public class ScriptContextImpl implements ScriptContext {
 
     @Override
     public Pace getPace() { return pace; }
+
+    @Override
+    public String getConnectionName() { return connectionName; }
 }

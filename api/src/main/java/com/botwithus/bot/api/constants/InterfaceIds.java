@@ -17,4 +17,8 @@ public final class InterfaceIds {
     public static final int MINIMAP = 1465;
     public static final int COMBAT_TARGET = 1430;
     public static final int ACTION_BAR = 1477;
+    public static final int PRODUCTION = 1370;
+    public static final int PRODUCTION_GRID = 1371;
+    public static final int PRODUCTION_PROGRESS = 1251;
+    public static final int SMITHING = 37;
 }

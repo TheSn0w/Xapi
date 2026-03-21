@@ -116,18 +116,6 @@ public class TestScript implements BotScript {
         return Math.max(Math.abs(p.tileX() - x), Math.abs(p.tileY() - y));
     }
 
-
-
-    private void check(String name, boolean condition) {
-        if (condition) {
-            passed++;
-            log.info("[SoilBoxTest] PASS: {}", name);
-        } else {
-            failed++;
-            log.error("[SoilBoxTest] FAIL: {}", name);
-        }
-    }
-
     @Override
     public void onStop() {
         log.info("[SoilBoxTest] Stopped at step {} — {} passed, {} failed", step, passed, failed);

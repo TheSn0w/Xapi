@@ -2,6 +2,7 @@ package com.botwithus.bot.cli;
 
 import com.botwithus.bot.api.BotScript;
 import com.botwithus.bot.api.blueprint.BlueprintGraph;
+import com.botwithus.bot.core.impl.ActionDebugger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ public class CliContext {
     private final LogCapture logCapture;
     private final ClientProviderImpl clientProvider = new ClientProviderImpl();
     private final Map<String, Connection> connections = new LinkedHashMap<>();
+    private final Object connectionsLock = new Object();
     private final Map<String, ConnectionGroup> groups = new LinkedHashMap<>();
     private String activeConnectionName;
     private String mountedConnectionName;
@@ -122,9 +124,11 @@ public class CliContext {
 
     public void connect(String pipeName) {
         String connName = pipeName != null ? pipeName : "BotWithUs";
-        if (connections.containsKey(connName)) {
-            out().println("Already connected to '" + connName + "'. Use 'use " + connName + "' to switch.");
-            return;
+        synchronized (connectionsLock) {
+            if (connections.containsKey(connName)) {
+                out().println("Already connected to '" + connName + "'. Use 'use " + connName + "' to switch.");
+                return;
+            }
         }
         try {
             PipeClient pipe = pipeName != null ? new PipeClient(pipeName) : new PipeClient();
@@ -135,7 +139,7 @@ public class CliContext {
             GameAPIImpl gameAPI = new GameAPIImpl(rpc);
             ClientImpl client = new ClientImpl(connName, gameAPI, eventBus, pipe::isOpen);
             clientProvider.putClient(connName, client);
-            ScriptContextImpl context = new ScriptContextImpl(gameAPI, eventBus, messageBus, clientProvider);
+            ScriptContextImpl context = new ScriptContextImpl(gameAPI, eventBus, messageBus, clientProvider, new com.botwithus.bot.core.impl.SharedStateImpl(), connName);
 
             var dispatcher = new com.botwithus.bot.core.impl.EventDispatcher(eventBus);
             dispatcher.bindAutoSubscription(gameAPI);
@@ -151,11 +155,13 @@ public class CliContext {
 
             Connection conn = new Connection(connName, pipe, rpc, runtime);
             conn.setEventBus(eventBus);
-            connections.put(connName, conn);
-            activeConnectionName = connName;
-            out().println("Connected to pipe: " + pipe.getPipePath());
-            if (connections.size() > 1) {
-                out().println("Active connection set to '" + connName + "'.");
+            synchronized (connectionsLock) {
+                connections.put(connName, conn);
+                activeConnectionName = connName;
+                out().println("Connected to pipe: " + pipe.getPipePath());
+                if (connections.size() > 1) {
+                    out().println("Active connection set to '" + connName + "'.");
+                }
             }
         } catch (Exception e) {
             out().println("Connection failed: " + e.getMessage());
@@ -163,34 +169,43 @@ public class CliContext {
     }
 
     public void disconnect(String name, boolean force) {
-        String target = name != null ? name : activeConnectionName;
-        if (target == null || !connections.containsKey(target)) {
-            out().println(target == null ? "No active connection." : "Connection not found: " + target);
-            return;
-        }
-        Connection conn = connections.get(target);
-        if (conn.hasRunningScripts() && !force) {
-            out().println("Connection '" + target + "' has running scripts. Use 'disconnect --force' to stop them and disconnect.");
-            return;
-        }
-        // Save auto-start state before disconnecting
-        if (autoStartManager != null && conn.getAccountName() != null) {
-            autoStartManager.saveState(conn);
-        }
-        if (target.equals(mountedConnectionName)) {
-            unmount();
-            out().println("Auto-unmounted — mounted connection was disconnected.");
-        }
-        connections.remove(target);
-        clientProvider.removeClient(target);
-        conn.close();
-        out().println("Disconnected from '" + target + "'.");
-
-        if (target.equals(activeConnectionName)) {
-            activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
-            if (activeConnectionName != null) {
-                out().println("Active connection switched to '" + activeConnectionName + "'.");
+        Connection conn;
+        String target;
+        boolean wasActive;
+        String newActive;
+        synchronized (connectionsLock) {
+            target = name != null ? name : activeConnectionName;
+            if (target == null || !connections.containsKey(target)) {
+                out().println(target == null ? "No active connection." : "Connection not found: " + target);
+                return;
             }
+            conn = connections.get(target);
+            if (conn.hasRunningScripts() && !force) {
+                out().println("Connection '" + target + "' has running scripts. Use 'disconnect --force' to stop them and disconnect.");
+                return;
+            }
+            // Save auto-start state before disconnecting
+            if (autoStartManager != null && conn.getAccountName() != null) {
+                autoStartManager.saveState(conn);
+            }
+            if (target.equals(mountedConnectionName)) {
+                unmount();
+                out().println("Auto-unmounted — mounted connection was disconnected.");
+            }
+            connections.remove(target);
+            clientProvider.removeClient(target);
+
+            wasActive = target.equals(activeConnectionName);
+            if (wasActive) {
+                activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
+            }
+            newActive = activeConnectionName;
+        }
+        conn.close();
+        ActionDebugger.remove(target);
+        out().println("Disconnected from '" + target + "'.");
+        if (wasActive && newActive != null) {
+            out().println("Active connection switched to '" + newActive + "'.");
         }
     }
 
@@ -199,23 +214,30 @@ public class CliContext {
     }
 
     public void disconnectAll(boolean force) {
-        if (streamManager != null) {
-            streamManager.stopAll(name -> connections.containsKey(name) ? connections.get(name) : null);
-        }
-        var iter = connections.entrySet().iterator();
-        while (iter.hasNext()) {
-            Connection conn = iter.next().getValue();
-            if (conn.hasRunningScripts() && !force) {
-                out().println("Skipping '" + conn.getName() + "' — has running scripts. Use --force to override.");
-                continue;
+        List<Connection> toClose = new ArrayList<>();
+        synchronized (connectionsLock) {
+            if (streamManager != null) {
+                streamManager.stopAll(name -> connections.containsKey(name) ? connections.get(name) : null);
             }
-            conn.close();
-            clientProvider.removeClient(conn.getName());
-            out().println("Disconnected from '" + conn.getName() + "'.");
-            iter.remove();
+            var iter = connections.entrySet().iterator();
+            while (iter.hasNext()) {
+                Connection conn = iter.next().getValue();
+                if (conn.hasRunningScripts() && !force) {
+                    out().println("Skipping '" + conn.getName() + "' — has running scripts. Use --force to override.");
+                    continue;
+                }
+                toClose.add(conn);
+                clientProvider.removeClient(conn.getName());
+                iter.remove();
+            }
+            if (activeConnectionName != null && !connections.containsKey(activeConnectionName)) {
+                activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
+            }
         }
-        if (activeConnectionName != null && !connections.containsKey(activeConnectionName)) {
-            activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
+        for (Connection conn : toClose) {
+            conn.close();
+            ActionDebugger.remove(conn.getName());
+            out().println("Disconnected from '" + conn.getName() + "'.");
         }
     }
 
@@ -224,9 +246,11 @@ public class CliContext {
     }
 
     public boolean setActive(String name) {
-        if (!connections.containsKey(name)) return false;
-        activeConnectionName = name;
-        return true;
+        synchronized (connectionsLock) {
+            if (!connections.containsKey(name)) return false;
+            activeConnectionName = name;
+            return true;
+        }
     }
 
     public List<BotScript> loadScripts() {
@@ -266,25 +290,32 @@ public class CliContext {
             unmount();
             out().println("Auto-unmounted — mounted connection was lost.");
         }
-        Connection conn = connections.remove(connName);
-        clientProvider.removeClient(connName);
+        Connection conn;
+        String newActive = null;
+        synchronized (connectionsLock) {
+            conn = connections.remove(connName);
+            clientProvider.removeClient(connName);
+            if (connName.equals(activeConnectionName)) {
+                activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
+                newActive = activeConnectionName;
+            }
+        }
         if (conn != null) {
             conn.close();
+            ActionDebugger.remove(connName);
             out().println("Connection '" + connName + "' lost — removed.");
         }
-        if (connName.equals(activeConnectionName)) {
-            activeConnectionName = connections.isEmpty() ? null : connections.keySet().iterator().next();
-            if (activeConnectionName != null) {
-                out().println("Active connection switched to '" + activeConnectionName + "'.");
-            }
+        if (newActive != null) {
+            out().println("Active connection switched to '" + newActive + "'.");
         }
     }
 
-    public boolean hasConnections() { return !connections.isEmpty(); }
+    public boolean hasConnections() { synchronized (connectionsLock) { return !connections.isEmpty(); } }
     public boolean hasActiveConnection() { return activeConnectionName != null; }
     public String getActiveConnectionName() { return activeConnectionName; }
-    public Connection getActiveConnection() { return activeConnectionName != null ? connections.get(activeConnectionName) : null; }
-    public Collection<Connection> getConnections() { return connections.values(); }
+    public Connection getActiveConnection() { synchronized (connectionsLock) { return activeConnectionName != null ? connections.get(activeConnectionName) : null; } }
+    /** Returns a snapshot of all connections, safe for iteration from any thread. */
+    public List<Connection> getConnections() { synchronized (connectionsLock) { return List.copyOf(connections.values()); } }
 
     public ScriptRuntime getRuntime() {
         Connection conn = getActiveConnection();
@@ -403,10 +434,12 @@ public class CliContext {
         ConnectionGroup group = groups.get(groupName);
         if (group == null) return List.of();
         List<Connection> result = new ArrayList<>();
-        for (String connName : group.getConnectionNames()) {
-            Connection conn = connections.get(connName);
-            if (conn != null && conn.isAlive()) {
-                result.add(conn);
+        synchronized (connectionsLock) {
+            for (String connName : group.getConnectionNames()) {
+                Connection conn = connections.get(connName);
+                if (conn != null && conn.isAlive()) {
+                    result.add(conn);
+                }
             }
         }
         return result;
@@ -431,7 +464,7 @@ public class CliContext {
         if (!java.nio.file.Files.isDirectory(scriptsDir)) return;
         scriptWatcher = new com.botwithus.bot.cli.watch.ScriptWatcher(scriptsDir, () -> {
             out().println("[ScriptWatcher] Script files changed — reloading...");
-            for (Connection conn : connections.values()) {
+            for (Connection conn : getConnections()) {
                 if (conn.isAlive()) {
                     conn.getRuntime().stopAll();
                     List<BotScript> scripts = loadScripts();

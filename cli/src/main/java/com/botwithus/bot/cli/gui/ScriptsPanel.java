@@ -415,7 +415,7 @@ public class ScriptsPanel implements GuiPanel {
             if (ImGui.smallButton(Icons.REDO + "##restart")) {
                 executor.submit(() -> {
                     runner.stop();
-                    try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                    runner.awaitStop(2000);
                     runner.start();
                 });
             }

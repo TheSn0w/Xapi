@@ -62,7 +62,8 @@ public final class XapiData {
 
     public record SessionData(List<LogEntry> actions, List<VarChange> vars, List<ChatEntry> chat,
                               List<ActionSnapshot> snapshots,
-                              long exportTime, String description) {}
+                              long exportTime, String description,
+                              long lastSeenActionTimestamp) {}
 
     public record XapiSettings(
             boolean recording, boolean blocking, boolean selectiveBlocking,
@@ -73,7 +74,9 @@ public final class XapiData {
             Set<String> pinnedVars, Map<String, String> varAnnotations,
             boolean useNamesForGeneration, String scriptClassName,
             float replaySpeed,
-            int entityDistanceFilter
+            int entityDistanceFilter,
+            boolean[] columnVisibility,
+            boolean autoScroll
     ) {}
 
     // ── Skill names and XP table ─────────────────────────────────────────
