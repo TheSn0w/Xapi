@@ -4,6 +4,7 @@ import com.botwithus.bot.api.ClientProvider;
 import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.Navigation;
 import com.botwithus.bot.api.ScriptContext;
+import com.botwithus.bot.api.antiban.Pace;
 import com.botwithus.bot.api.event.EventBus;
 import com.botwithus.bot.api.isc.MessageBus;
 import com.botwithus.bot.api.isc.SharedState;
@@ -17,6 +18,7 @@ public class ScriptContextImpl implements ScriptContext {
     private final ClientProvider clientProvider;
     private final SharedState sharedState;
     private final Navigation navigation;
+    private final Pace pace;
     private volatile ScriptManager scriptManager;
 
     public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider, SharedState sharedState) {
@@ -30,6 +32,7 @@ public class ScriptContextImpl implements ScriptContext {
         } else {
             throw new IllegalArgumentException("EventBus must be EventBusImpl for Walker support");
         }
+        this.pace = new Pace();
     }
 
     public ScriptContextImpl(GameAPI gameAPI, EventBus eventBus, MessageBus messageBus, ClientProvider clientProvider) {
@@ -64,4 +67,7 @@ public class ScriptContextImpl implements ScriptContext {
 
     @Override
     public Navigation getNavigation() { return navigation; }
+
+    @Override
+    public Pace getPace() { return pace; }
 }

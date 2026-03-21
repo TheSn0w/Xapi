@@ -62,12 +62,13 @@ final class ActionsTab {
                 | ImGuiTableFlags.Resizable;
 
         float tableHeight = ImGui.getContentRegionAvailY();
-        if (ImGui.beginTable("##xapi_actions", 10, flags, 0, tableHeight)) {
+        if (ImGui.beginTable("##xapi_actions", 11, flags, 0, tableHeight)) {
             ImGui.tableSetupColumn("#", 0, 0.3f);
             ImGui.tableSetupColumn("Time", 0, 0.7f);
             ImGui.tableSetupColumn("Tick", 0, 0.4f);
             ImGui.tableSetupColumn("Action", 0, 0.5f);
             ImGui.tableSetupColumn("Target", 0, 1.5f);
+            ImGui.tableSetupColumn("Intent", 0, 1.2f);
             ImGui.tableSetupColumn("Vars", 0, 0.6f);
             ImGui.tableSetupColumn("P1", 0, 0.4f);
             ImGui.tableSetupColumn("P2", 0, 0.4f);
@@ -121,8 +122,46 @@ final class ActionsTab {
                             entry.playerAnim(), entry.playerMoving() ? "MOVING" : "idle"));
                 }
 
-                // Vars column -- show var changes on this action's tick
+                // Intent column -- show inferred intent with color-coded confidence
                 ImGui.tableSetColumnIndex(5);
+                ActionSnapshot snap = i < script.snapshotLog.size() ? script.snapshotLog.get(i) : null;
+                if (snap != null && snap.intent() != null) {
+                    String conf = snap.intent().confidence();
+                    if ("high".equals(conf)) {
+                        ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, snap.intent().description());
+                    } else if ("medium".equals(conf)) {
+                        ImGui.textColored(0.9f, 0.8f, 0.3f, 1f, snap.intent().description());
+                    } else {
+                        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, snap.intent().description());
+                    }
+                    if (ImGui.isItemHovered()) {
+                        StringBuilder tip = new StringBuilder();
+                        tip.append("Confidence: ").append(conf).append("\n");
+                        if (snap.backpack() != null) {
+                            tip.append("Backpack: ").append(28 - snap.backpack().freeSlots()).append("/28");
+                            if (snap.backpack().full()) tip.append(" (FULL)");
+                            tip.append("\n");
+                        }
+                        if (snap.triggers() != null) {
+                            var t = snap.triggers();
+                            if (t.inventoryChanged()) tip.append("Trigger: inventory changed\n");
+                            if (t.animationEnded()) tip.append("Trigger: animation ended\n");
+                            if (t.playerStopped()) tip.append("Trigger: player stopped\n");
+                            if (t.varbitChanged()) tip.append("Trigger: varbit changed\n");
+                            if (t.recentItemChanges() != null) {
+                                for (var ic : t.recentItemChanges()) {
+                                    if (ic == null) continue;
+                                    int diff = ic.newQty() - ic.oldQty();
+                                    tip.append(String.format("  %s %s%d\n", ic.itemName(), diff > 0 ? "+" : "", diff));
+                                }
+                            }
+                        }
+                        ImGui.setTooltip(tip.toString().trim());
+                    }
+                }
+
+                // Vars column -- show var changes on this action's tick
+                ImGui.tableSetColumnIndex(6);
                 List<VarChange> tickVars = script.varsByTick.get(entry.gameTick());
                 if (tickVars != null && !tickVars.isEmpty()) {
                     ImGui.textColored(0.9f, 0.8f, 0.3f, 1f, String.valueOf(tickVars.size()));
@@ -135,11 +174,11 @@ final class ActionsTab {
                     }
                 }
 
-                ImGui.tableSetColumnIndex(6); ImGui.text(String.valueOf(entry.param1()));
-                ImGui.tableSetColumnIndex(7); ImGui.text(String.valueOf(entry.param2()));
-                ImGui.tableSetColumnIndex(8); ImGui.text(String.valueOf(entry.param3()));
+                ImGui.tableSetColumnIndex(7); ImGui.text(String.valueOf(entry.param1()));
+                ImGui.tableSetColumnIndex(8); ImGui.text(String.valueOf(entry.param2()));
+                ImGui.tableSetColumnIndex(9); ImGui.text(String.valueOf(entry.param3()));
 
-                ImGui.tableSetColumnIndex(9);
+                ImGui.tableSetColumnIndex(10);
                 renderCodeColumn(entry, i);
 
                 if (entry.wasBlocked()) ImGui.popStyleColor();
@@ -160,7 +199,8 @@ final class ActionsTab {
         if (findSlot(ActionTypes.OBJECT_OPTIONS, actionId) > 0) return script.categoryFilters[1];
         if (findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId) > 0) return script.categoryFilters[2];
         if (findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0) return script.categoryFilters[3];
-        if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM) return script.categoryFilters[4];
+        if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM
+                || actionId == ActionTypes.CONTAINER_ACTION) return script.categoryFilters[4];
         if (actionId == ActionTypes.WALK) return script.categoryFilters[5];
         return script.categoryFilters[6];
     }
@@ -219,10 +259,16 @@ final class ActionsTab {
 
     void generateAndCopyScript() {
         List<ActionTranslator.ActionEntry> entries = new ArrayList<>();
-        for (LogEntry e : script.actionLog) {
+        for (int i = 0; i < script.actionLog.size(); i++) {
+            LogEntry e = script.actionLog.get(i);
+            ActionSnapshot snap = i < script.snapshotLog.size() ? script.snapshotLog.get(i) : null;
             entries.add(new ActionTranslator.ActionEntry(
                     e.actionId(), e.param1(), e.param2(), e.param3(),
-                    e.timestamp(), e.entityName(), e.optionName()));
+                    e.timestamp(), e.entityName(), e.optionName(),
+                    snap != null && snap.intent() != null ? snap.intent().description() : null,
+                    snap != null && snap.backpack() != null && snap.backpack().full(),
+                    snap != null && snap.triggers() != null && snap.triggers().animationEnded(),
+                    snap != null ? snap.openInterfaceId() : -1));
         }
         String code = ActionTranslator.generateScript(entries, script.scriptClassName.get(), script.useNamesForGeneration);
         ImGui.setClipboardText(code);

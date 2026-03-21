@@ -137,7 +137,17 @@ public class XapiScript implements BotScript {
 
     // Inventory change tracking
     private volatile Map<Integer, Integer> lastInventorySnapshot = Map.of();
+    private volatile int lastInventorySlotCount = 0; // occupied slots from last query
     final List<InventoryChange> inventoryLog = new CopyOnWriteArrayList<>();
+
+    // Interaction snapshot state (built from existing per-tick data — zero extra RPC)
+    volatile BackpackSnapshot cachedBackpack;
+    private volatile BackpackSnapshot previousBackpack;
+    private volatile int previousOpenInterfaceId = -1;
+    private volatile int previousPlayerAnim = -1;
+    private volatile boolean previousPlayerMoving = false;
+    private volatile int lastActionInventoryLogSize = 0;
+    final List<ActionSnapshot> snapshotLog = new CopyOnWriteArrayList<>();
 
     // Pinned variables (survive clears)
     final Set<String> pinnedVars = ConcurrentHashMap.newKeySet(); // "varbit:1234", "varp:567"
@@ -289,6 +299,24 @@ public class XapiScript implements BotScript {
                     System.currentTimeMillis(), currentTick, false, "client",
                     names[0], names[1], px, py, pp, pa, pm
             ));
+
+            // Build interaction snapshot from cached state (no RPC calls)
+            try {
+                BackpackSnapshot bp = cachedBackpack;
+                int openIface = resolveTopInterfaceId();
+                TriggerSignals triggers = computeTriggers(bp, pa, pm);
+                IntentHypothesis intent = IntentEngine.infer(
+                        e.getActionId(), names[0], names[1], bp, triggers, openIface);
+                snapshotLog.add(new ActionSnapshot(bp, triggers, intent, openIface));
+
+                previousBackpack = bp;
+                previousOpenInterfaceId = openIface;
+                previousPlayerAnim = pa;
+                previousPlayerMoving = pm;
+                lastActionInventoryLogSize = inventoryLog.size();
+            } catch (Exception ignored) {
+                snapshotLog.add(null); // maintain index alignment
+            }
         }
     }
 
@@ -693,6 +721,7 @@ public class XapiScript implements BotScript {
         try {
             SessionData session = new SessionData(
                     new ArrayList<>(actionLog), new ArrayList<>(varLog), new ArrayList<>(chatLog),
+                    new ArrayList<>(snapshotLog),
                     System.currentTimeMillis(), "Xapi session export"
             );
             String filename = "session_" + new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date()) + ".json";
@@ -721,6 +750,8 @@ public class XapiScript implements BotScript {
                 }
             }
             if (session.chat() != null) { chatLog.clear(); chatLog.addAll(session.chat()); }
+            snapshotLog.clear();
+            if (session.snapshots() != null) { snapshotLog.addAll(session.snapshots()); }
             lastExportStatus = "Imported: " + filename + " (" + actionLog.size() + " actions)";
             log.info("Session imported from {}", file);
         } catch (Exception e) {
@@ -1302,7 +1333,52 @@ public class XapiScript implements BotScript {
                 while (inventoryLog.size() > 2000) inventoryLog.remove(0);
             }
             lastInventorySnapshot = current;
+            lastInventorySlotCount = items.size();
+
+            // Build cached backpack snapshot (no extra RPC — reuses data just queried)
+            int occupied = items.size();
+            int free = 28 - occupied;
+            List<ItemSnapshot> snapItems = new ArrayList<>(current.size());
+            for (var entry : current.entrySet()) {
+                String name;
+                try { name = api.getItemType(entry.getKey()).name(); } catch (Exception e) { name = "item:" + entry.getKey(); }
+                snapItems.add(new ItemSnapshot(entry.getKey(), name, entry.getValue()));
+            }
+            cachedBackpack = new BackpackSnapshot(List.copyOf(snapItems), free, free <= 0);
         } catch (Exception ignored) {}
+    }
+
+    // ── Interaction snapshot helpers ─────────────────────────────────────
+
+    private int resolveTopInterfaceId() {
+        List<OpenInterface> ifaces = openInterfaces;
+        if (ifaces == null || ifaces.isEmpty()) return -1;
+        return ifaces.get(0).interfaceId();
+    }
+
+    private TriggerSignals computeTriggers(BackpackSnapshot currentBp, int currentAnim, boolean currentMoving) {
+        boolean invChanged = false;
+        if (currentBp != null && previousBackpack != null) {
+            invChanged = currentBp.freeSlots() != previousBackpack.freeSlots()
+                    || currentBp.items().size() != previousBackpack.items().size();
+        } else if (currentBp != null && previousBackpack == null) {
+            invChanged = !currentBp.items().isEmpty();
+        }
+
+        boolean animEnded = previousPlayerAnim != -1 && currentAnim == -1;
+        boolean playerStopped = previousPlayerMoving && !currentMoving;
+        boolean varChanged = !varsByTick.getOrDefault(currentTick, List.of()).isEmpty();
+
+        // Slice recent inventory changes since last action
+        int logSize = inventoryLog.size();
+        List<InventoryChange> recentItems = lastActionInventoryLogSize < logSize
+                ? List.copyOf(inventoryLog.subList(lastActionInventoryLogSize, logSize))
+                : List.of();
+
+        List<VarChange> recentVars = varsByTick.getOrDefault(currentTick, List.of());
+
+        return new TriggerSignals(invChanged, animEnded, playerStopped, varChanged,
+                recentItems, List.copyOf(recentVars));
     }
 
     @Override
@@ -1414,6 +1490,7 @@ public class XapiScript implements BotScript {
             ImGui.sameLine();
             if (ImGui.button("Clear All")) {
                 actionLog.clear(); varLog.clear(); chatLog.clear();
+                snapshotLog.clear();
                 varsByTick.clear();
                 ActionDebugger.get().clear();
                 lastActionSize = -1; lastVarSize = -1; lastChatSize = -1;

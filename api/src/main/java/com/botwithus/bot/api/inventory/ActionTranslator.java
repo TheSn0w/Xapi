@@ -251,90 +251,121 @@ public final class ActionTranslator {
      * Entry for script generation — mirrors XapiScript.LogEntry fields needed here.
      */
     public record ActionEntry(int actionId, int param1, int param2, int param3,
-                              long timestamp, String entityName, String optionName) {}
+                              long timestamp, String entityName, String optionName,
+                              String intentDescription, boolean backpackFull,
+                              boolean animationEnded, int openInterfaceId) {
+        /** Backward-compatible constructor without snapshot data. */
+        public ActionEntry(int actionId, int param1, int param2, int param3,
+                           long timestamp, String entityName, String optionName) {
+            this(actionId, param1, param2, param3, timestamp, entityName, optionName,
+                    null, false, false, -1);
+        }
+    }
 
     /**
      * Generates a complete, compilable BotScript from a list of recorded actions.
+     * <p>
+     * Produces a resilient state-machine script with:
+     * <ul>
+     *   <li>Pace-based antiban delays (ex-Gaussian, fatigue, momentum)</li>
+     *   <li>Location guards that walk back if the player wanders off</li>
+     *   <li>Interface guards that re-open UIs if closed</li>
+     *   <li>Animation awareness (idle while chopping/fishing/etc.)</li>
+     *   <li>Null safety on entity queries</li>
+     *   <li>Loop detection (walk-back to start = automatic loop)</li>
+     *   <li>Movement guard (wait if player is moving)</li>
+     *   <li>Micro-break injection via {@code pace.breakCheck()}</li>
+     * </ul>
      *
-     * @param entries  the recorded actions in order
+     * @param entries   the recorded actions in order
      * @param className the class name for the generated script
-     * @param useNames  if true, generates name-based queries (skeleton mode);
-     *                  if false, uses raw GameAction calls (exact replay mode)
-     * @return a complete Java source file as a string
+     * @param useNames  if true, generates name-based queries with guards (skeleton mode);
+     *                  if false, uses raw GameAction calls with Pace delays (replay mode)
+     * @return the {@code onLoop()} method (and helper methods if needed), ready to paste into an existing BotScript class
      */
     public static String generateScript(java.util.List<ActionEntry> entries, String className, boolean useNames) {
+        boolean isLoop = useNames && !entries.isEmpty() && detectLoop(entries);
+        int lastIdx = entries.size() - 1;
+
         StringBuilder sb = new StringBuilder();
+
+        // ── Imports ──
         sb.append("import com.botwithus.bot.api.*;\n");
+        sb.append("import com.botwithus.bot.api.antiban.Pace;\n");
+        sb.append("import com.botwithus.bot.api.entities.*;\n");
         sb.append("import com.botwithus.bot.api.model.*;\n");
         sb.append("import com.botwithus.bot.api.inventory.*;\n");
         sb.append("import com.botwithus.bot.api.query.*;\n");
-        sb.append("import com.botwithus.bot.api.ui.ScriptUI;\n");
         sb.append("import com.botwithus.bot.api.util.Conditions;\n\n");
 
-        sb.append("@ScriptManifest(\n");
-        sb.append("        name = \"").append(className).append("\",\n");
-        sb.append("        version = \"1.0\",\n");
-        sb.append("        author = \"Xapi Generated\",\n");
-        sb.append("        description = \"Auto-generated from Xapi recording\",\n");
-        sb.append("        category = ScriptCategory.UTILITY\n");
-        sb.append(")\n");
-        sb.append("public class ").append(className).append(" implements BotScript {\n\n");
-        sb.append("    private ScriptContext ctx;\n");
-        sb.append("    private int step = 0;\n\n");
+        // ── Setup hint ──
+        sb.append("// Required fields: private ScriptContext ctx; private Pace pace; private Backpack backpack; private int step = 0;\n");
+        sb.append("// In onStart(): this.ctx = ctx; this.pace = ctx.getPace(); this.backpack = new Backpack(ctx.getGameAPI());\n\n");
 
-        sb.append("    @Override\n");
-        sb.append("    public void onStart(ScriptContext ctx) {\n");
-        sb.append("        this.ctx = ctx;\n");
-        sb.append("    }\n\n");
-
+        // ── onLoop ──
         sb.append("    @Override\n");
         sb.append("    public int onLoop() {\n");
         sb.append("        GameAPI api = ctx.getGameAPI();\n");
+        sb.append("        var player = api.getLocalPlayer();\n");
+        sb.append("        pace.breakCheck();\n\n");
+        sb.append("        if (player.isMoving()) return (int) pace.idle(\"walk\");\n\n");
         sb.append("        switch (step) {\n");
 
         for (int i = 0; i < entries.size(); i++) {
             ActionEntry e = entries.get(i);
-            String code;
-            if (useNames) {
-                // Use the two-line output, take only the high-level line
-                String full = toCode(e.actionId(), e.param1(), e.param2(), e.param3(),
-                        e.entityName(), e.optionName());
-                int nl = full.indexOf('\n');
-                code = nl > 0 ? full.substring(0, nl) : full;
-                // If it starts with "//", it's a comment-only line — fall back to raw
-                if (code.startsWith("//")) {
-                    code = toRawCode(e.actionId(), e.param1(), e.param2(), e.param3());
-                }
-            } else {
-                code = toRawCode(e.actionId(), e.param1(), e.param2(), e.param3());
-            }
+            int aid = e.actionId();
+            String paceCtx = classifyContext(aid);
+            boolean isLast = (i == lastIdx);
 
-            // Calculate delay to next action
+            // Recorded delay to next action
             int delayMs = 600;
             if (i + 1 < entries.size()) {
                 long delta = entries.get(i + 1).timestamp() - e.timestamp();
                 delayMs = (int) Math.max(300, Math.min(delta, 10000));
             }
+            boolean longDelay = delayMs > 4000;
 
-            // Human-readable comment
+            // Human-readable comment (prefer intent description when available)
             String comment = "";
-            if (hasName(e.entityName()) || hasName(e.optionName())) {
+            if (hasName(e.intentDescription())) {
+                comment = " // Intent: " + e.intentDescription();
+            } else if (hasName(e.entityName()) || hasName(e.optionName())) {
                 comment = " // " + orEmpty(e.optionName())
                         + (hasName(e.entityName()) ? " -> " + e.entityName() : "");
             }
 
-            sb.append("            case ").append(i).append(" -> {\n");
+            String advance = (isLast && isLoop) ? "step = 0;" : "step++;";
+            String paceDelay = longDelay
+                    ? "return (int) pace.idle(\"" + paceCtx + "\");"
+                    : "return (int) pace.delay(\"" + paceCtx + "\");";
 
-            // Walk actions get special handling
-            if (e.actionId() == ActionTypes.WALK) {
-                sb.append("                api.walkToAsync(").append(e.param2()).append(", ").append(e.param3()).append(");\n");
-                sb.append("                Conditions.waitUntil(() -> !api.getLocalPlayer().isMoving(), 5000);\n");
-            } else {
-                sb.append("                ").append(code).append(";").append(comment).append("\n");
+            sb.append("            case ").append(i).append(" -> {").append(comment).append("\n");
+
+            // Intent-driven backpack guards (high confidence only)
+            String intentLower = hasName(e.intentDescription()) ? e.intentDescription().toLowerCase() : "";
+            if (e.backpackFull() && intentLower.contains("banking")) {
+                sb.append("                if (!backpack.isFull()) { step++; return (int) pace.delay(\"react\"); }\n");
+            } else if (!e.backpackFull() && intentLower.contains("gathering")) {
+                sb.append("                if (backpack.isFull()) { step++; return (int) pace.delay(\"react\"); }\n");
             }
 
-            sb.append("                step++;\n");
-            sb.append("                return ").append(delayMs).append(";\n");
+            if (aid == ActionTypes.WALK) {
+                // ── Walk step ──
+                generateWalkStep(sb, e, advance);
+
+            } else if (isComponentAction(aid)) {
+                // ── Component/UI step ──
+                generateComponentStep(sb, e, entries, i, useNames, advance, paceDelay);
+
+            } else if (useNames && isEntityAction(aid)) {
+                // ── Entity step (NPC, object, ground item, player) ──
+                generateEntityStep(sb, e, entries, i, longDelay, paceCtx, advance, paceDelay);
+
+            } else {
+                // ── Other (dialogue, raw mode, etc.) ──
+                generateOtherStep(sb, e, useNames, advance, paceDelay);
+            }
+
             sb.append("            }\n");
         }
 
@@ -344,11 +375,242 @@ public final class ActionTranslator {
         sb.append("        }\n");
         sb.append("    }\n\n");
 
-        sb.append("    @Override\n");
-        sb.append("    public void onStop() {}\n");
-        sb.append("}\n");
+        // ── distanceTo helper (only needed in name-based mode) ──
+        if (useNames) {
+            sb.append("    private static int distanceTo(LocalPlayer p, int x, int y) {\n");
+            sb.append("        return Math.max(Math.abs(p.tileX() - x), Math.abs(p.tileY() - y));\n");
+            sb.append("    }\n\n");
+        }
+
+        // Remove trailing newline
+        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
+            sb.setLength(sb.length() - 1);
+        }
 
         return sb.toString();
+    }
+
+    // ── Step generators ──────────────────────────────────────────────────
+
+    private static void generateWalkStep(StringBuilder sb, ActionEntry e, String advance) {
+        sb.append("                api.walkToAsync(").append(e.param2()).append(", ").append(e.param3()).append(");\n");
+        sb.append("                Conditions.waitUntil(() -> !api.getLocalPlayer().isMoving(), 10000);\n");
+        sb.append("                ").append(advance).append("\n");
+        sb.append("                return (int) pace.delay(\"walk\");\n");
+    }
+
+    private static void generateComponentStep(StringBuilder sb, ActionEntry e,
+                                               java.util.List<ActionEntry> entries, int index,
+                                               boolean useNames, String advance, String paceDelay) {
+        int ifaceId = e.param3() >>> 16;
+
+        // Interface guard
+        if (useNames) {
+            int opener = findInterfaceOpener(entries, index);
+            if (opener >= 0) {
+                sb.append("                if (!api.isInterfaceOpen(").append(ifaceId)
+                        .append(")) { step = ").append(opener).append("; return (int) pace.delay(\"react\"); }\n");
+            } else {
+                sb.append("                if (!api.isInterfaceOpen(").append(ifaceId)
+                        .append(")) return (int) pace.idle(\"menu\");\n");
+            }
+        }
+
+        // Component interaction code
+        String code = resolveCode(e, useNames);
+        sb.append("                ").append(code).append("\n");
+        sb.append("                ").append(advance).append("\n");
+        sb.append("                ").append(paceDelay).append("\n");
+    }
+
+    private static void generateEntityStep(StringBuilder sb, ActionEntry e,
+                                            java.util.List<ActionEntry> entries, int index,
+                                            boolean longDelay, String paceCtx,
+                                            String advance, String paceDelay) {
+        int[] loc = extractLocation(e, entries, index);
+
+        // Location guard
+        if (loc != null) {
+            sb.append("                if (distanceTo(player, ").append(loc[0]).append(", ").append(loc[1]).append(") > 15) {\n");
+            sb.append("                    api.walkToAsync(").append(loc[0]).append(", ").append(loc[1]).append(");\n");
+            sb.append("                    return (int) pace.delay(\"walk\");\n");
+            sb.append("                }\n");
+        }
+
+        // Animation guard for long delays
+        if (longDelay) {
+            sb.append("                if (player.animationId() != -1) return (int) pace.idle(\"").append(paceCtx).append("\");\n");
+        }
+
+        // Entity query + null guard + interact
+        String[] parts = generateEntityParts(e);
+        if (parts != null) {
+            sb.append("                var target = ").append(parts[0]).append(";\n");
+            if (longDelay) {
+                // Long delay: null target means work is done → advance
+                sb.append("                if (target == null) { ").append(advance).append(" return (int) pace.delay(\"react\"); }\n");
+                sb.append("                target").append(parts[1]).append(";\n");
+                sb.append("                ").append(paceDelay).append("\n");
+            } else {
+                // Short delay: null guard then immediate advance
+                sb.append("                if (target == null) return (int) pace.idle(\"").append(paceCtx).append("\");\n");
+                sb.append("                target").append(parts[1]).append(";\n");
+                sb.append("                ").append(advance).append("\n");
+                sb.append("                ").append(paceDelay).append("\n");
+            }
+        } else {
+            // Fallback to raw code
+            sb.append("                ").append(toRawCode(e.actionId(), e.param1(), e.param2(), e.param3())).append("\n");
+            sb.append("                ").append(advance).append("\n");
+            sb.append("                ").append(paceDelay).append("\n");
+        }
+    }
+
+    private static void generateOtherStep(StringBuilder sb, ActionEntry e,
+                                           boolean useNames, String advance, String paceDelay) {
+        String code = resolveCode(e, useNames);
+        sb.append("                ").append(code).append("\n");
+        sb.append("                ").append(advance).append("\n");
+        sb.append("                ").append(paceDelay).append("\n");
+    }
+
+    /** Resolves a single line of action code (high-level or raw). */
+    private static String resolveCode(ActionEntry e, boolean useNames) {
+        if (useNames) {
+            String full = toCode(e.actionId(), e.param1(), e.param2(), e.param3(),
+                    e.entityName(), e.optionName());
+            int nl = full.indexOf('\n');
+            String code = nl > 0 ? full.substring(0, nl) : full;
+            if (code.startsWith("//")) {
+                return toRawCode(e.actionId(), e.param1(), e.param2(), e.param3());
+            }
+            return code;
+        }
+        return toRawCode(e.actionId(), e.param1(), e.param2(), e.param3());
+    }
+
+    // ── Script generation helpers ────────────────────────────────────────
+
+    /** Returns [queryExpr, interactSuffix] for entity actions, or null. */
+    private static String[] generateEntityParts(ActionEntry e) {
+        int aid = e.actionId();
+
+        int npcSlot = findSlot(ActionTypes.NPC_OPTIONS, aid);
+        if (npcSlot > 0) {
+            String query = hasName(e.entityName())
+                    ? "npcs.query().named(\"" + e.entityName() + "\").nearest()"
+                    : "npcs.query().index(" + e.param1() + ").nearest()";
+            String interact = hasName(e.optionName())
+                    ? ".interact(\"" + e.optionName() + "\")"
+                    : ".interact(" + npcSlot + ")";
+            return new String[]{query, interact};
+        }
+
+        int objSlot = findSlot(ActionTypes.OBJECT_OPTIONS, aid);
+        if (objSlot > 0) {
+            String query = hasName(e.entityName())
+                    ? "objects.query().named(\"" + e.entityName() + "\").nearest()"
+                    : "objects.query().typeId(" + e.param1() + ").nearest()";
+            String interact = hasName(e.optionName())
+                    ? ".interact(\"" + e.optionName() + "\")"
+                    : ".interact(" + objSlot + ")";
+            return new String[]{query, interact};
+        }
+
+        int giSlot = findSlot(ActionTypes.GROUND_ITEM_OPTIONS, aid);
+        if (giSlot > 0) {
+            String query = hasName(e.entityName())
+                    ? "groundItems.query().named(\"" + e.entityName() + "\").nearest()"
+                    : "groundItems.query().itemId(" + e.param1() + ").nearest()";
+            String interact = hasName(e.optionName())
+                    ? ".interact(\"" + e.optionName() + "\")"
+                    : ".interact(" + giSlot + ")";
+            return new String[]{query, interact};
+        }
+
+        int playerSlot = findSlot(ActionTypes.PLAYER_OPTIONS, aid);
+        if (playerSlot > 0) {
+            String query = hasName(e.entityName())
+                    ? "players.query().named(\"" + e.entityName() + "\").nearest()"
+                    : "players.query().index(" + e.param1() + ").nearest()";
+            String interact = ".interact(" + playerSlot + ")";
+            return new String[]{query, interact};
+        }
+
+        return null;
+    }
+
+    /** Maps action type to Pace context string. */
+    private static String classifyContext(int actionId) {
+        if (actionId == ActionTypes.WALK) return "walk";
+        if (findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0) return "combat";
+        if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM
+                || actionId == ActionTypes.CONTAINER_ACTION || actionId == ActionTypes.DIALOGUE) return "menu";
+        return "gather";
+    }
+
+    /** Extracts tile coordinates [x, y] for an action, or null if unavailable. */
+    private static int[] extractLocation(ActionEntry entry, java.util.List<ActionEntry> entries, int index) {
+        int aid = entry.actionId();
+        // Objects and ground items have tile coords directly in p2, p3
+        if (findSlot(ActionTypes.OBJECT_OPTIONS, aid) > 0
+                || findSlot(ActionTypes.GROUND_ITEM_OPTIONS, aid) > 0
+                || aid == ActionTypes.WALK
+                || aid == ActionTypes.SELECT_OBJECT
+                || aid == ActionTypes.SELECT_GROUND_ITEM) {
+            return new int[]{entry.param2(), entry.param3()};
+        }
+        // NPCs and players: use preceding WALK destination as location hint
+        if (findSlot(ActionTypes.NPC_OPTIONS, aid) > 0
+                || findSlot(ActionTypes.PLAYER_OPTIONS, aid) > 0
+                || aid == ActionTypes.SELECT_NPC) {
+            for (int j = index - 1; j >= 0; j--) {
+                if (entries.get(j).actionId() == ActionTypes.WALK) {
+                    return new int[]{entries.get(j).param2(), entries.get(j).param3()};
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Detects if the action sequence loops back to the starting area. */
+    private static boolean detectLoop(java.util.List<ActionEntry> entries) {
+        int[] firstLoc = null;
+        for (int i = 0; i < entries.size(); i++) {
+            firstLoc = extractLocation(entries.get(i), entries, i);
+            if (firstLoc != null) break;
+        }
+        if (firstLoc == null) return false;
+        for (int i = entries.size() - 1; i >= 0; i--) {
+            if (entries.get(i).actionId() == ActionTypes.WALK) {
+                int dx = Math.abs(entries.get(i).param2() - firstLoc[0]);
+                int dy = Math.abs(entries.get(i).param3() - firstLoc[1]);
+                return Math.max(dx, dy) <= 20;
+            }
+        }
+        return false;
+    }
+
+    /** Finds the step that likely opens a given interface (first non-component step before current). */
+    private static int findInterfaceOpener(java.util.List<ActionEntry> entries, int currentIndex) {
+        for (int j = currentIndex - 1; j >= 0; j--) {
+            int aid = entries.get(j).actionId();
+            if (!isComponentAction(aid)) return j;
+        }
+        return -1;
+    }
+
+    private static boolean isComponentAction(int actionId) {
+        return actionId == ActionTypes.COMPONENT
+                || actionId == ActionTypes.SELECT_COMPONENT_ITEM
+                || actionId == ActionTypes.CONTAINER_ACTION;
+    }
+
+    private static boolean isEntityAction(int actionId) {
+        return findSlot(ActionTypes.NPC_OPTIONS, actionId) > 0
+                || findSlot(ActionTypes.OBJECT_OPTIONS, actionId) > 0
+                || findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId) > 0
+                || findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0;
     }
 
     /** Formats resolved names as: ' | Attack -> "Hill Giant"' */

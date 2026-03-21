@@ -8,7 +8,7 @@ import com.botwithus.bot.api.model.InventoryItem;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  * Provides access to the wood box portable log storage system.
@@ -303,20 +303,6 @@ public final class WoodBox {
                 .filter(t -> t.level == level)
                 .map(t -> t.name)
                 .findFirst().orElse("Unknown");
-    }
-
-    /** Random delay between 400–700ms for human-like interaction pacing. */
-    private static int randomDelay() {
-        return ThreadLocalRandom.current().nextInt(400, 701);
-    }
-
-    /** Sleep the current (virtual) thread. */
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     // ========================== Enums ==========================

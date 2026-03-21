@@ -42,7 +42,26 @@ public final class XapiData {
     public record InventoryChange(int itemId, String itemName, int oldQty, int newQty,
                                   long timestamp, int gameTick) {}
 
+    // ── Interaction snapshot records ──────────────────────────────────────
+
+    public record ItemSnapshot(int itemId, String name, int quantity) {}
+
+    public record BackpackSnapshot(List<ItemSnapshot> items, int freeSlots, boolean full) {}
+
+    public record TriggerSignals(boolean inventoryChanged, boolean animationEnded,
+                                  boolean playerStopped, boolean varbitChanged,
+                                  List<InventoryChange> recentItemChanges,
+                                  List<VarChange> recentVarChanges) {}
+
+    public record IntentHypothesis(String description, String confidence) {}
+
+    public record ActionSnapshot(BackpackSnapshot backpack, TriggerSignals triggers,
+                                  IntentHypothesis intent, int openInterfaceId) {}
+
+    // ── Session export/import ─────────────────────────────────────────────
+
     public record SessionData(List<LogEntry> actions, List<VarChange> vars, List<ChatEntry> chat,
+                              List<ActionSnapshot> snapshots,
                               long exportTime, String description) {}
 
     public record XapiSettings(

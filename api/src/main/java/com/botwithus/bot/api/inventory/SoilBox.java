@@ -7,7 +7,7 @@ import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.model.InventoryItem;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  * Provides access to the Archaeological soil box storage system.
@@ -353,20 +353,6 @@ public final class SoilBox {
         return api.getComponentChildren(BANK_INTERFACE_ID, BANK_BACKPACK_COMPONENT).stream()
                 .filter(c -> c.itemId() == ITEM_ID)
                 .findFirst().orElse(null);
-    }
-
-    /** Random delay between 400–700ms for human-like interaction pacing. */
-    private static int randomDelay() {
-        return ThreadLocalRandom.current().nextInt(400, 701);
-    }
-
-    /** Sleep the current (virtual) thread. */
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     // ========================== Enum ==========================

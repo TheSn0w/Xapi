@@ -1,5 +1,6 @@
 package com.botwithus.bot.api;
 
+import com.botwithus.bot.api.antiban.Pace;
 import com.botwithus.bot.api.event.EventBus;
 import com.botwithus.bot.api.isc.MessageBus;
 import com.botwithus.bot.api.isc.SharedState;
@@ -66,4 +67,12 @@ public interface ScriptContext {
      * @return the {@link Navigation} instance
      */
     Navigation getNavigation();
+
+    /**
+     * Returns the human-like timing API for generating context-aware,
+     * personality-driven delays.
+     *
+     * @return the {@link Pace} instance
+     */
+    Pace getPace();
 }

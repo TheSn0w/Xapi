@@ -1,5 +1,6 @@
 package com.botwithus.bot.api.inventory;
 
+import com.botwithus.bot.api.antiban.DelayEngine;
 import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
@@ -9,7 +10,7 @@ import com.botwithus.bot.api.model.GameAction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -435,9 +436,9 @@ public final class DepositBox {
         };
     }
 
-    /** Random delay between 400–700ms for human-like interaction pacing. */
+    /** Ex-Gaussian delay for human-like interaction pacing (~350–700ms, right-skewed). */
     private static int randomDelay() {
-        return ThreadLocalRandom.current().nextInt(400, 701);
+        return (int) Math.max(250, Math.min(1200, Math.round(DelayEngine.exGaussianSample(400, 60, 80))));
     }
 
     /** Sleep the current (virtual) thread. */
