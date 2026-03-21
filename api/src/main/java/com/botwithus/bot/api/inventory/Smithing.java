@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides access to the RS3 smithing and smelting interface (interface 37).
- * <p>This interface opens at an anvil (smithing) or furnace (smelting) and allows
- * the player to select materials, products, and quality tiers before crafting.</p>
+ * Provides access to the RS3 smithing and smelting interface (interface 37)
+ * and live tracking of active smithing progress via packed item variables.
  *
- * <h3>Interface Structure</h3>
+ * <h3>Interface Structure (interface 37)</h3>
  * <ul>
  *   <li>Material category grids (5 rows): comp(37, 52/62/72/82/92)</li>
  *   <li>Product category grids (5 rows): comp(37, 103/114/125/136/147)</li>
@@ -32,27 +31,39 @@ import java.util.Map;
  *   <li>Quantity slider: comp(37, 34) — sub:0=decrease, sub:7=increase</li>
  * </ul>
  *
+ * <h3>Active Smithing Progress</h3>
+ * <p>Once smithing begins, interface 37 closes (smithing does NOT use interface 1251).
+ * Progress is stored as <b>packed item variables</b> on "Unfinished smithing item" (ID 47068)
+ * in the backpack. Read via {@code getItemVars(93, slot)} which returns 4 raw vars:</p>
+ * <ul>
+ *   <li>v0: reserved (always 0)</li>
+ *   <li>v1: <b>packed</b> — lower 16 bits = creating item enum key, upper 16 bits = current progress</li>
+ *   <li>v2: XP remaining × 10 (direct value)</li>
+ *   <li>v3: <b>packed</b> — lower 16 bits = current heat, upper 16 bits = metadata</li>
+ * </ul>
+ * <p><b>Important</b>: {@code getItemVarValue(inv, slot, csVarId)} does NOT work for
+ * smithing vars — always returns 0. Only {@code getItemVars()} returns the packed raw data.</p>
+ *
  * <h3>Smithing vs Smelting</h3>
  * <p>Both use interface 37. Smelting mode hides comp(37, 5) (the smithing header).
  * The mode is set by CS2 script 2600.</p>
- *
- * <h3>Quantity &gt; 28</h3>
- * <p>With certain bonus equipment (Blacksmith's outfit, Smelting gauntlets, Varrock armour)
- * or completed quests, the server may allow producing more than 28 items in one run
- * because produced items are sent directly to the bank. The API trusts the server's
- * reported max quantity and never artificially caps at 28.</p>
  *
  * <h3>Typical usage:</h3>
  * <pre>{@code
  * Smithing smith = new Smithing(ctx.getGameAPI());
  *
- * // Wait for interface
+ * // Selection interface
  * smith.awaitOpen(3000);
- *
- * // Select quality and make
  * smith.selectQuality(Smithing.Quality.PLUS_5);
  * Thread.sleep(300);
  * smith.make();
+ *
+ * // Active progress tracking (interface closed)
+ * List<UnfinishedItem> items = smith.getAllUnfinishedItems();
+ * for (UnfinishedItem item : items) {
+ *     System.out.println(item.creatingName() + " " + item.currentProgress()
+ *             + "/" + item.maxProgress() + " heat=" + item.currentHeat());
+ * }
  * }</pre>
  *
  * @see Production
@@ -167,27 +178,47 @@ public final class Smithing {
     /** Equipment inventory ID for checking worn items. */
     private static final int EQUIPMENT_INVENTORY_ID = 94;
 
-    // ========================== Active Smithing — Varclients ==========================
+    // ========================== Active Smithing — Varclients (hover-only) ==========================
 
-    /** Varclient: inventory ID containing the active unfinished item. */
+    /**
+     * Varclient: inventory ID of the item under the tooltip cursor.
+     * <p><b>Warning</b>: only populated while hovering over an unfinished item
+     * (tooltip active). Returns -1 otherwise. Not suitable for continuous monitoring —
+     * use {@link #getAllUnfinishedItems()} to scan the backpack instead.</p>
+     */
     public static final int VARC_ACTIVE_INVENTORY = 5121;
-    /** Varclient: slot index of the active unfinished item. */
+    /**
+     * Varclient: slot index of the item under the tooltip cursor.
+     * <p><b>Warning</b>: only populated while hovering. See {@link #VARC_ACTIVE_INVENTORY}.</p>
+     */
     public static final int VARC_ACTIVE_SLOT = 5122;
 
-    // ========================== Active Smithing — Item Var IDs ==========================
+    // ========================== Active Smithing — CS2 Var IDs (reference only) ============
 
-    /** Item var: key into enum 15095 for the item being created. */
-    public static final int ITEMVAR_CREATING = 43222;
-    /** Item var: current progress (0 → max). */
-    public static final int ITEMVAR_PROGRESS = 43223;
-    /** Item var: experience remaining × 10 (divide by 10 for actual XP). */
-    public static final int ITEMVAR_XP_LEFT = 43224;
-    /** Item var: current heat level. */
-    public static final int ITEMVAR_HEAT = 43225;
+    /**
+     * CS2 item var IDs used by {@code INV_GETVAR} in clientscript-5828.
+     * <p><b>These DO NOT work with {@code getItemVarValue()} RPC</b> — that call returns 0.
+     * They are documented here for cross-referencing with CS2 scripts only.
+     * Use {@link #getAllUnfinishedItems()} which reads packed raw vars via {@code getItemVars()}.</p>
+     *
+     * <ul>
+     *   <li>43222 — creating item (enum 15095 key)</li>
+     *   <li>43223 — current progress</li>
+     *   <li>43224 — XP remaining × 10</li>
+     *   <li>43225 — current heat</li>
+     * </ul>
+     */
+    public static final int CS2_VAR_CREATING = 43222;
+    /** CS2 var for progress. See {@link #CS2_VAR_CREATING} for usage warning. */
+    public static final int CS2_VAR_PROGRESS = 43223;
+    /** CS2 var for XP remaining × 10. See {@link #CS2_VAR_CREATING} for usage warning. */
+    public static final int CS2_VAR_XP_LEFT = 43224;
+    /** CS2 var for heat. See {@link #CS2_VAR_CREATING} for usage warning. */
+    public static final int CS2_VAR_HEAT = 43225;
 
     // ========================== Active Smithing — Enums & Params ==========================
 
-    /** Enum: maps item var 43222 key → item ID being created. */
+    /** Enum: maps creating key (from packed var 1, lower 16 bits) → item ID being created. */
     public static final int ENUM_CREATING_ITEM = 15095;
     /** Item param: max progress required to complete the item. */
     public static final int PARAM_MAX_PROGRESS = 7801;
@@ -956,7 +987,7 @@ public final class Smithing {
     /**
      * Resolve the item being created from an enum 15095 key.
      *
-     * @param enumKey the value from item var 43222
+     * @param enumKey the creating key (lower 16 bits of packed var 1)
      * @return the resolved item ID, or -1 if unresolvable
      */
     public int resolveCreatingItemId(int enumKey) {
@@ -1119,7 +1150,7 @@ public final class Smithing {
      * @param maxProgress     max progress from item param 7801
      * @param progressPercent calculated progress percentage (0–100)
      * @param currentHeat     current heat level
-     * @param experienceLeft  XP remaining (item var 43224 / 10)
+     * @param experienceLeft  XP remaining (packed var 2 / 10)
      */
     public record UnfinishedItem(
             int slot,
