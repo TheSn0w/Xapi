@@ -149,6 +149,8 @@ final class XapiState {
     volatile List<InvVarLiveEntry> invVarLiveResults = List.of();
     volatile String invVarSearchStatus = "";
     final List<InvVarChangeEntry> invVarChangeLog = new CopyOnWriteArrayList<>();
+    // Baseline snapshot: varbitId -> value at time of snapshot (for "Changed Only" comparison)
+    final ConcurrentHashMap<Integer, Integer> invVarBaseline = new ConcurrentHashMap<>();
 
     // ── Interface event tracking ─────────────────────────────────────────
     final List<InterfaceEvent> interfaceEventLog = new CopyOnWriteArrayList<>();
@@ -251,6 +253,9 @@ final class XapiState {
     // Separate editing state for inv var search labels (avoids conflict with pinned vars editor)
     final ImString invVarAnnotationInput = new ImString(256);
     String invVarEditingKey = null;
+
+    // Inv var search filter (value or varbit ID)
+    final ImString invVarFilterText = new ImString(128);
 
     // ── Helpers (package-private for tab access) ─────────────────────────
 

@@ -293,9 +293,65 @@ final class VariablesTab {
                 ImGui.setTooltip(live ? "Click to disable live polling" : "Enable live polling — updates every ~600ms");
             }
             ImGui.sameLine();
+            ImGui.text("Filter:");
+            ImGui.sameLine();
+            ImGui.pushItemWidth(120);
+            ImGui.inputText("##ivs_filter", state.invVarFilterText);
+            ImGui.popItemWidth();
+            if (ImGui.isItemHovered()) ImGui.setTooltip("Filter by varbit ID or value (e.g. \"42\" or \"v:100\" for value 100)");
+
+            // Baseline snapshot controls
+            boolean hasBaseline = !state.invVarBaseline.isEmpty();
+            ImGui.sameLine();
+            if (ImGui.button("Set Start##ivs_snap")) {
+                state.invVarBaseline.clear();
+                // Only snapshot varbits matching the current filter
+                String snapFilter = state.invVarFilterText.get().trim();
+                boolean snapByValue = snapFilter.startsWith("v:") || snapFilter.startsWith("V:");
+                String snapNumStr = snapByValue ? snapFilter.substring(2).trim() : snapFilter;
+                int snapFilterNum = Integer.MIN_VALUE;
+                try { snapFilterNum = Integer.parseInt(snapNumStr); } catch (NumberFormatException ignored) {}
+
+                for (var r : state.invVarLiveResults) {
+                    boolean matches;
+                    if (snapFilter.isEmpty() || snapFilterNum == Integer.MIN_VALUE) {
+                        matches = true;
+                    } else if (snapByValue) {
+                        matches = r.decodedValue() == snapFilterNum;
+                    } else {
+                        matches = r.varbitId() == snapFilterNum;
+                        if (!matches && r.allVarbitIds() != null) {
+                            for (int id : r.allVarbitIds()) {
+                                if (id == snapFilterNum) { matches = true; break; }
+                            }
+                        }
+                    }
+                    if (matches) {
+                        state.invVarBaseline.put(r.varbitId(), r.decodedValue());
+                        if (r.allVarbitIds() != null) {
+                            for (int sibId : r.allVarbitIds()) {
+                                state.invVarBaseline.putIfAbsent(sibId, r.decodedValue());
+                            }
+                        }
+                    }
+                }
+            }
+            if (ImGui.isItemHovered()) ImGui.setTooltip("Snapshot filtered varbits as baseline — \"Changed Only\" will compare against this");
+            ImGui.sameLine();
             boolean changedOnly = state.invVarChangedOnly;
             if (ImGui.checkbox("Changed Only##ivs", changedOnly)) {
                 state.invVarChangedOnly = !changedOnly;
+            }
+            if (ImGui.isItemHovered()) {
+                ImGui.setTooltip(hasBaseline ? "Show only varbits changed from baseline" : "Show only varbits that changed during this session");
+            }
+            if (hasBaseline) {
+                ImGui.sameLine();
+                if (ImGui.smallButton("Clear##ivs_snap_clr")) {
+                    state.invVarBaseline.clear();
+                    state.invVarChangedOnly = false;
+                }
+                if (ImGui.isItemHovered()) ImGui.setTooltip("Clear baseline snapshot");
             }
 
             // Status line
@@ -309,11 +365,74 @@ final class VariablesTab {
             // Live results table
             List<XapiData.InvVarLiveEntry> results = state.invVarLiveResults;
             if (state.invVarChangedOnly) {
-                List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
-                for (var r : results) {
-                    if (r.lastChangeTime() > 0) filtered.add(r);
+                if (!state.invVarBaseline.isEmpty()) {
+                    // Baseline mode: show only varbits whose value differs from baseline
+                    List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
+                    for (var r : results) {
+                        Integer baseVal = state.invVarBaseline.get(r.varbitId());
+                        if (baseVal != null && r.decodedValue() != baseVal) filtered.add(r);
+                    }
+                    results = filtered;
+                } else {
+                    // No baseline: show varbits that changed during this live session
+                    List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
+                    for (var r : results) {
+                        if (r.lastChangeTime() > 0) filtered.add(r);
+                    }
+                    results = filtered;
                 }
-                results = filtered;
+            }
+            // Promote annotated sibling varbits to their own main rows
+            Set<Integer> mainVarbitIds = new HashSet<>();
+            for (var r : results) mainVarbitIds.add(r.varbitId());
+            List<XapiData.InvVarLiveEntry> promoted = null;
+            for (var r : results) {
+                if (r.allVarbitIds() == null || r.allVarbitIds().size() <= 1) continue;
+                for (int sibId : r.allVarbitIds()) {
+                    if (sibId == r.varbitId() || mainVarbitIds.contains(sibId)) continue;
+                    if (state.varAnnotations.containsKey("invvarbit:" + sibId)) {
+                        if (promoted == null) promoted = new ArrayList<>(results);
+                        mainVarbitIds.add(sibId);
+                        promoted.add(new XapiData.InvVarLiveEntry(
+                                sibId, r.itemVarId(), r.decodedValue(), r.bits(),
+                                r.previousValue(), r.lastChangeTime(), null));
+                    }
+                }
+            }
+            if (promoted != null) results = promoted;
+            // Apply text filter (skip when baseline "Changed Only" is active — baseline already narrowed results)
+            boolean baselineActive = state.invVarChangedOnly && !state.invVarBaseline.isEmpty();
+            String filterStr = state.invVarFilterText.get().trim();
+            if (!filterStr.isEmpty() && !baselineActive) {
+                boolean filterByValue = filterStr.startsWith("v:") || filterStr.startsWith("V:");
+                String numStr = filterByValue ? filterStr.substring(2).trim() : filterStr;
+                try {
+                    int filterNum = Integer.parseInt(numStr);
+                    List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
+                    for (var r : results) {
+                        if (filterByValue) {
+                            if (r.decodedValue() == filterNum) filtered.add(r);
+                        } else {
+                            // Match varbit ID — check main and all siblings
+                            if (r.varbitId() == filterNum) { filtered.add(r); continue; }
+                            if (r.allVarbitIds() != null) {
+                                for (int id : r.allVarbitIds()) {
+                                    if (id == filterNum) { filtered.add(r); break; }
+                                }
+                            }
+                        }
+                    }
+                    results = filtered;
+                } catch (NumberFormatException ignored) {
+                    // Non-numeric filter — match against labels
+                    String lower = filterStr.toLowerCase();
+                    List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
+                    for (var r : results) {
+                        String ann = state.varAnnotations.get("invvarbit:" + r.varbitId());
+                        if (ann != null && ann.toLowerCase().contains(lower)) filtered.add(r);
+                    }
+                    results = filtered;
+                }
             }
             if (!results.isEmpty()) {
                 int invId = state.invVarSearchInvId.get();
