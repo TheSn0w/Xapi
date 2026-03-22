@@ -14,16 +14,16 @@ import java.util.List;
 
 final class InventoryTab {
 
-    private final XapiScript script;
+    private final XapiState state;
     private final ImString filterText = new ImString(256);
     private int lastLogSize = -1;
 
-    InventoryTab(XapiScript s) {
-        this.script = s;
+    InventoryTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
-        List<InventoryChange> log = script.inventoryLog;
+        List<InventoryChange> log = state.inventoryLog;
 
         ImGui.text("Filter:");
         ImGui.sameLine();
@@ -32,7 +32,7 @@ final class InventoryTab {
         ImGui.popItemWidth();
         ImGui.sameLine();
         if (ImGui.smallButton("Clear##inv_clear")) {
-            script.inventoryLog.clear();
+            state.inventoryLog.clear();
             lastLogSize = -1;
         }
         ImGui.sameLine();
@@ -72,7 +72,7 @@ final class InventoryTab {
 
                 ImGui.tableSetColumnIndex(0);
                 ImGui.text(Instant.ofEpochMilli(ic.timestamp())
-                        .atZone(ZoneId.systemDefault()).format(XapiScript.TIME_FMT));
+                        .atZone(ZoneId.systemDefault()).format(XapiState.TIME_FMT));
 
                 ImGui.tableSetColumnIndex(1);
                 ImGui.text(String.valueOf(ic.gameTick()));

@@ -18,10 +18,10 @@ import java.util.List;
 
 final class InterfacesTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    InterfacesTab(XapiScript s) {
-        this.script = s;
+    InterfacesTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
@@ -45,7 +45,7 @@ final class InterfacesTab {
     private void renderCurrentInterfacesSubTab() {
         ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Click an interface to load its components (updates every ~2s)");
 
-        List<OpenInterface> ifaces = script.openInterfaces;
+        List<OpenInterface> ifaces = state.openInterfaces;
         if (ifaces.isEmpty()) {
             ImGui.text("No open interfaces detected.");
             return;
@@ -58,11 +58,11 @@ final class InterfacesTab {
             int ifaceId = iface.interfaceId();
             boolean open = ImGui.treeNode("Interface " + ifaceId + "##iface_" + ifaceId);
             if (ImGui.isItemClicked()) {
-                script.inspectInterfaceId = ifaceId;
+                state.inspectInterfaceId = ifaceId;
             }
 
             if (open) {
-                List<Component> children = script.componentCache.get(ifaceId);
+                List<Component> children = state.componentCache.get(ifaceId);
                 if (children == null || children.isEmpty()) {
                     ImGui.textColored(0.7f, 0.7f, 0.7f, 1f, "Click to load components...");
                 } else {
@@ -93,8 +93,8 @@ final class InterfacesTab {
                             if (c.spriteId() > 0) ImGui.text(String.valueOf(c.spriteId()));
 
                             ImGui.tableSetColumnIndex(5);
-                            String text = script.componentTextCache.getOrDefault(key, "");
-                            List<String> opts = script.componentOptionsCache.getOrDefault(key, List.of());
+                            String text = state.componentTextCache.getOrDefault(key, "");
+                            List<String> opts = state.componentOptionsCache.getOrDefault(key, List.of());
                             if (!text.isEmpty()) ImGui.text(text);
                             if (!opts.isEmpty()) {
                                 ImGui.textColored(0.7f, 0.7f, 0.4f, 1f, String.join(" | ", opts));
@@ -144,7 +144,7 @@ final class InterfacesTab {
     /** Returns mini menu entries matching the given interface ID (from packed param3 hash). */
     private List<MiniMenuEntry> getMenuEntriesForInterface(int ifaceId) {
         List<MiniMenuEntry> result = new ArrayList<>();
-        List<MiniMenuEntry> menu = script.lastMiniMenu;
+        List<MiniMenuEntry> menu = state.lastMiniMenu;
         if (menu == null) return result;
         for (MiniMenuEntry entry : menu) {
             // Component actions store packed hash in param3: ifaceId << 16 | compId
@@ -159,14 +159,14 @@ final class InterfacesTab {
         ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Polls every tick. Only visible interfaces are tracked.");
 
         if (ImGui.smallButton("Clear Events")) {
-            script.interfaceEventLog.clear();
+            state.interfaceEventLog.clear();
         }
         ImGui.sameLine();
         if (ImGui.smallButton("Copy All")) {
             StringBuilder sb = new StringBuilder();
-            for (InterfaceEvent ev : script.interfaceEventLog) {
+            for (InterfaceEvent ev : state.interfaceEventLog) {
                 sb.append(String.format("[%s] Tick:%d Interface:%d %s\n",
-                        XapiScript.TIME_FMT.format(Instant.ofEpochMilli(ev.timestamp()).atZone(ZoneId.systemDefault()).toLocalTime()),
+                        XapiState.TIME_FMT.format(Instant.ofEpochMilli(ev.timestamp()).atZone(ZoneId.systemDefault()).toLocalTime()),
                         ev.gameTick(), ev.interfaceId(), ev.type()));
                 if ("OPENED".equals(ev.type())) {
                     for (InterfaceComponentSnapshot cs : ev.components()) {
@@ -183,7 +183,7 @@ final class InterfacesTab {
             ImGui.setClipboardText(sb.toString());
         }
 
-        List<InterfaceEvent> events = script.interfaceEventLog;
+        List<InterfaceEvent> events = state.interfaceEventLog;
         if (events.isEmpty()) {
             ImGui.text("No interface events recorded yet.");
             return;
@@ -192,7 +192,7 @@ final class InterfacesTab {
         // Render events in reverse (newest first)
         for (int idx = events.size() - 1; idx >= 0; idx--) {
             InterfaceEvent ev = events.get(idx);
-            String time = XapiScript.TIME_FMT.format(Instant.ofEpochMilli(ev.timestamp()).atZone(ZoneId.systemDefault()).toLocalTime());
+            String time = XapiState.TIME_FMT.format(Instant.ofEpochMilli(ev.timestamp()).atZone(ZoneId.systemDefault()).toLocalTime());
             boolean isOpen = "OPENED".equals(ev.type());
 
             // Find first non-empty text as summary
@@ -296,11 +296,11 @@ final class InterfacesTab {
     }
 
     private void renderMenuLogSubTab() {
-        List<MenuSnapshot> log = script.menuLog;
+        List<MenuSnapshot> log = state.menuLog;
         ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "Menu changes: " + log.size() + " snapshots (max 500)");
         ImGui.sameLine();
         if (ImGui.smallButton("Clear##menu_clear")) {
-            script.menuLog.clear();
+            state.menuLog.clear();
         }
 
         if (log.isEmpty()) {
@@ -312,7 +312,7 @@ final class InterfacesTab {
         for (int i = log.size() - 1; i >= 0; i--) {
             MenuSnapshot snap = log.get(i);
             String time = Instant.ofEpochMilli(snap.timestamp())
-                    .atZone(ZoneId.systemDefault()).format(XapiScript.TIME_FMT);
+                    .atZone(ZoneId.systemDefault()).format(XapiState.TIME_FMT);
             String header = time + " [tick " + snap.gameTick() + "] — " + snap.entries().size() + " entries";
 
             if (ImGui.treeNode(header + "##menu_" + i)) {

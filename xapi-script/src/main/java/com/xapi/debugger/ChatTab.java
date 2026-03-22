@@ -13,23 +13,23 @@ import java.util.List;
 
 final class ChatTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    ChatTab(XapiScript s) {
-        this.script = s;
+    ChatTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
         ImGui.text("Filter:");
         ImGui.sameLine();
         ImGui.pushItemWidth(200);
-        ImGui.inputText("##chat_filter", script.chatFilterText);
+        ImGui.inputText("##chat_filter", state.chatFilterText);
         ImGui.popItemWidth();
         ImGui.sameLine();
-        if (ImGui.button("Clear Chat")) { script.chatLog.clear(); script.lastChatSize = -1; }
+        if (ImGui.button("Clear Chat")) { state.chatLog.clear(); state.lastChatSize = -1; }
 
-        List<ChatEntry> chats = script.chatLog;
-        String filter = script.chatFilterText.get().toLowerCase();
+        List<ChatEntry> chats = state.chatLog;
+        String filter = state.chatFilterText.get().toLowerCase();
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
                 | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;
         float tableHeight = ImGui.getContentRegionAvailY();
@@ -52,14 +52,14 @@ final class ChatTab {
                 }
                 displayed++;
                 ImGui.tableNextRow();
-                if (ce.gameTick() == script.selectedActionTick) {
+                if (ce.gameTick() == state.selectedActionTick) {
                     ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.6f, 0.2f, 0.3f));
-                } else if (script.hasActionOnTick(ce.gameTick())) {
+                } else if (state.hasActionOnTick(ce.gameTick())) {
                     ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.4f, 0.2f, 0.2f));
                 }
 
                 ImGui.tableSetColumnIndex(0); ImGui.text(String.valueOf(displayed));
-                ImGui.tableSetColumnIndex(1); ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(ce.timestamp()), ZoneId.systemDefault()).format(XapiScript.TIME_FMT));
+                ImGui.tableSetColumnIndex(1); ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(ce.timestamp()), ZoneId.systemDefault()).format(XapiState.TIME_FMT));
                 ImGui.tableSetColumnIndex(2); ImGui.text(String.valueOf(ce.gameTick()));
                 ImGui.tableSetColumnIndex(3); ImGui.text(String.valueOf(ce.messageType()));
                 ImGui.tableSetColumnIndex(4);
@@ -70,10 +70,10 @@ final class ChatTab {
                 if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy");
             }
 
-            if (script.lastChatSize == -1) {
-                script.lastChatSize = chats.size();
-            } else if (chats.size() > script.lastChatSize) {
-                script.lastChatSize = chats.size();
+            if (state.lastChatSize == -1) {
+                state.lastChatSize = chats.size();
+            } else if (chats.size() > state.lastChatSize) {
+                state.lastChatSize = chats.size();
                 ImGui.setScrollHereY(1.0f);
             }
             ImGui.endTable();

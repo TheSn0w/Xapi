@@ -16,15 +16,15 @@ import java.util.Map;
  */
 final class ProductionTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    ProductionTab(XapiScript s) {
-        this.script = s;
+    ProductionTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
         // Status header
-        boolean open = script.prodOpen;
+        boolean open = state.prodOpen;
         ImGui.text("Production Interface: ");
         ImGui.sameLine();
         if (open) {
@@ -37,7 +37,7 @@ final class ProductionTab {
         ImGui.sameLine();
         ImGui.text("  |  Progress: ");
         ImGui.sameLine();
-        if (script.progressOpen) {
+        if (state.progressOpen) {
             ImGui.textColored(0.2f, 0.8f, 1f, 1f, "PRODUCING");
         } else {
             ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "IDLE");
@@ -69,7 +69,7 @@ final class ProductionTab {
         ImGui.spacing();
 
         // Categories
-        if (script.prodHasCategories) {
+        if (state.prodHasCategories) {
             renderCategories();
             ImGui.spacing();
             ImGui.separator();
@@ -77,7 +77,7 @@ final class ProductionTab {
         }
 
         // Production progress (interface 1251)
-        if (script.progressOpen) {
+        if (state.progressOpen) {
             renderProgress();
             ImGui.spacing();
             ImGui.separator();
@@ -91,8 +91,8 @@ final class ProductionTab {
     private void renderProgress() {
         if (ImGui.collapsingHeader("Production Progress (Interface 1251)", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
             // Progress bar
-            int total = script.progressTotal;
-            int remaining = script.progressRemaining;
+            int total = state.progressTotal;
+            int remaining = state.progressRemaining;
             int made = total > 0 ? total - remaining : 0;
             float pct = total > 0 ? (float) made / total : 0f;
 
@@ -107,17 +107,17 @@ final class ProductionTab {
             // Text fields
             ImGui.text("Product: ");
             ImGui.sameLine();
-            String prodName = script.progressProductName;
+            String prodName = state.progressProductName;
             ImGui.textColored(0.5f, 0.9f, 1f, 1f, prodName != null ? prodName : "???");
 
-            String timeText = script.progressTimeText;
+            String timeText = state.progressTimeText;
             if (timeText != null) {
                 ImGui.text("Time Remaining: ");
                 ImGui.sameLine();
                 ImGui.text(timeText);
             }
 
-            String counterText = script.progressCounterText;
+            String counterText = state.progressCounterText;
             if (counterText != null) {
                 ImGui.text("Counter: ");
                 ImGui.sameLine();
@@ -134,9 +134,9 @@ final class ProductionTab {
 
                 progRow("Total to Make", "varc", 2228, total);
                 progRow("Remaining", "varc", 2229, remaining);
-                progRow("Speed Modifier", "varc", 2227, script.progressSpeedModifier);
-                progRow("Product Item ID", "varp", 1175, script.progressProductId);
-                progRow("Visibility", "varp", 3034, script.progressVisibility);
+                progRow("Speed Modifier", "varc", 2227, state.progressSpeedModifier);
+                progRow("Product Item ID", "varp", 1175, state.progressProductId);
+                progRow("Visibility", "varp", 3034, state.progressVisibility);
 
                 ImGui.endTable();
             }
@@ -169,12 +169,12 @@ final class ProductionTab {
                 ImGui.tableSetupColumn("Value", 0, 1f);
                 ImGui.tableHeadersRow();
 
-                varpRow("Category Enum", 1168, script.prodCategoryEnum);
-                varpRow("Product List Enum", 1169, script.prodProductListEnum);
-                varpRow("Selected Product", 1170, script.prodSelectedItem);
-                varpRow("Category Dropdown", 7881, script.prodCategoryDropdown);
-                varpRow("Max Quantity", 8846, script.prodMaxQty);
-                varpRow("Chosen Quantity", 8847, script.prodChosenQty);
+                varpRow("Category Enum", 1168, state.prodCategoryEnum);
+                varpRow("Product List Enum", 1169, state.prodProductListEnum);
+                varpRow("Selected Product", 1170, state.prodSelectedItem);
+                varpRow("Category Dropdown", 7881, state.prodCategoryDropdown);
+                varpRow("Max Quantity", 8846, state.prodMaxQty);
+                varpRow("Chosen Quantity", 8847, state.prodChosenQty);
 
                 ImGui.endTable();
             }
@@ -199,9 +199,9 @@ final class ProductionTab {
     private void renderCurrentSelection() {
         ImGui.text("Selected Product: ");
         ImGui.sameLine();
-        int selectedId = script.prodSelectedItem;
+        int selectedId = state.prodSelectedItem;
         if (selectedId > 0) {
-            String name = script.prodSelectedName;
+            String name = state.prodSelectedName;
             ImGui.textColored(0.5f, 0.9f, 1f, 1f,
                     (name != null ? name : "???") + "  (ID: " + selectedId + ")");
             if (ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
@@ -214,8 +214,8 @@ final class ProductionTab {
 
         ImGui.text("Quantity: ");
         ImGui.sameLine();
-        int chosen = script.prodChosenQty;
-        int max = script.prodMaxQty;
+        int chosen = state.prodChosenQty;
+        int max = state.prodMaxQty;
         if (max > 0) {
             float pct = (float) chosen / max;
             ImGui.pushStyleColor(ImGuiCol.PlotHistogram,
@@ -230,7 +230,7 @@ final class ProductionTab {
 
     private void renderProductGrid() {
         if (ImGui.collapsingHeader("Product Grid", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
-            List<ProductionTabEntry> products = script.prodGridEntries;
+            List<ProductionTabEntry> products = state.prodGridEntries;
             if (products.isEmpty()) {
                 ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "No products found in grid.");
                 return;
@@ -247,7 +247,7 @@ final class ProductionTab {
                 ImGui.tableSetupScrollFreeze(0, 1);
                 ImGui.tableHeadersRow();
 
-                int selectedId = script.prodSelectedItem;
+                int selectedId = state.prodSelectedItem;
                 for (ProductionTabEntry p : products) {
                     ImGui.tableNextRow();
 
@@ -286,7 +286,7 @@ final class ProductionTab {
 
     private void renderCategories() {
         if (ImGui.collapsingHeader("Categories")) {
-            List<String> categories = script.prodCategoryNames;
+            List<String> categories = state.prodCategoryNames;
             if (categories.isEmpty()) {
                 ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "No category data available.");
                 return;
@@ -329,14 +329,14 @@ final class ProductionTab {
             codeRow("Increase Qty", "api.queueAction(new GameAction(57, 1, 7, 89849875));");
             codeRow("Open Category Dropdown", "api.queueAction(new GameAction(57, 1, -1, 89849884));");
 
-            int selectedId = script.prodSelectedItem;
+            int selectedId = state.prodSelectedItem;
             if (selectedId > 0) {
                 int idx = -1;
-                for (ProductionTabEntry p : script.prodGridEntries) {
+                for (ProductionTabEntry p : state.prodGridEntries) {
                     if (p.itemId() == selectedId) { idx = p.index(); break; }
                 }
                 if (idx >= 0) {
-                    codeRow("Select Current (" + (script.prodSelectedName != null ? script.prodSelectedName : selectedId) + ")",
+                    codeRow("Select Current (" + (state.prodSelectedName != null ? state.prodSelectedName : selectedId) + ")",
                             "api.queueAction(new GameAction(57, 1, " + (idx * 4 + 1) + ", " + ((1371 << 16) | 22) + "));");
                 }
             }

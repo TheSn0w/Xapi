@@ -15,15 +15,15 @@ import java.util.List;
  */
 final class SmithingTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    SmithingTab(XapiScript s) {
-        this.script = s;
+    SmithingTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
         // Status header
-        boolean open = script.smithOpen;
+        boolean open = state.smithOpen;
         ImGui.text("Smithing Interface: ");
         ImGui.sameLine();
         if (open) {
@@ -31,7 +31,7 @@ final class SmithingTab {
             ImGui.sameLine();
             ImGui.text(" — Mode: ");
             ImGui.sameLine();
-            if (script.smithIsSmelting) {
+            if (state.smithIsSmelting) {
                 ImGui.textColored(1f, 0.6f, 0.2f, 1f, "SMELTING");
             } else {
                 ImGui.textColored(0.4f, 0.7f, 1f, 1f, "SMITHING");
@@ -44,7 +44,7 @@ final class SmithingTab {
         ImGui.sameLine();
         ImGui.text("  |  Active: ");
         ImGui.sameLine();
-        if (script.activelySmithing) {
+        if (state.activelySmithing) {
             ImGui.textColored(0.2f, 0.8f, 1f, 1f, "SMITHING");
         } else {
             ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "IDLE");
@@ -79,14 +79,14 @@ final class SmithingTab {
         ImGui.spacing();
 
         // Material grid
-        renderGrid("Material Grid", script.smithMaterialEntries, true);
+        renderGrid("Material Grid", state.smithMaterialEntries, true);
 
         ImGui.spacing();
         ImGui.separator();
         ImGui.spacing();
 
         // Product grid
-        renderGrid("Product Grid", script.smithProductEntries, false);
+        renderGrid("Product Grid", state.smithProductEntries, false);
 
         ImGui.spacing();
         ImGui.separator();
@@ -97,22 +97,10 @@ final class SmithingTab {
     }
 
     private void renderActiveSmithing() {
-        // Always show raw var debug if we have unfinished items
-        String rawVars = script.smithRawVarsDebug;
-        if (rawVars != null && !rawVars.isEmpty()) {
-            if (ImGui.collapsingHeader("Raw Item Vars (Debug)", ImGuiTreeNodeFlags.DefaultOpen)) {
-                ImGui.textColored(0.7f, 0.7f, 0.3f, 1f, rawVars);
-                if (ImGui.smallButton("Copy##raw_vars")) {
-                    ImGui.setClipboardText(rawVars);
-                }
-            }
-            ImGui.spacing();
-        }
-
-        if (!script.activelySmithing) return;
+        if (!state.activelySmithing) return;
 
         if (ImGui.collapsingHeader("Active Smithing Progress", ImGuiTreeNodeFlags.DefaultOpen)) {
-            Smithing.UnfinishedItem active = script.activeSmithingItem;
+            Smithing.UnfinishedItem active = state.activeSmithingItem;
 
             if (active != null) {
                 // Item being created
@@ -125,8 +113,8 @@ final class SmithingTab {
                 ImGui.spacing();
 
                 // Heat bar (orange)
-                float heatPct = script.smithMaxHeat > 0
-                        ? (float) active.currentHeat() / script.smithMaxHeat : 0f;
+                float heatPct = state.smithMaxHeat > 0
+                        ? (float) active.currentHeat() / state.smithMaxHeat : 0f;
                 int heatColor = heatPct >= 0.67f
                         ? ImGui.colorConvertFloat4ToU32(1f, 0.5f, 0f, 1f)   // orange
                         : heatPct >= 0.34f
@@ -138,15 +126,15 @@ final class SmithingTab {
                 ImGui.text("Heat:");
                 ImGui.sameLine();
                 ImGui.textColored(0.7f, 0.7f, 0.7f, 1f,
-                        active.currentHeat() + " / " + script.smithMaxHeat
-                                + "  (" + script.smithHeatPercent + "%)");
+                        active.currentHeat() + " / " + state.smithMaxHeat
+                                + "  (" + state.smithHeatPercent + "%)");
                 ImGui.sameLine();
                 ImGui.textColored(0.5f, 0.9f, 1f, 1f,
-                        "[" + script.smithHeatBand + " — " + script.smithProgressPerStrike + " prog/strike]");
+                        "[" + state.smithHeatBand + " — " + state.smithProgressPerStrike + " prog/strike]");
 
                 ImGui.pushStyleColor(ImGuiCol.PlotHistogram, heatColor);
                 ImGui.progressBar(heatPct, 300, 16,
-                        active.currentHeat() + " / " + script.smithMaxHeat);
+                        active.currentHeat() + " / " + state.smithMaxHeat);
                 ImGui.popStyleColor();
 
                 // Progress bar (blue)
@@ -173,13 +161,13 @@ final class SmithingTab {
                 ImGui.text("Reheat Rate: ");
                 ImGui.sameLine();
                 ImGui.textColored(0.7f, 0.7f, 0.7f, 1f,
-                        script.smithReheatRate + " heat/tick at forge");
+                        state.smithReheatRate + " heat/tick at forge");
             }
 
             ImGui.spacing();
 
             // All unfinished items table
-            List<Smithing.UnfinishedItem> allItems = script.allUnfinishedItems;
+            List<Smithing.UnfinishedItem> allItems = state.allUnfinishedItems;
             if (!allItems.isEmpty()) {
                 ImGui.separator();
                 ImGui.text("Unfinished Items in Backpack: " + allItems.size());
@@ -237,26 +225,26 @@ final class SmithingTab {
                 ImGui.tableSetupColumn("Value", 0, 2f);
                 ImGui.tableHeadersRow();
 
-                stateRow("Mode", script.smithIsSmelting ? "Smelting" : "Smithing");
+                stateRow("Mode", state.smithIsSmelting ? "Smelting" : "Smithing");
 
-                int selectedId = script.smithSelectedItem;
-                String selectedName = script.smithProductName;
+                int selectedId = state.smithSelectedItem;
+                String selectedName = state.smithProductName;
                 stateRow("Selected Item", selectedName != null && selectedId > 0
                         ? selectedName + " (ID: " + selectedId + ")" : String.valueOf(selectedId));
                 stateRow("Product Name", selectedName != null ? selectedName : "—");
-                stateRow("Quantity", String.valueOf(script.smithQuantity));
-                stateRow("Quality Tier", script.smithQualityTier + " (" + script.smithQualityName + ")");
-                stateRow("Material (dbrow)", String.valueOf(script.smithMaterialDbrow));
-                stateRow("Product (dbrow)", String.valueOf(script.smithProductDbrow));
-                stateRow("Location", String.valueOf(script.smithLocation));
-                stateRow("Outfit Bonus 1", String.valueOf(script.smithOutfitBonus1));
-                stateRow("Outfit Bonus 2", String.valueOf(script.smithOutfitBonus2));
-                stateRow("Heat Efficiency", String.valueOf(script.smithHeatEfficiency));
-                stateRow("Exceeds Backpack", String.valueOf(script.smithExceedsBackpack));
-                stateRow("Full Blacksmith Outfit", String.valueOf(script.smithFullOutfit));
-                stateRow("Varrock Armour", String.valueOf(script.smithVarrockArmour));
+                stateRow("Quantity", String.valueOf(state.smithQuantity));
+                stateRow("Quality Tier", state.smithQualityTier + " (" + state.smithQualityName + ")");
+                stateRow("Material (dbrow)", String.valueOf(state.smithMaterialDbrow));
+                stateRow("Product (dbrow)", String.valueOf(state.smithProductDbrow));
+                stateRow("Location", String.valueOf(state.smithLocation));
+                stateRow("Outfit Bonus 1", String.valueOf(state.smithOutfitBonus1));
+                stateRow("Outfit Bonus 2", String.valueOf(state.smithOutfitBonus2));
+                stateRow("Heat Efficiency", String.valueOf(state.smithHeatEfficiency));
+                stateRow("Exceeds Backpack", String.valueOf(state.smithExceedsBackpack));
+                stateRow("Full Blacksmith Outfit", String.valueOf(state.smithFullOutfit));
+                stateRow("Varrock Armour", String.valueOf(state.smithVarrockArmour));
 
-                List<Integer> bonuses = script.smithActiveBonuses;
+                List<Integer> bonuses = state.smithActiveBonuses;
                 stateRow("Active Bonuses", bonuses.isEmpty() ? "None" : bonuses.toString());
 
                 ImGui.endTable();
@@ -277,7 +265,7 @@ final class SmithingTab {
             String[] tierNames = {"Base", "+1", "+2", "+3", "+4", "+5", "Burial"};
             int[] tierVarbits = {0, 1, 2, 3, 4, 5, 50};
             int[] tierComps = {149, 161, 159, 157, 155, 153, 151};
-            int currentTier = script.smithQualityTier;
+            int currentTier = state.smithQualityTier;
 
             int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
             if (ImGui.beginTable("##smith_quality", 4, flags)) {

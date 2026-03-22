@@ -17,56 +17,56 @@ import java.util.Map;
 
 final class EntitiesTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    EntitiesTab(XapiScript s) {
-        this.script = s;
+    EntitiesTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
         ImGui.text("Filter:");
         ImGui.sameLine();
         ImGui.pushItemWidth(200);
-        ImGui.inputText("##entity_filter", script.entityFilterText);
+        ImGui.inputText("##entity_filter", state.entityFilterText);
         ImGui.popItemWidth();
         ImGui.sameLine();
         ImGui.text("Dist:");
         ImGui.sameLine();
         if (ImGui.arrowButton("##dist_dec", 0 /* ImGuiDir_Left */)) {
-            script.entityDistanceArr[0] = Math.max(5, script.entityDistanceArr[0] - 5);
-            script.entityDistanceFilter = script.entityDistanceArr[0];
-            script.settingsDirty = true;
+            state.entityDistanceArr[0] = Math.max(5, state.entityDistanceArr[0] - 5);
+            state.entityDistanceFilter = state.entityDistanceArr[0];
+            state.settingsDirty = true;
         }
         ImGui.sameLine();
-        ImGui.text(String.valueOf(script.entityDistanceArr[0]));
+        ImGui.text(String.valueOf(state.entityDistanceArr[0]));
         ImGui.sameLine();
         if (ImGui.arrowButton("##dist_inc", 1 /* ImGuiDir_Right */)) {
-            script.entityDistanceArr[0] = Math.min(200, script.entityDistanceArr[0] + 5);
-            script.entityDistanceFilter = script.entityDistanceArr[0];
-            script.settingsDirty = true;
+            state.entityDistanceArr[0] = Math.min(200, state.entityDistanceArr[0] + 5);
+            state.entityDistanceFilter = state.entityDistanceArr[0];
+            state.settingsDirty = true;
         }
         ImGui.sameLine();
         ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, "tiles");
 
-        String filter = script.entityFilterText.get().toLowerCase();
+        String filter = state.entityFilterText.get().toLowerCase();
 
         // Show counts in status line
         ImGui.textColored(0.6f, 0.6f, 0.6f, 0.8f,
                 String.format("NPCs: %d  |  Players: %d  |  Objects: %d  |  Ground Items: %d",
-                        script.nearbyNpcs.size(), script.nearbyPlayers.size(),
-                        script.nearbyObjects.size(), script.nearbyGroundItems.size()));
+                        state.nearbyNpcs.size(), state.nearbyPlayers.size(),
+                        state.nearbyObjects.size(), state.nearbyGroundItems.size()));
 
         if (ImGui.beginTabBar("##entity_sub_tabs")) {
             if (ImGui.beginTabItem("NPCs")) {
-                renderEntityTable(script.nearbyNpcs, "npc", filter);
+                renderEntityTable(state.nearbyNpcs, "npc", filter);
                 ImGui.endTabItem();
             }
             if (ImGui.beginTabItem("Players")) {
-                renderEntityTable(script.nearbyPlayers, "player", filter);
+                renderEntityTable(state.nearbyPlayers, "player", filter);
                 ImGui.endTabItem();
             }
             if (ImGui.beginTabItem("Objects")) {
-                renderEntityTable(script.nearbyObjects, "location", filter);
+                renderEntityTable(state.nearbyObjects, "location", filter);
                 ImGui.endTabItem();
             }
             if (ImGui.beginTabItem("Ground Items")) {
@@ -93,7 +93,7 @@ final class EntitiesTab {
             ImGui.tableSetupScrollFreeze(0, 1);
             ImGui.tableHeadersRow();
 
-            Map<Integer, EntityInfo> infoSnap = script.entityInfoCache;
+            Map<Integer, EntityInfo> infoSnap = state.entityInfoCache;
 
             for (int i = 0; i < entities.size(); i++) {
                 Entity e = entities.get(i);
@@ -166,13 +166,13 @@ final class EntitiesTab {
 
 
     private void renderGroundItemsTable(String filter) {
-        List<GroundItemStack> stacks = script.nearbyGroundItems;
+        List<GroundItemStack> stacks = state.nearbyGroundItems;
         if (stacks.isEmpty()) {
             ImGui.text("No ground items nearby.");
             return;
         }
 
-        Map<Integer, ItemType> typeCache = script.groundItemTypeCache;
+        Map<Integer, ItemType> typeCache = state.groundItemTypeCache;
 
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
                 | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;

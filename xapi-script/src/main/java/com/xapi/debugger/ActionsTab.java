@@ -34,13 +34,13 @@ final class ActionsTab {
     private static final int[] COMPACT_HIDE = {COL_TIME, COL_TICK, COL_INTENT, COL_VARS, COL_P1, COL_P2, COL_P3};
     private boolean[] preCompactState;
 
-    private final XapiScript script;
+    private final XapiState state;
 
     // Pre-filtered display indices (rebuilt each frame)
     private final List<Integer> displayIndices = new ArrayList<>();
 
-    ActionsTab(XapiScript s) {
-        this.script = s;
+    ActionsTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
@@ -48,24 +48,24 @@ final class ActionsTab {
         ImGui.text("Filter:");
         ImGui.sameLine();
         ImGui.pushItemWidth(200);
-        ImGui.inputText("##action_filter", script.filterText);
+        ImGui.inputText("##action_filter", state.filterText);
         ImGui.popItemWidth();
 
         ImGui.sameLine(); ImGui.text(" |");
         ImGui.sameLine();
-        if (ImGui.checkbox("NPC##f", script.categoryFilters[0])) { script.categoryFilters[0] = !script.categoryFilters[0]; script.settingsDirty = true; }
+        if (ImGui.checkbox("NPC##f", state.categoryFilters[0])) { state.categoryFilters[0] = !state.categoryFilters[0]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("Obj##f", script.categoryFilters[1])) { script.categoryFilters[1] = !script.categoryFilters[1]; script.settingsDirty = true; }
+        if (ImGui.checkbox("Obj##f", state.categoryFilters[1])) { state.categoryFilters[1] = !state.categoryFilters[1]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("GI##f", script.categoryFilters[2])) { script.categoryFilters[2] = !script.categoryFilters[2]; script.settingsDirty = true; }
+        if (ImGui.checkbox("GI##f", state.categoryFilters[2])) { state.categoryFilters[2] = !state.categoryFilters[2]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("Player##f", script.categoryFilters[3])) { script.categoryFilters[3] = !script.categoryFilters[3]; script.settingsDirty = true; }
+        if (ImGui.checkbox("Player##f", state.categoryFilters[3])) { state.categoryFilters[3] = !state.categoryFilters[3]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("Comp##f", script.categoryFilters[4])) { script.categoryFilters[4] = !script.categoryFilters[4]; script.settingsDirty = true; }
+        if (ImGui.checkbox("Comp##f", state.categoryFilters[4])) { state.categoryFilters[4] = !state.categoryFilters[4]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("Walk##f", script.categoryFilters[5])) { script.categoryFilters[5] = !script.categoryFilters[5]; script.settingsDirty = true; }
+        if (ImGui.checkbox("Walk##f", state.categoryFilters[5])) { state.categoryFilters[5] = !state.categoryFilters[5]; state.settingsDirty = true; }
         ImGui.sameLine();
-        if (ImGui.checkbox("Other##f", script.categoryFilters[6])) { script.categoryFilters[6] = !script.categoryFilters[6]; script.settingsDirty = true; }
+        if (ImGui.checkbox("Other##f", state.categoryFilters[6])) { state.categoryFilters[6] = !state.categoryFilters[6]; state.settingsDirty = true; }
 
         ImGui.sameLine(); ImGui.text(" |");
         ImGui.sameLine();
@@ -77,13 +77,13 @@ final class ActionsTab {
             ImGui.openPopup("##clear_actions_confirm");
         }
         if (ImGui.beginPopup("##clear_actions_confirm")) {
-            ImGui.text("Clear all " + script.actionLog.size() + " actions?");
+            ImGui.text("Clear all " + state.actionLog.size() + " actions?");
             if (ImGui.button("Yes, clear")) {
-                script.actionLog.clear();
-                script.snapshotLog.clear();
-                script.lastActionSize = -1;
-                script.trimmedActionCount = 0;
-                script.actionsDirty = true;
+                state.actionLog.clear();
+                state.snapshotLog.clear();
+                state.lastActionSize = -1;
+                state.trimmedActionCount = 0;
+                state.actionsDirty = true;
                 ImGui.closeCurrentPopup();
             }
             ImGui.sameLine();
@@ -100,9 +100,9 @@ final class ActionsTab {
         if (ImGui.beginPopup("##col_popup")) {
             for (int c = 0; c < COL_COUNT; c++) {
                 if (!COL_TOGGLEABLE[c]) continue;
-                if (ImGui.checkbox(COL_NAMES[c] + "##cv" + c, script.columnVisible[c])) {
-                    script.columnVisible[c] = !script.columnVisible[c];
-                    script.settingsDirty = true;
+                if (ImGui.checkbox(COL_NAMES[c] + "##cv" + c, state.columnVisible[c])) {
+                    state.columnVisible[c] = !state.columnVisible[c];
+                    state.settingsDirty = true;
                 }
             }
             ImGui.endPopup();
@@ -115,9 +115,9 @@ final class ActionsTab {
         if (ImGui.isItemHovered()) ImGui.setTooltip("Toggle: hide Time, Tick, Intent, Vars, P1-P3");
 
         ImGui.sameLine();
-        if (ImGui.checkbox("Auto-scroll##as", script.autoScroll)) {
-            script.autoScroll = !script.autoScroll;
-            script.settingsDirty = true;
+        if (ImGui.checkbox("Auto-scroll##as", state.autoScroll)) {
+            state.autoScroll = !state.autoScroll;
+            state.settingsDirty = true;
         }
 
         // ── Build visible column mapping ──
@@ -125,7 +125,7 @@ final class ActionsTab {
         int[] logicalToVisible = new int[COL_COUNT]; // logical -> visible index (-1 if hidden)
         int[] visibleToLogical = new int[COL_COUNT]; // visible -> logical index
         for (int c = 0; c < COL_COUNT; c++) {
-            if (script.columnVisible[c]) {
+            if (state.columnVisible[c]) {
                 logicalToVisible[c] = visibleCount;
                 visibleToLogical[visibleCount] = c;
                 visibleCount++;
@@ -135,15 +135,15 @@ final class ActionsTab {
         }
 
         // ── Pre-filter entries into display index list ──
-        List<LogEntry> entries = script.actionLog;
-        String filter = script.filterText.get().toLowerCase();
+        List<LogEntry> entries = state.actionLog;
+        String filter = state.filterText.get().toLowerCase();
         displayIndices.clear();
         for (int i = 0; i < entries.size(); i++) {
             LogEntry entry = entries.get(i);
             if (!passesCategory(entry.actionId())) continue;
             if (!filter.isEmpty()) {
                 String actionName = ActionTypes.nameOf(entry.actionId()).toLowerCase();
-                String target = script.buildTargetText(entry).toLowerCase();
+                String target = state.buildTargetText(entry).toLowerCase();
                 String params = entry.param1() + " " + entry.param2() + " " + entry.param3();
                 if (!actionName.contains(filter) && !target.contains(filter) && !params.contains(filter)) continue;
             }
@@ -183,7 +183,7 @@ final class ActionsTab {
                     }
 
                     ImGui.tableNextRow();
-                    if (entry.gameTick() == script.selectedActionTick) {
+                    if (entry.gameTick() == state.selectedActionTick) {
                         ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.4f, 0.6f, 0.2f, 0.3f));
                     } else if (entry.gameTick() == prevTick && prevTick > 0) {
                         ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.3f, 0.3f, 0.5f, 0.15f));
@@ -196,7 +196,7 @@ final class ActionsTab {
                     ImGui.text(String.valueOf(i + 1));
                     // Click row to select tick for cross-tab linking
                     if (ImGui.isItemClicked(0)) {
-                        script.selectedActionTick = (script.selectedActionTick == entry.gameTick()) ? -1 : entry.gameTick();
+                        state.selectedActionTick = (state.selectedActionTick == entry.gameTick()) ? -1 : entry.gameTick();
                     }
                     // Rich row tooltip on hover
                     if (ImGui.isItemHovered()) {
@@ -204,9 +204,9 @@ final class ActionsTab {
                     }
                     if (ImGui.beginPopupContextItem("actionCtx_" + i)) {
                         if (ImGui.menuItem("Remove action")) {
-                            if (i < script.snapshotLog.size()) script.snapshotLog.remove(i);
-                            script.actionLog.remove(i);
-                            script.actionsDirty = true;
+                            if (i < state.snapshotLog.size()) state.snapshotLog.remove(i);
+                            state.actionLog.remove(i);
+                            state.actionsDirty = true;
                             ImGui.endPopup();
                             if (entry.wasBlocked()) ImGui.popStyleColor();
                             removedRow = true;
@@ -218,7 +218,7 @@ final class ActionsTab {
                     // Time
                     if (logicalToVisible[COL_TIME] >= 0) {
                         ImGui.tableSetColumnIndex(logicalToVisible[COL_TIME]);
-                        ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(entry.timestamp()), ZoneId.systemDefault()).format(XapiScript.TIME_FMT));
+                        ImGui.text(LocalTime.ofInstant(Instant.ofEpochMilli(entry.timestamp()), ZoneId.systemDefault()).format(XapiState.TIME_FMT));
                     }
 
                     // Tick
@@ -240,7 +240,7 @@ final class ActionsTab {
 
                     // Target (always visible, with wrapping)
                     ImGui.tableSetColumnIndex(logicalToVisible[COL_TARGET]);
-                    String target = script.buildTargetText(entry);
+                    String target = state.buildTargetText(entry);
                     ImGui.pushTextWrapPos(ImGui.getCursorPosX() + ImGui.getColumnWidth());
                     ImGui.textWrapped(target);
                     ImGui.popTextWrapPos();
@@ -286,15 +286,15 @@ final class ActionsTab {
             clipper.end();
 
             // Auto-scroll
-            if (script.autoScroll) {
-                if (script.lastActionSize == -1) {
-                    script.lastActionSize = entries.size();
-                } else if (entries.size() > script.lastActionSize) {
-                    script.lastActionSize = entries.size();
+            if (state.autoScroll) {
+                if (state.lastActionSize == -1) {
+                    state.lastActionSize = entries.size();
+                } else if (entries.size() > state.lastActionSize) {
+                    state.lastActionSize = entries.size();
                     ImGui.setScrollHereY(1.0f);
                 }
             } else {
-                script.lastActionSize = entries.size();
+                state.lastActionSize = entries.size();
             }
             ImGui.endTable();
         }
@@ -304,20 +304,20 @@ final class ActionsTab {
         // Check if currently in compact mode (all compact columns hidden)
         boolean isCompact = true;
         for (int c : COMPACT_HIDE) {
-            if (script.columnVisible[c]) { isCompact = false; break; }
+            if (state.columnVisible[c]) { isCompact = false; break; }
         }
         if (isCompact && preCompactState != null) {
             // Restore previous state
-            System.arraycopy(preCompactState, 0, script.columnVisible, 0, COL_COUNT);
+            System.arraycopy(preCompactState, 0, state.columnVisible, 0, COL_COUNT);
             preCompactState = null;
         } else {
             // Save current state and apply compact
-            preCompactState = script.columnVisible.clone();
+            preCompactState = state.columnVisible.clone();
             for (int c : COMPACT_HIDE) {
-                script.columnVisible[c] = false;
+                state.columnVisible[c] = false;
             }
         }
-        script.settingsDirty = true;
+        state.settingsDirty = true;
     }
 
     private void renderRowTooltip(LogEntry entry, int i) {
@@ -325,7 +325,7 @@ final class ActionsTab {
         tip.append("Right-click to remove\n\n");
 
         String actionName = ActionTypes.nameOf(entry.actionId());
-        String target = script.buildTargetText(entry);
+        String target = state.buildTargetText(entry);
         tip.append("Action: ").append(actionName);
         if (!target.isEmpty()) tip.append(" | Target: ").append(target);
         tip.append("\n");
@@ -338,13 +338,13 @@ final class ActionsTab {
                     entry.playerAnim(), entry.playerMoving() ? "MOVING" : "idle"));
         }
 
-        ActionSnapshot snap = i < script.snapshotLog.size() ? script.snapshotLog.get(i) : null;
+        ActionSnapshot snap = i < state.snapshotLog.size() ? state.snapshotLog.get(i) : null;
         if (snap != null && snap.intent() != null) {
             tip.append("Intent: ").append(snap.intent().description())
                     .append(" (").append(snap.intent().confidence()).append(")\n");
         }
 
-        List<VarChange> tickVars = script.varsByTick.get(entry.gameTick());
+        List<VarChange> tickVars = state.varsByTick.get(entry.gameTick());
         if (tickVars != null && !tickVars.isEmpty()) {
             tip.append("Vars: ");
             for (VarChange vc : tickVars) {
@@ -361,7 +361,7 @@ final class ActionsTab {
     }
 
     private void renderIntentCell(LogEntry entry, int i) {
-        ActionSnapshot snap = i < script.snapshotLog.size() ? script.snapshotLog.get(i) : null;
+        ActionSnapshot snap = i < state.snapshotLog.size() ? state.snapshotLog.get(i) : null;
         if (snap != null && snap.intent() != null) {
             String conf = snap.intent().confidence();
             float r, g, b;
@@ -403,7 +403,7 @@ final class ActionsTab {
     }
 
     private void renderVarsCell(LogEntry entry) {
-        List<VarChange> tickVars = script.varsByTick.get(entry.gameTick());
+        List<VarChange> tickVars = state.varsByTick.get(entry.gameTick());
         if (tickVars != null && !tickVars.isEmpty()) {
             ImGui.textColored(0.9f, 0.8f, 0.3f, 1f, String.valueOf(tickVars.size()));
             if (ImGui.isItemHovered()) {
@@ -417,16 +417,16 @@ final class ActionsTab {
     }
 
     boolean passesCategory(int actionId) {
-        if (findSlot(ActionTypes.NPC_OPTIONS, actionId) > 0) return script.categoryFilters[0];
-        if (findSlot(ActionTypes.OBJECT_OPTIONS, actionId) > 0) return script.categoryFilters[1];
-        if (findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId) > 0) return script.categoryFilters[2];
-        if (findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0) return script.categoryFilters[3];
+        if (findSlot(ActionTypes.NPC_OPTIONS, actionId) > 0) return state.categoryFilters[0];
+        if (findSlot(ActionTypes.OBJECT_OPTIONS, actionId) > 0) return state.categoryFilters[1];
+        if (findSlot(ActionTypes.GROUND_ITEM_OPTIONS, actionId) > 0) return state.categoryFilters[2];
+        if (findSlot(ActionTypes.PLAYER_OPTIONS, actionId) > 0) return state.categoryFilters[3];
         if (actionId == ActionTypes.COMPONENT || actionId == ActionTypes.SELECT_COMPONENT_ITEM
                 || actionId == ActionTypes.CONTAINER_ACTION
                 || actionId == ActionTypes.DIALOGUE
-                || actionId == ActionTypes.COMP_ON_PLAYER) return script.categoryFilters[4];
-        if (actionId == ActionTypes.WALK) return script.categoryFilters[5];
-        return script.categoryFilters[6];
+                || actionId == ActionTypes.COMP_ON_PLAYER) return state.categoryFilters[4];
+        if (actionId == ActionTypes.WALK) return state.categoryFilters[5];
+        return state.categoryFilters[6];
     }
 
     private void renderCodeColumn(LogEntry entry, int i) {
@@ -434,7 +434,7 @@ final class ActionsTab {
                 entry.actionId(), entry.param1(), entry.param2(), entry.param3(),
                 entry.entityName(), entry.optionName());
         int newline = fullCode.indexOf('\n');
-        String human = script.buildTargetText(entry);
+        String human = state.buildTargetText(entry);
         boolean hasHuman = !human.isEmpty();
 
         ImGui.pushTextWrapPos(ImGui.getCursorPosX() + ImGui.getColumnWidth());
@@ -491,9 +491,9 @@ final class ActionsTab {
 
     void generateAndCopyScript() {
         List<ActionTranslator.ActionEntry> entries = new ArrayList<>();
-        for (int i = 0; i < script.actionLog.size(); i++) {
-            LogEntry e = script.actionLog.get(i);
-            ActionSnapshot snap = i < script.snapshotLog.size() ? script.snapshotLog.get(i) : null;
+        for (int i = 0; i < state.actionLog.size(); i++) {
+            LogEntry e = state.actionLog.get(i);
+            ActionSnapshot snap = i < state.snapshotLog.size() ? state.snapshotLog.get(i) : null;
             entries.add(new ActionTranslator.ActionEntry(
                     e.actionId(), e.param1(), e.param2(), e.param3(),
                     e.timestamp(), e.entityName(), e.optionName(),
@@ -502,15 +502,15 @@ final class ActionsTab {
                     snap != null && snap.triggers() != null && snap.triggers().animationEnded(),
                     snap != null ? snap.openInterfaceId() : -1));
         }
-        String code = ActionTranslator.generateScript(entries, script.scriptClassName.get(), script.useNamesForGeneration);
+        String code = ActionTranslator.generateScript(entries, state.scriptClassName.get(), state.useNamesForGeneration);
         ImGui.setClipboardText(code);
-        script.lastExportStatus = "Script copied to clipboard (" + entries.size() + " steps)";
+        state.lastExportStatus = "Script copied to clipboard (" + entries.size() + " steps)";
     }
 
     void scanSessionFiles() {
         try {
-            if (Files.exists(XapiScript.SESSION_DIR)) {
-                script.sessionFiles = Files.list(XapiScript.SESSION_DIR)
+            if (Files.exists(XapiState.SESSION_DIR)) {
+                state.sessionFiles = Files.list(XapiState.SESSION_DIR)
                         .filter(p -> p.toString().endsWith(".json"))
                         .map(p -> p.getFileName().toString())
                         .sorted(Comparator.reverseOrder())
@@ -518,15 +518,15 @@ final class ActionsTab {
                         .toArray(String[]::new);
             }
         } catch (Exception ignored) {
-            script.sessionFiles = new String[0];
+            state.sessionFiles = new String[0];
         }
     }
 
     private void copyAllActions() {
         // Collect visible entries respecting filters
         List<LogEntry> visible = new ArrayList<>();
-        String filter = script.filterText.get().toLowerCase();
-        for (LogEntry e : script.actionLog) {
+        String filter = state.filterText.get().toLowerCase();
+        for (LogEntry e : state.actionLog) {
             if (!passesCategory(e.actionId())) continue;
             if (!filter.isEmpty()) {
                 String actionName = ActionTypes.nameOf(e.actionId()).toLowerCase();
@@ -551,7 +551,7 @@ final class ActionsTab {
                 delayMs = (int) Math.max(300, Math.min(delta, 10000));
             }
 
-            String human = script.buildTargetText(e);
+            String human = state.buildTargetText(e);
             String fullCode = ActionTranslator.toCode(e.actionId(), e.param1(), e.param2(), e.param3(),
                     e.entityName(), e.optionName());
             // Take the first executable line (high-level if available, otherwise raw)

@@ -35,6 +35,7 @@ public final class GameCacheData {
     // Default cache directories
     private static final Path DEFAULT_CACHE_DIR = Path.of("D:\\13-03-2026");
     private static final Path DEFAULT_INTERFACES_DIR = Path.of("D:\\Claude\\rs-tools\\output\\interfaces");
+    private static final Path DEFAULT_VARBITS_DIR = Path.of("D:\\Claude\\rs-tools\\output\\configs\\varbits");
 
     // ── Location (Object) cache ────────────────────────────────────────
 
@@ -55,6 +56,17 @@ public final class GameCacheData {
     /** A cached interface widget — only stores menu_options and text (skip all visual data). */
     public record CachedWidget(List<String> menuOptions, String text) {}
 
+    // ── Item varbit definitions (domain 5 varbits for decoding packed item vars) ──
+
+    /** An item varbit definition from the cache. */
+    public record ItemVarbitDef(int varbitId, int itemVarId, int lowBit, int highBit) {
+        /** Extracts this varbit's value from a packed integer. */
+        public int decode(int packed) {
+            int mask = (1 << (highBit - lowBit + 1)) - 1;
+            return (packed >>> lowBit) & mask;
+        }
+    }
+
     // ── Lookup maps ────────────────────────────────────────────────────
 
     private final Map<Integer, CachedLocation> locations = new ConcurrentHashMap<>();
@@ -63,6 +75,8 @@ public final class GameCacheData {
     // Nested map: ifaceId -> (compId -> CachedWidget)
     private final Map<Integer, Map<Integer, CachedWidget>> interfaces = new ConcurrentHashMap<>();
     private volatile int widgetCount;
+    // Item varbit defs grouped by itemVarId (decoded from varp domain 5)
+    private final Map<Integer, List<ItemVarbitDef>> itemVarbits = new ConcurrentHashMap<>();
 
     private volatile boolean loaded;
     private volatile String loadError;
@@ -81,6 +95,19 @@ public final class GameCacheData {
     public CachedLocation getLocation(int id) { return locations.get(id); }
     public CachedItem getItem(int id) { return items.get(id); }
     public CachedNpc getNpc(int id) { return npcs.get(id); }
+
+    /**
+     * Returns all item varbit definitions for a given item var ID.
+     * Use these to decode packed item var values into individual sub-values.
+     */
+    public List<ItemVarbitDef> getItemVarbitDefs(int itemVarId) {
+        return itemVarbits.getOrDefault(itemVarId, List.of());
+    }
+
+    /** Returns total count of loaded item varbit definitions. */
+    public int itemVarbitCount() {
+        return itemVarbits.values().stream().mapToInt(List::size).sum();
+    }
 
     /**
      * Gets the cached menu options for an interface widget.
@@ -223,12 +250,13 @@ public final class GameCacheData {
             loadItems(cacheDir.resolve("items.json"));
             loadNpcs(cacheDir.resolve("npcs.json"));
             loadInterfaces(DEFAULT_INTERFACES_DIR);
+            loadItemVarbits(DEFAULT_VARBITS_DIR);
 
             loaded = true;
             long elapsed = System.currentTimeMillis() - start;
-            log.info("Game cache loaded in {}ms: {} locations, {} items, {} NPCs, {} interfaces ({} widgets)",
+            log.info("Game cache loaded in {}ms: {} locations, {} items, {} NPCs, {} interfaces ({} widgets), {} item varbits",
                     elapsed, locations.size(), items.size(), npcs.size(),
-                    interfaces.size(), widgetCount);
+                    interfaces.size(), widgetCount, itemVarbitCount());
         } catch (Exception e) {
             loadError = "Failed to load cache: " + e.getMessage();
             log.error(loadError, e);
@@ -400,6 +428,48 @@ public final class GameCacheData {
         widgetCount = totalWidgets;
         log.info("Loaded {} interfaces ({} widgets) in {}ms",
                 interfaces.size(), totalWidgets, System.currentTimeMillis() - start);
+    }
+
+    /**
+     * Loads item varbit definitions (domain 5) from the varbits config directory.
+     * Only loads varbits whose varp encodes domain 5 (item vars).
+     * Groups them by itemVarId derived from: (var_index - 2) / 256.
+     */
+    private void loadItemVarbits(Path varbitsDir) {
+        if (!Files.isDirectory(varbitsDir)) {
+            log.warn("Varbits directory not found: {}", varbitsDir);
+            return;
+        }
+        long start = System.currentTimeMillis();
+        Gson gson = new Gson();
+        int count = 0;
+        try (var stream = Files.list(varbitsDir)) {
+            for (Path file : (Iterable<Path>) stream::iterator) {
+                if (!file.toString().endsWith(".json")) continue;
+                try (BufferedReader reader = Files.newBufferedReader(file)) {
+                    JsonObject obj = gson.fromJson(reader, JsonObject.class);
+                    if (obj == null) continue;
+                    long varp = obj.has("varp") ? obj.get("varp").getAsLong() : 0;
+                    int domain = (int) ((varp >> 24) & 0xFF);
+                    if (domain != 5) continue; // Only item var domain
+
+                    int varbitId = obj.has("id") ? obj.get("id").getAsInt() : -1;
+                    int lowBit = obj.has("low_bit") ? obj.get("low_bit").getAsInt() : 0;
+                    int highBit = obj.has("high_bit") ? obj.get("high_bit").getAsInt() : 0;
+                    int varIndex = (int) (varp & 0xFFFFFF);
+                    int itemVarId = (varIndex - 2) / 256; // Map varp var_index to getItemVars varId
+
+                    itemVarbits.computeIfAbsent(itemVarId, k -> new ArrayList<>())
+                            .add(new ItemVarbitDef(varbitId, itemVarId, lowBit, highBit));
+                    count++;
+                } catch (Exception e) {
+                    log.debug("Failed to load varbit file {}: {}", file.getFileName(), e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            log.warn("Failed to list varbits directory: {}", e.getMessage());
+        }
+        log.info("Loaded {} item varbit definitions in {}ms", count, System.currentTimeMillis() - start);
     }
 
     private static List<String> parseStringArray(JsonArray arr) {

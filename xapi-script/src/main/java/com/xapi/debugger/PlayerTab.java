@@ -13,14 +13,14 @@ import java.util.List;
 
 final class PlayerTab {
 
-    private final XapiScript script;
+    private final XapiState state;
 
-    PlayerTab(XapiScript s) {
-        this.script = s;
+    PlayerTab(XapiState s) {
+        this.state = s;
     }
 
     void render() {
-        LocalPlayer lp = script.localPlayerData;
+        LocalPlayer lp = state.localPlayerData;
         if (lp == null) {
             ImGui.text("Waiting for player data...");
             return;
@@ -72,7 +72,7 @@ final class PlayerTab {
         ImGui.textColored(1f, 0.8f, 0.2f, 1f, "Skills");
         ImGui.separator();
 
-        List<PlayerStat> stats = script.playerStats;
+        List<PlayerStat> stats = state.playerStats;
         if (stats == null || stats.isEmpty()) {
             ImGui.text("No skill data available.");
             return;
