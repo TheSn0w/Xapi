@@ -1,6 +1,6 @@
 package com.xapi.debugger;
 
-import com.botwithus.bot.api.model.ItemVar;
+
 import com.botwithus.bot.api.model.MiniMenuEntry;
 
 import java.util.List;
@@ -36,11 +36,17 @@ public final class XapiData {
 
     public record MenuSnapshot(long timestamp, int gameTick, List<MiniMenuEntry> entries) {}
 
-    public record ItemVarEntry(String slotName, int itemId, String itemName, int slot,
-                               List<ItemVar> vars) {}
-
     public record InventoryChange(int itemId, String itemName, int oldQty, int newQty,
                                   long timestamp, int gameTick) {}
+
+    /** Live inventory varbit entry — current decoded value with change tracking. */
+    public record InvVarLiveEntry(int varbitId, int itemVarId, int decodedValue, int bits,
+                                  int previousValue, long lastChangeTime,
+                                  List<Integer> allVarbitIds) {}
+
+    /** Logged change from the live inventory varbit poller. */
+    public record InvVarChangeEntry(int varbitId, int itemVarId, int oldDecoded, int newDecoded,
+                                    long timestamp, int bits) {}
 
     // ── Interaction snapshot records ──────────────────────────────────────
 
@@ -79,35 +85,4 @@ public final class XapiData {
             boolean autoScroll
     ) {}
 
-    // ── Skill names and XP table ─────────────────────────────────────────
-
-    public static final String[] SKILL_NAMES = {
-        "Attack", "Defence", "Strength", "Constitution", "Ranged",
-        "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching",
-        "Fishing", "Firemaking", "Crafting", "Smithing", "Mining",
-        "Herblore", "Agility", "Thieving", "Slayer", "Farming",
-        "Runecrafting", "Hunter", "Construction", "Summoning",
-        "Dungeoneering", "Divination", "Invention", "Archaeology", "Necromancy"
-    };
-
-    public static final int[] XP_TABLE = buildXpTable();
-
-    private static int[] buildXpTable() {
-        int[] table = new int[150];
-        table[0] = 0;
-        for (int level = 2; level <= 150; level++) {
-            double xp = 0;
-            for (int l = 1; l < level; l++) {
-                xp += Math.floor(l + 300 * Math.pow(2, l / 7.0)) / 4.0;
-            }
-            table[level - 1] = (int) Math.floor(xp);
-        }
-        return table;
-    }
-
-    public static int xpToNextLevel(int currentXp, int currentLevel, int maxLevel) {
-        if (currentLevel >= maxLevel || currentLevel >= XP_TABLE.length) return 0;
-        int nextLevelXp = XP_TABLE[currentLevel];
-        return Math.max(0, nextLevelXp - currentXp);
-    }
 }

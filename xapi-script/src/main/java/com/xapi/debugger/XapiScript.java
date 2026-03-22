@@ -254,7 +254,6 @@ public class XapiScript implements BotScript {
                     System.currentTimeMillis(), state.currentTick, false, "client",
                     names[0], names[1], px, py, pp, pa, pm
             ));
-            state.actionsDirty = true;
 
             // Build interaction snapshot from cached state (no RPC calls)
             try {
@@ -273,6 +272,7 @@ public class XapiScript implements BotScript {
     }
 
     private void onVarbitChange(VarbitChangeEvent e) {
+        if (!state.recording) return;
         try {
             VarChange vc = new VarChange("varbit", e.getVarId(), e.getOldValue(), e.getNewValue(),
                     System.currentTimeMillis(), state.currentTick);
@@ -283,6 +283,7 @@ public class XapiScript implements BotScript {
     }
 
     private void onVarChange(VarChangeEvent e) {
+        if (!state.recording) return;
         try {
             VarChange vc = new VarChange("varp", e.getVarId(), e.getOldValue(), e.getNewValue(),
                     System.currentTimeMillis(), state.currentTick);
@@ -293,6 +294,7 @@ public class XapiScript implements BotScript {
     }
 
     private void onChatMessage(ChatMessageEvent e) {
+        if (!state.recording) return;
         try {
             var msg = e.getMessage();
             String text = msg.text() != null ? msg.text().replaceAll("<img=\\d+>", "").replaceAll("<col=[0-9a-fA-F]+>", "").replaceAll("</col>", "").trim() : "";
@@ -318,6 +320,31 @@ public class XapiScript implements BotScript {
         ActionDebugger debugger = state.actionDebugger;
         debugger.setRecording(state.recording);
         debugger.setBlocking(state.blocking);
+
+        // Execute clear requests on the loop thread (requested by render thread)
+        if (state.clearRequested) {
+            state.clearRequested = false;
+            state.actionLog.clear(); state.varLog.clear(); state.chatLog.clear();
+            state.snapshotLog.clear();
+            state.varsByTick.clear();
+            state.actionDebugger.clear();
+            state.lastActionSize = -1; state.lastVarSize = -1; state.lastChatSize = -1;
+            state.inventoryLog.clear();
+            state.interfaceEventLog.clear();
+            state.trimmedActionCount = 0; state.trimmedVarCount = 0; state.trimmedChatCount = 0;
+            state.varChangeCount.clear();
+            sessionManager.doAutoSave();
+            log.info("Clear All executed and saved");
+        }
+        if (state.clearActionsRequested) {
+            state.clearActionsRequested = false;
+            state.actionLog.clear();
+            state.snapshotLog.clear();
+            state.lastActionSize = -1;
+            state.trimmedActionCount = 0;
+            sessionManager.doAutoSave();
+            log.info("Clear Actions executed and saved");
+        }
 
         // Sync state.blocking to game client
         if (state.blocking != lastBlockingSentToClient) {
@@ -355,107 +382,120 @@ public class XapiScript implements BotScript {
         try { state.playerStats = api.getPlayerStats(); } catch (Exception ignored) {}
         try { state.openInterfaces = api.getOpenInterfaces(); } catch (Exception ignored) { state.openInterfaces = List.of(); }
 
+        int tab = state.activeTab;
+
         // Pre-cache component options for open interfaces (timing-proof).
-        // Caches at most ONE new interface per loop iteration to keep the loop responsive.
-        // This ensures onActionExecuted finds cached data even if the interface closes on click.
-        try {
-            Set<Integer> currentOpen = new java.util.HashSet<>();
-            for (var oi : state.openInterfaces) currentOpen.add(oi.interfaceId());
-            for (int ifaceId : currentOpen) {
-                if (state.cachedInterfaceOptions.add(ifaceId)) { // Only on first open
-                    try {
-                        List<Component> comps = api.queryComponents(
-                                ComponentFilter.builder().interfaceId(ifaceId).build());
-                        if (comps != null && comps.size() <= 300) { // Skip large data interfaces
-                            for (Component c : comps) {
-                                String key = c.interfaceId() + ":" + c.componentId();
-                                if (!state.componentOptionsCache.containsKey(key)) {
-                                    try {
-                                        List<String> opts = api.getComponentOptions(c.interfaceId(), c.componentId());
-                                        if (opts != null && !opts.isEmpty()) {
-                                            state.componentOptionsCache.put(key, opts);
-                                        }
-                                    } catch (Exception ignored) {}
+        // Only needed when Actions tab is active (for action name resolution).
+        if (tab == 0) {
+            try {
+                Set<Integer> currentOpen = new java.util.HashSet<>();
+                for (var oi : state.openInterfaces) currentOpen.add(oi.interfaceId());
+                for (int ifaceId : currentOpen) {
+                    if (state.cachedInterfaceOptions.add(ifaceId)) { // Only on first open
+                        try {
+                            List<Component> comps = api.queryComponents(
+                                    ComponentFilter.builder().interfaceId(ifaceId).build());
+                            if (comps != null && comps.size() <= 300) { // Skip large data interfaces
+                                for (Component c : comps) {
+                                    String key = c.interfaceId() + ":" + c.componentId();
+                                    if (!state.componentOptionsCache.containsKey(key)) {
+                                        try {
+                                            List<String> opts = api.getComponentOptions(c.interfaceId(), c.componentId());
+                                            if (opts != null && !opts.isEmpty()) {
+                                                state.componentOptionsCache.put(key, opts);
+                                            }
+                                        } catch (Exception ignored) {}
+                                    }
                                 }
                             }
-                        }
-                    } catch (Exception ignored) {}
-                    break; // One interface per iteration — keep the loop responsive
+                        } catch (Exception ignored) {}
+                        break; // One interface per iteration — keep the loop responsive
+                    }
                 }
-            }
-            state.cachedInterfaceOptions.retainAll(currentOpen);
-        } catch (Exception ignored) {}
+                state.cachedInterfaceOptions.retainAll(currentOpen);
+            } catch (Exception ignored) {}
+        }
 
-        try { inspectorCollector.collectProductionData(api); } catch (Exception e) { log.debug("collectProductionData failed: {}", e.getMessage()); }
-        try { inspectorCollector.collectProductionProgressData(api); } catch (Exception e) { log.debug("collectProductionProgressData failed: {}", e.getMessage()); }
-        try { inspectorCollector.collectSmithingData(api); } catch (Exception e) { log.debug("collectSmithingData failed: {}", e.getMessage()); }
-        try { inspectorCollector.collectActiveSmithingData(api); } catch (Exception e) { log.debug("collectActiveSmithingData failed: {}", e.getMessage()); }
+        // Production collectors — only when Production tab (7) is active or interface is open
+        if (tab == 7 || state.prodOpen) {
+            try { inspectorCollector.collectProductionData(api); } catch (Exception e) { log.debug("collectProductionData failed: {}", e.getMessage()); }
+            try { inspectorCollector.collectProductionProgressData(api); } catch (Exception e) { log.debug("collectProductionProgressData failed: {}", e.getMessage()); }
+        }
+        // Smithing collectors — only when Smithing tab (8) is active or interface is open
+        if (tab == 8 || state.smithOpen) {
+            try { inspectorCollector.collectSmithingData(api); } catch (Exception e) { log.debug("collectSmithingData failed: {}", e.getMessage()); }
+            try { inspectorCollector.collectActiveSmithingData(api); } catch (Exception e) { log.debug("collectActiveSmithingData failed: {}", e.getMessage()); }
+        }
         try { inventoryTracker.collectInventoryDiff(api); } catch (Exception e) { log.debug("collectInventoryDiff failed: {}", e.getMessage()); }
 
-        // Mini menu poll + pre-resolve action names while interfaces are still open
-        try {
-            var menu = api.getMiniMenu();
-            if (menu != null && !menu.isEmpty()) {
-                state.lastMiniMenu = menu;
-                int hash = menu.stream()
-                        .mapToInt(e -> Objects.hash(e.optionText(), e.actionId(), e.param1(), e.param2(), e.param3()))
-                        .sum();
-                if (hash != lastMiniMenuHash) {
-                    lastMiniMenuHash = hash;
-                    state.menuLog.add(new MenuSnapshot(System.currentTimeMillis(), state.currentTick, List.copyOf(menu)));
-                    while (state.menuLog.size() > 500) state.menuLog.remove(0);
-                }
-                // Pre-resolve names for EVERY menu entry while interfaces are open.
-                // This eliminates timing issues: onActionExecuted just does a cache lookup.
-                for (var entry : menu) {
-                    var aKey = new XapiState.ActionCacheKey(entry.actionId(), entry.param1(), entry.param2(), entry.param3());
-                    String optionText = entry.optionText();
-                    String entityName = null;
+        // Mini menu poll + pre-resolve action names — only when Actions tab (0) is active
+        if (tab == 0) {
+            try {
+                var menu = api.getMiniMenu();
+                if (menu != null && !menu.isEmpty()) {
+                    state.lastMiniMenu = menu;
+                    int hash = menu.stream()
+                            .mapToInt(e -> Objects.hash(e.optionText(), e.actionId(), e.param1(), e.param2(), e.param3()))
+                            .sum();
+                    if (hash != lastMiniMenuHash) {
+                        lastMiniMenuHash = hash;
+                        state.menuLog.add(new MenuSnapshot(System.currentTimeMillis(), state.currentTick, List.copyOf(menu)));
+                        while (state.menuLog.size() > 500) state.menuLog.remove(0);
+                    }
+                    // Pre-resolve names for EVERY menu entry while interfaces are open.
+                    // This eliminates timing issues: onActionExecuted just does a cache lookup.
+                    for (var entry : menu) {
+                        var aKey = new XapiState.ActionCacheKey(entry.actionId(), entry.param1(), entry.param2(), entry.param3());
+                        String optionText = entry.optionText();
+                        String entityName = null;
 
-                    int aid = entry.actionId();
-                    if (NameResolver.isComponentAction(aid)) {
-                        int packed = entry.param3();
-                        int iface = packed >>> 16;
-                        int comp = packed & 0xFFFF;
-                        int sub = entry.param2();
+                        int aid = entry.actionId();
+                        if (NameResolver.isComponentAction(aid)) {
+                            int packed = entry.param3();
+                            int iface = packed >>> 16;
+                            int comp = packed & 0xFFFF;
+                            int sub = entry.param2();
 
-                        // Cache component options while interface is alive
-                        String optKey = iface + ":" + comp;
-                        if (!state.componentOptionsCache.containsKey(optKey)) {
-                            try {
-                                List<String> opts = api.getComponentOptions(iface, comp);
-                                if (opts != null && !opts.isEmpty()) state.componentOptionsCache.put(optKey, opts);
-                            } catch (Exception ignored) {}
+                            // Cache component options while interface is alive
+                            String optKey = iface + ":" + comp;
+                            if (!state.componentOptionsCache.containsKey(optKey)) {
+                                try {
+                                    List<String> opts = api.getComponentOptions(iface, comp);
+                                    if (opts != null && !opts.isEmpty()) state.componentOptionsCache.put(optKey, opts);
+                                } catch (Exception ignored) {}
+                            }
+
+                            // Resolve entity name
+                            if (sub >= 0) {
+                                // Sub-component: get item via getComponentItem RPC
+                                try {
+                                    var compItem = api.getComponentItem(iface, comp, sub);
+                                    if (compItem != null && compItem.itemId() > 0) {
+                                        entityName = nameResolver.lookupItemName(api, compItem.itemId());
+                                    }
+                                } catch (Exception ignored) {}
+                            } else {
+                                // No sub: try component text
+                                try {
+                                    String text = api.getComponentText(iface, comp);
+                                    if (text != null && !text.isEmpty()) {
+                                        entityName = text.replaceAll("<[^>]+>", "").trim();
+                                    }
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                        // Fallback: mini menu's own itemId for entity name
+                        if (entityName == null && entry.itemId() > 0) {
+                            entityName = nameResolver.lookupItemName(api, entry.itemId());
                         }
 
-                        // Resolve entity name
-                        if (sub >= 0) {
-                            // Sub-component: get item via getComponentItem RPC
-                            try {
-                                var compItem = api.getComponentItem(iface, comp, sub);
-                                if (compItem != null && compItem.itemId() > 0) {
-                                    entityName = nameResolver.lookupItemName(api, compItem.itemId());
-                                }
-                            } catch (Exception ignored) {}
-                        } else {
-                            // No sub: try component text
-                            try {
-                                String text = api.getComponentText(iface, comp);
-                                if (text != null && !text.isEmpty()) {
-                                    entityName = text.replaceAll("<[^>]+>", "").trim();
-                                }
-                            } catch (Exception ignored) {}
-                        }
+                        state.preResolvedActions.put(aKey, new String[]{entityName, optionText});
                     }
-                    // Fallback: mini menu's own itemId for entity name
-                    if (entityName == null && entry.itemId() > 0) {
-                        entityName = nameResolver.lookupItemName(api, entry.itemId());
-                    }
-
-                    state.preResolvedActions.put(aKey, new String[]{entityName, optionText});
                 }
-            }
-        } catch (Exception ignored) {}
+            } catch (Exception ignored) {}
+        }
+
+        try { inspectorCollector.pollInvVarLive(api); } catch (Exception e) { log.debug("pollInvVarLive failed: {}", e.getMessage()); }
 
         try { dataPoller.pollPinnedVars(api); } catch (Exception e) { log.debug("pollPinnedVars failed: {}", e.getMessage()); }
         try { dataPoller.pollChatHistory(api); } catch (Exception e) { log.debug("pollChatHistory failed: {}", e.getMessage()); }
@@ -463,7 +503,8 @@ public class XapiScript implements BotScript {
         try { dataPoller.pollInterfaceEvents(api); } catch (Exception e) { log.debug("pollInterfaceEvents failed: {}", e.getMessage()); }
 
         // Heavy inspector data collection (entity queries — every ~3 ticks / 1.8s)
-        if (now - lastInspectorUpdate > 1800) {
+        // Only when Entities (4) or Interfaces (5) tab is active
+        if ((tab == 4 || tab == 5) && now - lastInspectorUpdate > 1800) {
             lastInspectorUpdate = now;
             try {
                 inspectorCollector.collectInspectorData(api);
@@ -494,8 +535,8 @@ public class XapiScript implements BotScript {
             SessionManager.trimLog(state.inventoryLog, state.maxLogEntries);
         }
 
-        // Auto-save when dirty, debounced to avoid excessive I/O
-        sessionManager.shouldAutoSave(now);
+        // Auto-save if data changed since last save
+        sessionManager.doAutoSaveIfChanged();
 
         return 600;
     }
@@ -508,7 +549,7 @@ public class XapiScript implements BotScript {
         // Remove shutdown hook — we're doing a clean stop, no need for the fallback
         sessionManager.removeShutdownHook();
 
-        // Save settings and actions on stop
+        // Save current state to disk
         sessionManager.saveSettings();
         sessionManager.doAutoSave();
 
@@ -561,6 +602,7 @@ public class XapiScript implements BotScript {
             }
 
             ImGui.separator();
+            state.activeTab = selectedTab;
 
             // Render selected tab content
             switch (selectedTab) {
@@ -620,16 +662,7 @@ public class XapiScript implements BotScript {
                 int total = state.actionLog.size() + state.varLog.size() + state.chatLog.size();
                 ImGui.text("Clear all " + total + " entries? This cannot be undone.");
                 if (ImGui.button("Yes, clear")) {
-                    state.actionLog.clear(); state.varLog.clear(); state.chatLog.clear();
-                    state.snapshotLog.clear();
-                    state.varsByTick.clear();
-                    state.actionDebugger.clear();
-                    state.lastActionSize = -1; state.lastVarSize = -1; state.lastChatSize = -1;
-                    state.inventoryLog.clear();
-                    state.interfaceEventLog.clear();
-                    state.trimmedActionCount = 0; state.trimmedVarCount = 0; state.trimmedChatCount = 0;
-                    // Don't clear state.pinnedVars, state.varChangeCount, or state.varAnnotations
-                    state.actionsDirty = true; // triggers autosave of empty state
+                    state.clearRequested = true;
                     ImGui.closeCurrentPopup();
                 }
                 ImGui.sameLine();

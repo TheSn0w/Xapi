@@ -76,4 +76,51 @@ public final class Skills {
         PlayerStat stat = api.getPlayerStat(skillId);
         return stat != null ? stat.xp() : 0;
     }
+
+    // ── Skill names ─────────────────────────────────────────────────────
+
+    public static final int SKILL_COUNT = 29;
+
+    public static final String[] SKILL_NAMES = {
+        "Attack", "Defence", "Strength", "Constitution", "Ranged",
+        "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching",
+        "Fishing", "Firemaking", "Crafting", "Smithing", "Mining",
+        "Herblore", "Agility", "Thieving", "Slayer", "Farming",
+        "Runecrafting", "Hunter", "Construction", "Summoning",
+        "Dungeoneering", "Divination", "Invention", "Archaeology", "Necromancy"
+    };
+
+    /**
+     * Returns the display name for a skill ID, or "Skill {id}" if out of range.
+     */
+    public static String getSkillName(int skillId) {
+        return skillId >= 0 && skillId < SKILL_NAMES.length
+                ? SKILL_NAMES[skillId] : "Skill " + skillId;
+    }
+
+    // ── XP table ────────────────────────────────────────────────────────
+
+    public static final int[] XP_TABLE = buildXpTable();
+
+    private static int[] buildXpTable() {
+        int[] table = new int[150];
+        table[0] = 0;
+        for (int level = 2; level <= 150; level++) {
+            double xp = 0;
+            for (int l = 1; l < level; l++) {
+                xp += Math.floor(l + 300 * Math.pow(2, l / 7.0)) / 4.0;
+            }
+            table[level - 1] = (int) Math.floor(xp);
+        }
+        return table;
+    }
+
+    /**
+     * Returns the XP remaining until the next level.
+     */
+    public static int xpToNextLevel(int currentXp, int currentLevel, int maxLevel) {
+        if (currentLevel >= maxLevel || currentLevel >= XP_TABLE.length) return 0;
+        int nextLevelXp = XP_TABLE[currentLevel];
+        return Math.max(0, nextLevelXp - currentXp);
+    }
 }

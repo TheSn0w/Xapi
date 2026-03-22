@@ -66,8 +66,12 @@ final class XapiState {
     volatile String importPath;
     volatile String lastExportStatus = "";
 
-    // ── Auto-save state ──────────────────────────────────────────────────
-    volatile boolean actionsDirty;
+    // ── Clear requests (set on render thread, executed on onLoop thread) ──
+    volatile boolean clearRequested;
+    volatile boolean clearActionsRequested;
+
+    // ── Active tab (set on render thread, read by onLoop for conditional polling) ──
+    volatile int activeTab;
 
     // ── Replay state ─────────────────────────────────────────────────────
     volatile boolean replaying;
@@ -132,12 +136,19 @@ final class XapiState {
     // ── Ground item type cache ───────────────────────────────────────────
     volatile Map<Integer, ItemType> groundItemTypeCache = Map.of();
 
-    // ── Item varbits cache ───────────────────────────────────────────────
-    volatile List<ItemVarEntry> itemVarCache = List.of();
-    volatile boolean showItemVarbits = false;
+    // ── Item varbits state ────────────────────────────────────────────────
     volatile Boolean itemVarSystemAvailable = null;
     volatile int itemVarErrorLogCount = 0;
     volatile String itemVarPlayerName = null;
+
+    // ── Inventory varbit live polling ────────────────────────────────────
+    volatile boolean invVarLiveEnabled;
+    volatile boolean invVarChangedOnly;
+    final imgui.type.ImInt invVarSearchInvId = new imgui.type.ImInt(94);
+    final imgui.type.ImInt invVarSearchSlot = new imgui.type.ImInt(0);
+    volatile List<InvVarLiveEntry> invVarLiveResults = List.of();
+    volatile String invVarSearchStatus = "";
+    final List<InvVarChangeEntry> invVarChangeLog = new CopyOnWriteArrayList<>();
 
     // ── Interface event tracking ─────────────────────────────────────────
     final List<InterfaceEvent> interfaceEventLog = new CopyOnWriteArrayList<>();
@@ -234,8 +245,12 @@ final class XapiState {
     String[] sessionFiles = new String[0];
 
     // Var annotation editing
-    final ImString annotationInput = new ImString(64);
+    final ImString annotationInput = new ImString(256);
     String editingAnnotationKey = null;
+
+    // Separate editing state for inv var search labels (avoids conflict with pinned vars editor)
+    final ImString invVarAnnotationInput = new ImString(256);
+    String invVarEditingKey = null;
 
     // ── Helpers (package-private for tab access) ─────────────────────────
 

@@ -3,6 +3,7 @@ package com.xapi.debugger;
 import static com.xapi.debugger.XapiData.*;
 
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.cache.ItemVarbitDef;
 import com.botwithus.bot.api.entities.EntityContext;
 import com.botwithus.bot.api.inventory.Smithing;
 import com.botwithus.bot.api.model.*;
@@ -29,10 +30,12 @@ final class InspectorCollector {
 
     private final XapiState state;
 
-    // Item var persistence private fields
-    private volatile Map<String, Integer> previousItemVarSnapshot = Map.of();
     private static final Path ITEMVAR_ACCOUNTS_FILE = Path.of("xapi_itemvar_accounts.json");
     private static final int ITEM_VAR_ERROR_LOG_MAX = 20;
+
+    // Live polling state: tracks decoded values per varbitId for change detection
+    private volatile Map<Integer, Integer> liveSnapshot = null; // varbitId -> decoded value
+    private final Map<Integer, Long> liveChangeTimes = new HashMap<>(); // varbitId -> last change timestamp
 
 
     InspectorCollector(XapiState state) {
@@ -133,15 +136,6 @@ final class InspectorCollector {
             state.inspectInterfaceId = -1; // Reset -- one-shot fetch
         }
 
-        // Production, progress, and smithing data now collected per-tick in onTick()
-
-        // Collect item varbits for equipped items (guarded -- may crash game client)
-        if (state.showItemVarbits) {
-            collectItemVarbits(api);
-        } else {
-            state.itemVarCache = List.of();
-            previousItemVarSnapshot = Map.of();
-        }
     }
 
     /**
@@ -472,117 +466,127 @@ final class InspectorCollector {
     }
 
     /**
-     * Collects item varbits for all equipped items. Uses a single-probe approach:
-     * on first call per player, tries one getItemVars call to check if the item var
-     * system is initialized for this account. Result is persisted to disk so we
-     * never crash the same account twice.
+     * Continuously polls the inventory slot for item varbit values every loop iteration.
+     * Decodes all varbit defs, detects changes from the previous poll, highlights them
+     * in the live results, and logs changes to the change history.
      */
-    void collectItemVarbits(GameAPI api) {
-        int[] slotIndices = {0, 1, 2, 3, 4, 5, 7, 9, 10, 12, 13, 14, 17};
-        String[] slotNames = {"Head", "Cape", "Neck", "Weapon", "Body", "Shield",
-                "Legs", "Hands", "Feet", "Ring", "Ammo", "Aura", "Pocket"};
-
-        // Need player name for persistence
-        LocalPlayer lp = state.localPlayerData;
-        if (lp == null || lp.name() == null || lp.name().isEmpty()) {
-            log.debug("collectItemVarbits: no local player data (lp={}, name={})",
-                    lp, lp != null ? lp.name() : "null");
-            return;
-        }
-        String playerName = lp.name().toLowerCase();
-
-        // Detect player switch mid-session
-        if (!playerName.equals(state.itemVarPlayerName)) {
-            state.itemVarSystemAvailable = null;
-            state.itemVarPlayerName = playerName;
-        }
-
-        // Probe if untested
-        if (state.itemVarSystemAvailable == null) {
-            Boolean persisted = loadItemVarStatus(playerName);
-            if (persisted != null) {
-                state.itemVarSystemAvailable = persisted;
-            } else {
-                // Find first equipped item to probe with
-                int probeSlot = -1;
-                for (int idx : slotIndices) {
-                    try {
-                        InventoryItem item = api.getInventoryItem(94, idx);
-                        if (item != null && item.itemId() > 0) { probeSlot = idx; break; }
-                    } catch (Exception ignored) {}
-                }
-                if (probeSlot < 0) return; // No equipped items -- can't probe yet
-
-                try {
-                    api.getItemVars(94, probeSlot); // may crash pipe if system not initialized
-                    state.itemVarSystemAvailable = true;
-                    saveItemVarStatus(playerName, true);
-                    log.info("Item var system available for player '{}'", playerName);
-                } catch (Exception e) {
-                    state.itemVarSystemAvailable = false;
-                    saveItemVarStatus(playerName, false);
-                    logItemVarError("probe getItemVars(94, " + probeSlot + ") for player '" + playerName + "'", e);
-                    log.warn("Item var system NOT available for player '{}' -- disabled", playerName);
-                    state.itemVarCache = List.of();
-                    previousItemVarSnapshot = Map.of();
-                    return;
-                }
+    void pollInvVarLive(GameAPI api) {
+        if (!state.invVarLiveEnabled) {
+            if (!state.invVarLiveResults.isEmpty()) {
+                state.invVarLiveResults = List.of();
+                state.invVarSearchStatus = "";
             }
-        }
-
-        if (!state.itemVarSystemAvailable) {
-            state.itemVarCache = List.of();
-            previousItemVarSnapshot = Map.of();
+            liveSnapshot = null;
             return;
         }
 
-        // System is available -- collect raw item vars for each equipped slot
-        List<ItemVarEntry> entries = new ArrayList<>();
-        Map<String, Integer> newSnapshot = new HashMap<>();
+        if (Boolean.FALSE.equals(state.itemVarSystemAvailable)) {
+            state.invVarLiveResults = List.of();
+            state.invVarSearchStatus = "Item var system not available for this account";
+            return;
+        }
 
-        for (int s = 0; s < slotIndices.length; s++) {
-            int slotIdx = slotIndices[s];
-            try {
-                InventoryItem item = api.getInventoryItem(94, slotIdx);
-                if (item == null || item.itemId() <= 0) continue;
+        int invId = state.invVarSearchInvId.get();
+        int slot = state.invVarSearchSlot.get();
 
-                List<ItemVar> vars = api.getItemVars(94, slotIdx);
-                if (vars == null || vars.isEmpty()) continue;
+        try {
+            var rawVars = api.getItemVars(invId, slot);
+            if (rawVars == null || rawVars.isEmpty()) {
+                state.invVarLiveResults = List.of();
+                state.invVarSearchStatus = "No item vars at inv " + invId + " slot " + slot;
+                liveSnapshot = null;
+                return;
+            }
 
-                // Get item name
-                String itemName = "";
-                try {
-                    ItemType type = api.getItemType(item.itemId());
-                    if (type != null && type.name() != null) itemName = type.name();
-                } catch (Exception ignored) {}
+            Map<Integer, Integer> packedByItemVarId = new HashMap<>();
+            List<ItemVarbitDef> allDefs = new ArrayList<>();
+            for (var iv : rawVars) {
+                packedByItemVarId.put(iv.varId(), iv.value());
+                allDefs.addAll(state.gameCache.getItemVarbitDefs(iv.varId()));
+            }
 
-                entries.add(new ItemVarEntry(slotNames[s], item.itemId(), itemName, slotIdx, vars));
+            if (allDefs.isEmpty()) {
+                state.invVarLiveResults = List.of();
+                state.invVarSearchStatus = "No varbit definitions for item vars in this slot";
+                liveSnapshot = null;
+                return;
+            }
 
-                // Build snapshot for change detection (varId → value)
-                for (ItemVar v : vars) {
-                    String key = slotIdx + ":v" + v.varId();
-                    newSnapshot.put(key, v.value());
+            // Build previous decoded values map (varbitId -> decodedValue) from last poll
+            Map<Integer, Integer> prevDecoded = liveSnapshot != null ? liveSnapshot : Map.of();
+            long now = System.currentTimeMillis();
+
+            // Decode all, skip zeros, collect all varbit IDs per unique decoded value
+            // Keep one representative entry (narrowest bit width) per value
+            Map<Integer, XapiData.InvVarLiveEntry> byValue = new LinkedHashMap<>();
+            Map<Integer, List<Integer>> allIdsByValue = new LinkedHashMap<>();
+            for (var def : allDefs) {
+                Integer packed = packedByItemVarId.get(def.itemVarId());
+                if (packed == null) continue;
+                int decoded = def.decode(packed);
+                int bits = def.highBit() - def.lowBit() + 1;
+
+                allIdsByValue.computeIfAbsent(decoded, k -> new ArrayList<>()).add(def.varbitId());
+
+                Integer prev = prevDecoded.get(def.varbitId());
+                int prevVal = prev != null ? prev : decoded;
+                // Preserve existing change time if value hasn't changed since last detected change
+                long changeTime = (prev != null && prev != decoded) ? now : getLastChangeTime(def.varbitId());
+
+                var entry = new XapiData.InvVarLiveEntry(def.varbitId(), def.itemVarId(), decoded, bits, prevVal, changeTime, List.of());
+                byValue.merge(decoded, entry,
+                        (existing, candidate) -> candidate.bits() < existing.bits() ? candidate : existing);
+            }
+            // Attach all varbit IDs to each representative entry
+            for (var e : byValue.entrySet()) {
+                List<Integer> ids = allIdsByValue.getOrDefault(e.getKey(), List.of());
+                var old = e.getValue();
+                e.setValue(new XapiData.InvVarLiveEntry(old.varbitId(), old.itemVarId(), old.decodedValue(),
+                        old.bits(), old.previousValue(), old.lastChangeTime(), List.copyOf(ids)));
+            }
+
+            List<XapiData.InvVarLiveEntry> results = new ArrayList<>(byValue.values());
+            results.sort(Comparator.comparingInt(XapiData.InvVarLiveEntry::bits)
+                    .thenComparingInt(XapiData.InvVarLiveEntry::varbitId));
+
+            // Detect changes and log them
+            if (!prevDecoded.isEmpty()) {
+                for (var entry : results) {
+                    Integer prev = prevDecoded.get(entry.varbitId());
+                    if (prev != null && prev != entry.decodedValue()) {
+                        state.invVarChangeLog.add(new XapiData.InvVarChangeEntry(
+                                entry.varbitId(), entry.itemVarId(), prev, entry.decodedValue(), now, entry.bits()));
+                        // Cap change log at 200
+                        while (state.invVarChangeLog.size() > 200) state.invVarChangeLog.remove(0);
+                    }
                 }
-            } catch (Exception e) {
-                logItemVarError("collectItemVarbits slot=" + slotNames[s] + " slotIdx=" + slotIdx, e);
             }
-        }
 
-        // Detect changes and log as VarChange entries
-        Map<String, Integer> oldSnapshot = previousItemVarSnapshot;
-        for (Map.Entry<String, Integer> entry : newSnapshot.entrySet()) {
-            Integer oldVal = oldSnapshot.get(entry.getKey());
-            if (oldVal != null && !oldVal.equals(entry.getValue())) {
-                String key = entry.getKey();
-                int varId = Integer.parseInt(key.substring(key.indexOf(":v") + 2));
-                state.varLog.add(new VarChange("itemvar", varId, oldVal, entry.getValue(),
-                        System.currentTimeMillis(), state.currentTick));
-                state.varChangeCount.merge("itemvar:" + varId, 1, Integer::sum);
+            // Build new snapshot (varbitId -> decoded value) for next poll
+            Map<Integer, Integer> newSnapshot = new HashMap<>();
+            for (var entry : results) {
+                newSnapshot.put(entry.varbitId(), entry.decodedValue());
             }
-        }
+            // Store change times for entries that just changed
+            for (var entry : results) {
+                if (entry.lastChangeTime() > 0) {
+                    liveChangeTimes.put(entry.varbitId(), entry.lastChangeTime());
+                }
+            }
+            liveSnapshot = newSnapshot;
 
-        state.itemVarCache = entries;
-        previousItemVarSnapshot = newSnapshot;
+            state.invVarLiveResults = List.copyOf(results);
+            state.invVarSearchStatus = results.size() + " varbits | inv " + invId + " slot " + slot;
+        } catch (Exception e) {
+            state.invVarLiveResults = List.of();
+            state.invVarSearchStatus = "Error: " + e.getMessage();
+            logItemVarError("pollInvVarLive inv=" + invId + " slot=" + slot, e);
+        }
+    }
+
+    private long getLastChangeTime(int varbitId) {
+        Long t = liveChangeTimes.get(varbitId);
+        return t != null ? t : 0;
     }
 
     @SuppressWarnings("unchecked")

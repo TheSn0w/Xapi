@@ -1,5 +1,6 @@
 package com.xapi.debugger;
 
+import com.botwithus.bot.api.cache.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,18 +18,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Loads game cache data (locations, items, NPCs, interfaces) from offline JSON dump files.
- * Provides instant name/action/transform/component lookups without any RPC calls.
- *
- * <p>Expected sources:
- * <ul>
- *   <li>{@code D:\13-03-2026\locations.json} — 135K location definitions</li>
- *   <li>{@code D:\13-03-2026\items.json} — 60K item definitions</li>
- *   <li>{@code D:\13-03-2026\npcs.json} — 32K NPC definitions</li>
- *   <li>{@code D:\Claude\rs-tools\output\interfaces\} — 103K interface widget definitions</li>
- * </ul>
+ * Gson-backed {@link GameCache} implementation that loads game cache data
+ * (locations, items, NPCs, interfaces) from offline JSON dump files.
  */
-public final class GameCacheData {
+public final class GameCacheData implements GameCache {
 
     private static final Logger log = LoggerFactory.getLogger(GameCacheData.class);
 
@@ -36,36 +29,6 @@ public final class GameCacheData {
     private static final Path DEFAULT_CACHE_DIR = Path.of("D:\\13-03-2026");
     private static final Path DEFAULT_INTERFACES_DIR = Path.of("D:\\Claude\\rs-tools\\output\\interfaces");
     private static final Path DEFAULT_VARBITS_DIR = Path.of("D:\\Claude\\rs-tools\\output\\configs\\varbits");
-
-    // ── Location (Object) cache ────────────────────────────────────────
-
-    public record CachedLocation(int id, String name, List<String> actions,
-                                  int varbitId, int varpId, List<Integer> transforms) {}
-
-    // ── Item cache ─────────────────────────────────────────────────────
-
-    public record CachedItem(int id, String name, List<String> widgetActions, List<String> groundActions) {}
-
-    // ── NPC cache ──────────────────────────────────────────────────────
-
-    public record CachedNpc(int id, String name, List<String> actions,
-                             int varbitId, int varpId, List<Integer> transforms) {}
-
-    // ── Interface widget cache ──────────────────────────────────────────
-
-    /** A cached interface widget — only stores menu_options and text (skip all visual data). */
-    public record CachedWidget(List<String> menuOptions, String text) {}
-
-    // ── Item varbit definitions (domain 5 varbits for decoding packed item vars) ──
-
-    /** An item varbit definition from the cache. */
-    public record ItemVarbitDef(int varbitId, int itemVarId, int lowBit, int highBit) {
-        /** Extracts this varbit's value from a packed integer. */
-        public int decode(int packed) {
-            int mask = (1 << (highBit - lowBit + 1)) - 1;
-            return (packed >>> lowBit) & mask;
-        }
-    }
 
     // ── Lookup maps ────────────────────────────────────────────────────
 
@@ -77,13 +40,15 @@ public final class GameCacheData {
     private volatile int widgetCount;
     // Item varbit defs grouped by itemVarId (decoded from varp domain 5)
     private final Map<Integer, List<ItemVarbitDef>> itemVarbits = new ConcurrentHashMap<>();
+    // Reverse index: varbitId -> ItemVarbitDef (for VarManager lookups)
+    private final Map<Integer, ItemVarbitDef> itemVarbitById = new ConcurrentHashMap<>();
 
     private volatile boolean loaded;
     private volatile String loadError;
 
     // ── Public API ─────────────────────────────────────────────────────
 
-    public boolean isLoaded() { return loaded; }
+    @Override public boolean isLoaded() { return loaded; }
     public String getLoadError() { return loadError; }
     public int locationCount() { return locations.size(); }
     public int itemCount() { return items.size(); }
@@ -92,16 +57,18 @@ public final class GameCacheData {
     public int interfaceCount() { return interfaces.size(); }
     public int widgetCount() { return widgetCount; }
 
-    public CachedLocation getLocation(int id) { return locations.get(id); }
-    public CachedItem getItem(int id) { return items.get(id); }
-    public CachedNpc getNpc(int id) { return npcs.get(id); }
+    @Override public CachedLocation getLocation(int id) { return locations.get(id); }
+    @Override public CachedItem getItem(int id) { return items.get(id); }
+    @Override public CachedNpc getNpc(int id) { return npcs.get(id); }
 
-    /**
-     * Returns all item varbit definitions for a given item var ID.
-     * Use these to decode packed item var values into individual sub-values.
-     */
+    @Override
     public List<ItemVarbitDef> getItemVarbitDefs(int itemVarId) {
         return itemVarbits.getOrDefault(itemVarId, List.of());
+    }
+
+    @Override
+    public ItemVarbitDef getItemVarbitDef(int varbitId) {
+        return itemVarbitById.get(varbitId);
     }
 
     /** Returns total count of loaded item varbit definitions. */
@@ -109,10 +76,7 @@ public final class GameCacheData {
         return itemVarbits.values().stream().mapToInt(List::size).sum();
     }
 
-    /**
-     * Gets the cached menu options for an interface widget.
-     * @return the menu options list, or null if not cached
-     */
+    @Override
     public List<String> getWidgetOptions(int ifaceId, int compId) {
         var comps = interfaces.get(ifaceId);
         if (comps == null) return null;
@@ -120,10 +84,7 @@ public final class GameCacheData {
         return widget != null ? widget.menuOptions() : null;
     }
 
-    /**
-     * Gets the cached text label for an interface widget.
-     * @return the text string, or null if not cached
-     */
+    @Override
     public String getWidgetText(int ifaceId, int compId) {
         var comps = interfaces.get(ifaceId);
         if (comps == null) return null;
@@ -131,12 +92,8 @@ public final class GameCacheData {
         return widget != null ? widget.text() : null;
     }
 
-    /**
-     * Returns a known interface name for common interfaces.
-     * Falls back to "Interface {id}" for unknown interfaces.
-     */
+    @Override
     public String getInterfaceName(int ifaceId) {
-        // Common well-known interfaces
         return switch (ifaceId) {
             case 517 -> "Bank";
             case 762 -> "Bank";
@@ -155,22 +112,13 @@ public final class GameCacheData {
         };
     }
 
-    /**
-     * Resolves a location's name following its transform/morph chain.
-     * Uses the provided var value to pick the correct transform ID.
-     *
-     * @param typeId   the base location type ID
-     * @param varValue the current varbit/varp value (use -1 to skip transform)
-     * @return the resolved location, or null if not found
-     */
+    @Override
     public CachedLocation resolveLocation(int typeId, int varValue) {
         CachedLocation base = locations.get(typeId);
         if (base == null) return null;
 
-        // If base has a name, return it directly (no morph needed)
         if (base.name() != null && !base.name().isEmpty()) return base;
 
-        // Follow transform chain
         if (base.transforms() != null && !base.transforms().isEmpty() && varValue >= 0) {
             int transformedId;
             if (varValue < base.transforms().size()) {
@@ -189,21 +137,13 @@ public final class GameCacheData {
         return base;
     }
 
-    /**
-     * Resolves an NPC's definition following its transform/morph chain.
-     *
-     * @param typeId   the base NPC type ID
-     * @param varValue the current varbit/varp value (use -1 to skip transform)
-     * @return the resolved NPC, or null if not found
-     */
+    @Override
     public CachedNpc resolveNpc(int typeId, int varValue) {
         CachedNpc base = npcs.get(typeId);
         if (base == null) return null;
 
-        // If base has a name, return it directly
         if (base.name() != null && !base.name().isEmpty()) return base;
 
-        // Follow transform chain
         if (base.transforms() != null && !base.transforms().isEmpty() && varValue >= 0) {
             int transformedId;
             if (varValue < base.transforms().size()) {
@@ -459,8 +399,9 @@ public final class GameCacheData {
                     int varIndex = (int) (varp & 0xFFFFFF);
                     int itemVarId = (varIndex - 2) / 256; // Map varp var_index to getItemVars varId
 
-                    itemVarbits.computeIfAbsent(itemVarId, k -> new ArrayList<>())
-                            .add(new ItemVarbitDef(varbitId, itemVarId, lowBit, highBit));
+                    ItemVarbitDef def = new ItemVarbitDef(varbitId, itemVarId, lowBit, highBit);
+                    itemVarbits.computeIfAbsent(itemVarId, k -> new ArrayList<>()).add(def);
+                    itemVarbitById.put(varbitId, def);
                     count++;
                 } catch (Exception e) {
                     log.debug("Failed to load varbit file {}: {}", file.getFileName(), e.getMessage());

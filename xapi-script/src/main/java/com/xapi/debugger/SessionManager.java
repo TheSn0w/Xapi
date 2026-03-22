@@ -13,6 +13,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Manages settings persistence, auto-save, export/import, and shutdown hooks.
+ *
+ * <p>Autosave strategy: the current in-memory state is written to disk every
+ * loop iteration (~600ms), unconditionally overwriting the previous file.
+ * Whatever is in memory IS what's on disk — no dirty flags, no debounce,
+ * no race conditions between clear and save.
  */
 final class SessionManager {
 
@@ -20,11 +25,15 @@ final class SessionManager {
 
     private final XapiState state;
 
-    private long lastAutoSave;
-    private static final long AUTOSAVE_DEBOUNCE_MS = 10_000;
     private static final Path AUTOSAVE_FILE = XapiState.SESSION_DIR.resolve("autosave.json");
     private Thread shutdownHook;
     private volatile long lastSettingsSave;
+
+    // Track collection sizes to skip autosave when nothing changed
+    private int lastSavedActionSize;
+    private int lastSavedVarSize;
+    private int lastSavedChatSize;
+    private int lastSavedSnapshotSize;
 
     SessionManager(XapiState state) {
         this.state = state;
@@ -70,11 +79,8 @@ final class SessionManager {
 
             state.showVarbits = s.showVarbits();
             state.showVarps = s.showVarps();
-            // showVarcs/showVarcStrs removed -- varc tracking disabled until API supports events
-            // state.showItemVarbits is NOT loaded -- always starts as false (crash safety)
 
             if (s.varFilterText() != null) state.varFilterText.set(s.varFilterText());
-            // varcWatchIds removed -- varc tracking disabled until API supports events
             if (s.pinnedVars() != null) { state.pinnedVars.clear(); state.pinnedVars.addAll(s.pinnedVars()); }
             if (s.varAnnotations() != null) { state.varAnnotations.clear(); state.varAnnotations.putAll(s.varAnnotations()); }
 
@@ -104,14 +110,32 @@ final class SessionManager {
     static <T> int trimLog(List<T> list, int maxSize) {
         int size = list.size();
         if (size <= maxSize) return 0;
-        // Bulk snapshot-and-replace: 2 array copies instead of N individual remove(0) calls.
-        // CopyOnWriteArrayList doesn't support subList().clear(), so we snapshot, clear, and re-add.
         List<T> keep = new ArrayList<>(list.subList(size - maxSize, size));
         list.clear();
         list.addAll(keep);
         return size - maxSize;
     }
 
+    /**
+     * Writes the current in-memory state to autosave.json only if the data
+     * has changed since the last save. Called every loop iteration (~600ms).
+     */
+    void doAutoSaveIfChanged() {
+        int aSize = state.actionLog.size();
+        int vSize = state.varLog.size();
+        int cSize = state.chatLog.size();
+        int sSize = state.snapshotLog.size();
+        if (aSize == lastSavedActionSize && vSize == lastSavedVarSize
+                && cSize == lastSavedChatSize && sSize == lastSavedSnapshotSize) {
+            return; // Nothing changed — skip expensive serialization + disk write
+        }
+        doAutoSave();
+    }
+
+    /**
+     * Writes the current in-memory state to autosave.json unconditionally.
+     * Used by clear, stop, and shutdown hook where we must guarantee a write.
+     */
     void doAutoSave() {
         try {
             SessionData session = new SessionData(
@@ -121,6 +145,10 @@ final class SessionManager {
                     state.lastSeenActionTimestamp
             );
             Files.writeString(AUTOSAVE_FILE, XapiState.GSON.toJson(session));
+            lastSavedActionSize = state.actionLog.size();
+            lastSavedVarSize = state.varLog.size();
+            lastSavedChatSize = state.chatLog.size();
+            lastSavedSnapshotSize = state.snapshotLog.size();
         } catch (Exception e) {
             log.warn("Auto-save failed: {}", e.getMessage());
         }
@@ -184,7 +212,6 @@ final class SessionManager {
             if (session.actions() != null) { state.actionLog.clear(); state.actionLog.addAll(session.actions()); }
             if (session.vars() != null) {
                 state.varLog.clear(); state.varLog.addAll(session.vars());
-                // Rebuild state.varsByTick index
                 state.varsByTick.clear();
                 for (VarChange vc : state.varLog) {
                     state.varsByTick.computeIfAbsent(vc.gameTick(), k -> new CopyOnWriteArrayList<>()).add(vc);
@@ -208,16 +235,6 @@ final class SessionManager {
 
     void removeShutdownHook() {
         try { Runtime.getRuntime().removeShutdownHook(shutdownHook); } catch (Exception ignored) {}
-    }
-
-    boolean shouldAutoSave(long now) {
-        if (state.actionsDirty && now - lastAutoSave >= AUTOSAVE_DEBOUNCE_MS) {
-            state.actionsDirty = false;
-            lastAutoSave = now;
-            doAutoSave();
-            return true;
-        }
-        return false;
     }
 
     boolean shouldPersistSettings(long now) {

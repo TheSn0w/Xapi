@@ -1,9 +1,8 @@
 package com.xapi.debugger;
 
-import static com.xapi.debugger.XapiData.*;
-
 import com.botwithus.bot.api.model.LocalPlayer;
 import com.botwithus.bot.api.model.PlayerStat;
+import com.botwithus.bot.api.util.Skills;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -95,8 +94,8 @@ final class PlayerTab {
             int totalLevel = 0;
 
             for (PlayerStat stat : stats) {
-                String skillName = stat.skillId() < SKILL_NAMES.length ? SKILL_NAMES[stat.skillId()] : "Skill " + stat.skillId();
-                int xpToNext = XapiData.xpToNextLevel(stat.xp(), stat.level(), stat.maxLevel());
+                String skillName = Skills.getSkillName(stat.skillId());
+                int xpToNext = Skills.xpToNextLevel(stat.xp(), stat.level(), stat.maxLevel());
 
                 totalXp += stat.xp();
                 totalLevel += stat.level();

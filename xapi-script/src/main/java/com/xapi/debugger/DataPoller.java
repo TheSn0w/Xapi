@@ -182,7 +182,8 @@ final class DataPoller {
 
     void pollInterfaceEvents(GameAPI api) {
         try {
-            List<OpenInterface> current = api.getOpenInterfaces();
+            // Reuse state.openInterfaces already fetched in doLoop — avoids duplicate RPC
+            List<OpenInterface> current = state.openInterfaces;
             if (current == null) current = List.of();
 
             Set<Integer> currentIfaceIds = new HashSet<>();

@@ -2,11 +2,14 @@ package com.xapi.debugger;
 
 import static com.xapi.debugger.XapiData.*;
 
-import com.botwithus.bot.api.model.ItemVar;
 import imgui.ImGui;
 import imgui.ImGuiListClipper;
+import imgui.ImGuiTableColumnSortSpecs;
+import imgui.ImGuiTableSortSpecs;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiHoveredFlags;
+import imgui.flag.ImGuiSortDirection;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiTableColumnFlags;
 import imgui.flag.ImGuiTableFlags;
 
 import java.time.Instant;
@@ -14,12 +17,16 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 final class VariablesTab {
 
     private final XapiState state;
     private final List<Integer> displayIndices = new ArrayList<>();
+    private final Set<Integer> expandedVarbitGroups = new HashSet<>();
 
     VariablesTab(XapiState s) {
         this.state = s;
@@ -33,44 +40,6 @@ final class VariablesTab {
         boolean wSVP = state.showVarps;
         if (ImGui.checkbox("Varps##vf", wSVP)) { state.showVarps = !wSVP; state.settingsDirty = true; }
         ImGui.sameLine();
-        boolean itemVarDisabled = Boolean.FALSE.equals(state.itemVarSystemAvailable);
-        if (itemVarDisabled) ImGui.beginDisabled();
-        boolean wSIV = state.showItemVarbits;
-        if (ImGui.checkbox("ItemVar##vf", wSIV)) {
-            state.showItemVarbits = !wSIV;
-            state.settingsDirty = true;
-            if (!wSIV) { // toggling ON — reset error count
-                state.itemVarErrorLogCount = 0;
-            }
-        }
-        if (itemVarDisabled && ImGui.isItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-            ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 0.2f, 0.2f, 1.0f);
-            ImGui.beginTooltip();
-            ImGui.setWindowFontScale(1.2f);
-            ImGui.text("This account does not qualify for item vars yet");
-            ImGui.setWindowFontScale(1.0f);
-            ImGui.endTooltip();
-            ImGui.popStyleColor();
-        }
-        if (itemVarDisabled) ImGui.endDisabled();
-        ImGui.sameLine();
-        if (ImGui.button("Re-check##itemvar")) {
-            state.resetItemVarProbe();
-        }
-        if (ImGui.isItemHovered()) {
-            if (itemVarDisabled) {
-                ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 0.2f, 0.2f, 1.0f);
-                ImGui.beginTooltip();
-                ImGui.setWindowFontScale(1.2f);
-                ImGui.text("This account does not qualify for item vars yet");
-                ImGui.setWindowFontScale(1.0f);
-                ImGui.endTooltip();
-                ImGui.popStyleColor();
-            } else {
-                ImGui.setTooltip("Re-probe item var system (use after obtaining a varbit item)");
-            }
-        }
-        ImGui.sameLine();
         ImGui.text("|");
         ImGui.sameLine();
         if (ImGui.button("Clear Vars")) { state.varLog.clear(); state.varsByTick.clear(); state.lastVarSize = -1; }
@@ -82,8 +51,8 @@ final class VariablesTab {
         ImGui.inputText("##var_filter", state.varFilterText);
         ImGui.popItemWidth();
 
-        // -- Item Varbits Section (equipped items) --
-        renderItemVarbits();
+        // -- Inventory Varbit Search --
+        renderInvVarSearch();
 
         List<VarChange> vars = state.varLog;
         int[] watchIds = parseWatchIds(state.varFilterText.get().trim());
@@ -179,26 +148,27 @@ final class VariablesTab {
             if ("varbit".equals(vc.type()) && !state.showVarbits) continue;
             if ("varp".equals(vc.type()) && !state.showVarps) continue;
             if ("varc".equals(vc.type()) || "varcstr".equals(vc.type())) continue;
-            if ("itemvar".equals(vc.type()) && !state.showItemVarbits) continue;
             if (watchIds.length > 0 && !inWatchlist(vc.varId(), watchIds)) continue;
             displayIndices.add(i);
         }
 
         // -- Main Var Change Log --
         int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
-                | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;
+                | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable;
         float tableHeight = ImGui.getContentRegionAvailY();
         if (tableHeight < 50) tableHeight = 50;
-        if (ImGui.beginTable("##xapi_vars", 9, flags, 0, tableHeight)) {
-            ImGui.tableSetupColumn("", 0, 0.15f);
-            ImGui.tableSetupColumn("#", 0, 0.25f);
-            ImGui.tableSetupColumn("Time", 0, 0.7f);
-            ImGui.tableSetupColumn("Tick", 0, 0.4f);
-            ImGui.tableSetupColumn("Type", 0, 0.4f);
-            ImGui.tableSetupColumn("VarID", 0, 0.5f);
-            ImGui.tableSetupColumn("Old", 0, 0.5f);
-            ImGui.tableSetupColumn("New", 0, 0.5f);
-            ImGui.tableSetupColumn("Delta", 0, 0.5f);
+        ImGui.pushStyleVar(ImGuiStyleVar.CellPadding, 14, 4);
+        if (ImGui.beginTable("##xapi_vars", 10, flags, 0, tableHeight)) {
+            ImGui.tableSetupColumn("");
+            ImGui.tableSetupColumn("#");
+            ImGui.tableSetupColumn("Time");
+            ImGui.tableSetupColumn("Tick");
+            ImGui.tableSetupColumn("Type");
+            ImGui.tableSetupColumn("VarID");
+            ImGui.tableSetupColumn("Old");
+            ImGui.tableSetupColumn("New");
+            ImGui.tableSetupColumn("Delta");
+            ImGui.tableSetupColumn("Note", ImGuiTableColumnFlags.WidthStretch);
             ImGui.tableSetupScrollFreeze(0, 1);
             ImGui.tableHeadersRow();
 
@@ -278,6 +248,12 @@ final class VariablesTab {
                     } else {
                         ImGui.text(deltaStr);
                     }
+
+                    ImGui.tableSetColumnIndex(9);
+                    String note = state.varAnnotations.get(pinKey);
+                    if (note != null && !note.isEmpty()) {
+                        ImGui.textColored(0.7f, 0.9f, 0.7f, 1f, note);
+                    }
                 }
             }
             clipper.end();
@@ -290,51 +266,270 @@ final class VariablesTab {
             }
             ImGui.endTable();
         }
+        ImGui.popStyleVar();
     }
 
-    private void renderItemVarbits() {
-        List<ItemVarEntry> items = state.itemVarCache;
-        if (items.isEmpty()) return;
+    private void renderInvVarSearch() {
+        if (ImGui.collapsingHeader("Inventory Varbit Search")) {
+            ImGui.pushItemWidth(100);
+            ImGui.inputInt("Inv ID##ivs", state.invVarSearchInvId);
+            ImGui.sameLine();
+            ImGui.inputInt("Slot##ivs", state.invVarSearchSlot);
+            ImGui.popItemWidth();
+            ImGui.sameLine();
+            boolean live = state.invVarLiveEnabled;
+            if (live) {
+                ImGui.pushStyleColor(ImGuiCol.Button, 0.2f, 0.7f, 0.3f, 0.7f);
+                ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.2f, 0.7f, 0.3f, 0.9f);
+            }
+            if (ImGui.button(live ? "Live" : "Enable##ivs")) {
+                state.invVarLiveEnabled = !live;
+                if (!live) {
+                    state.invVarChangeLog.clear();
+                }
+            }
+            if (live) ImGui.popStyleColor(2);
+            if (ImGui.isItemHovered()) {
+                ImGui.setTooltip(live ? "Click to disable live polling" : "Enable live polling — updates every ~600ms");
+            }
+            ImGui.sameLine();
+            boolean changedOnly = state.invVarChangedOnly;
+            if (ImGui.checkbox("Changed Only##ivs", changedOnly)) {
+                state.invVarChangedOnly = !changedOnly;
+            }
 
-        if (ImGui.collapsingHeader("Item Varbits (" + items.size() + " items with vars)")) {
-            int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
-                    | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.Resizable;
+            // Status line
+            String status = state.invVarSearchStatus;
+            if (!status.isEmpty()) {
+                boolean isError = status.startsWith("Error") || status.startsWith("Item var system");
+                if (isError) ImGui.textColored(1f, 0.3f, 0.3f, 1f, status);
+                else ImGui.textColored(0.5f, 0.9f, 0.5f, 1f, status);
+            }
 
-            if (ImGui.beginTable("##item_vars", 5, flags)) {
-                ImGui.tableSetupColumn("Slot", 0, 0.5f);
-                ImGui.tableSetupColumn("Item", 0, 1.0f);
-                ImGui.tableSetupColumn("VarId", 0, 0.5f);
-                ImGui.tableSetupColumn("Value", 0, 0.4f);
-                ImGui.tableSetupColumn("Code", 0, 1.5f);
-                ImGui.tableSetupScrollFreeze(0, 1);
-                ImGui.tableHeadersRow();
+            // Live results table
+            List<XapiData.InvVarLiveEntry> results = state.invVarLiveResults;
+            if (state.invVarChangedOnly) {
+                List<XapiData.InvVarLiveEntry> filtered = new ArrayList<>();
+                for (var r : results) {
+                    if (r.lastChangeTime() > 0) filtered.add(r);
+                }
+                results = filtered;
+            }
+            if (!results.isEmpty()) {
+                int invId = state.invVarSearchInvId.get();
+                int slot = state.invVarSearchSlot.get();
+                long now = System.currentTimeMillis();
+                int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
+                        | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable
+                        | ImGuiTableFlags.Sortable | ImGuiTableFlags.SortTristate;
 
-                for (ItemVarEntry entry : items) {
-                    for (ItemVar v : entry.vars()) {
+                ImGui.pushStyleVar(ImGuiStyleVar.CellPadding, 14, 4);
+                if (ImGui.beginTable("##ivs_live", 5, flags)) {
+                    ImGui.tableSetupColumn("VarbitID", ImGuiTableColumnFlags.DefaultSort);
+                    ImGui.tableSetupColumn("Value");
+                    ImGui.tableSetupColumn("Bits");
+                    ImGui.tableSetupColumn("Label", ImGuiTableColumnFlags.WidthStretch | ImGuiTableColumnFlags.NoSort);
+                    ImGui.tableSetupColumn("Code", ImGuiTableColumnFlags.NoSort);
+                    ImGui.tableSetupScrollFreeze(0, 1);
+                    ImGui.tableHeadersRow();
+
+                    // Sort results based on column header clicks
+                    ImGuiTableSortSpecs sortSpecs = ImGui.tableGetSortSpecs();
+                    if (sortSpecs != null && sortSpecs.getSpecsCount() > 0) {
+                        ImGuiTableColumnSortSpecs colSpec = sortSpecs.getSpecs()[0];
+                        int colIdx = colSpec.getColumnIndex();
+                        boolean asc = colSpec.getSortDirection() == ImGuiSortDirection.Ascending;
+                        Comparator<XapiData.InvVarLiveEntry> cmp = null;
+                        if (colIdx == 0) cmp = Comparator.comparingInt(XapiData.InvVarLiveEntry::varbitId);
+                        else if (colIdx == 1) cmp = Comparator.comparingInt(XapiData.InvVarLiveEntry::decodedValue);
+                        else if (colIdx == 2) cmp = Comparator.comparingInt(XapiData.InvVarLiveEntry::bits);
+                        if (cmp != null) {
+                            if (!asc) cmp = cmp.reversed();
+                            results = new ArrayList<>(results);
+                            results.sort(cmp);
+                        }
+                        sortSpecs.setSpecsDirty(false);
+                    }
+
+                    for (int i = 0; i < results.size(); i++) {
+                        XapiData.InvVarLiveEntry r = results.get(i);
+                        String annotKey = "invvarbit:" + r.varbitId();
+                        boolean hasGroup = r.allVarbitIds() != null && r.allVarbitIds().size() > 1;
+                        boolean expanded = hasGroup && expandedVarbitGroups.contains(r.varbitId());
                         ImGui.tableNextRow();
+
+                        // Highlight row if value changed recently (fade over 15 seconds)
+                        long age = r.lastChangeTime() > 0 ? now - r.lastChangeTime() : Long.MAX_VALUE;
+                        if (age < 15000) {
+                            float alpha = 0.4f * (1.0f - (float) age / 15000f);
+                            boolean increased = r.decodedValue() > r.previousValue();
+                            if (increased) {
+                                ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.2f, 0.8f, 0.2f, alpha));
+                            } else {
+                                ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.8f, 0.2f, 0.2f, alpha));
+                            }
+                        }
+
+                        // VarbitID column — clickable to expand group
                         ImGui.tableSetColumnIndex(0);
-                        ImGui.textColored(0.7f, 0.7f, 0.4f, 1f, entry.slotName());
+                        if (hasGroup) {
+                            String arrow = expanded ? "v " : "> ";
+                            ImGui.pushStyleColor(ImGuiCol.Text, 1f, 1f, 0.3f, 1f);
+                            if (ImGui.selectable(arrow + r.varbitId() + " (" + r.allVarbitIds().size() + ")##vbg_" + i)) {
+                                if (expanded) expandedVarbitGroups.remove(r.varbitId());
+                                else expandedVarbitGroups.add(r.varbitId());
+                            }
+                            ImGui.popStyleColor();
+                            if (ImGui.isItemHovered()) {
+                                ImGui.setTooltip(expanded ? "Click to collapse" : "Click to expand " + r.allVarbitIds().size() + " varbits with value " + r.decodedValue());
+                            }
+                        } else {
+                            ImGui.textColored(1f, 1f, 0.3f, 1f, String.valueOf(r.varbitId()));
+                        }
+
                         ImGui.tableSetColumnIndex(1);
-                        ImGui.text(entry.itemName().isEmpty()
-                                ? String.valueOf(entry.itemId())
-                                : entry.itemName() + " (" + entry.itemId() + ")");
+                        if (age < 15000) {
+                            boolean increased = r.decodedValue() > r.previousValue();
+                            if (increased) ImGui.textColored(0.3f, 1f, 0.3f, 1f, String.valueOf(r.decodedValue()));
+                            else ImGui.textColored(1f, 0.3f, 0.3f, 1f, String.valueOf(r.decodedValue()));
+                        } else {
+                            ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(r.decodedValue()));
+                        }
                         ImGui.tableSetColumnIndex(2);
-                        ImGui.textColored(1f, 1f, 0.3f, 1f, String.valueOf(v.varId()));
+                        ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, String.valueOf(r.bits()));
                         ImGui.tableSetColumnIndex(3);
-                        ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(v.value()));
+                        renderInvVarLabelCell(annotKey, i, "iv");
                         ImGui.tableSetColumnIndex(4);
-                        String code = "api.getItemVarValue(94, " + entry.slot() + ", " + v.varId() + ")";
+                        String code = "VarManager.getInvVarbit(" + invId + ", " + slot + ", " + r.varbitId() + ")";
                         ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
-                        if (ImGui.selectable(code + "##iv_" + entry.slot() + "_" + v.varId())) {
+                        if (ImGui.selectable(code + "##ivs_" + i)) {
                             ImGui.setClipboardText(code);
                         }
                         ImGui.popStyleColor();
                         if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy");
+
+                        // Expanded sub-rows for sibling varbit IDs
+                        if (expanded) {
+                            for (int j = 0; j < r.allVarbitIds().size(); j++) {
+                                int siblingId = r.allVarbitIds().get(j);
+                                if (siblingId == r.varbitId()) continue; // skip the main one already shown
+                                String subKey = "invvarbit:" + siblingId;
+                                ImGui.tableNextRow();
+                                ImGui.tableSetBgColor(1, ImGui.colorConvertFloat4ToU32(0.15f, 0.15f, 0.2f, 0.5f));
+
+                                ImGui.tableSetColumnIndex(0);
+                                ImGui.textColored(0.7f, 0.7f, 0.3f, 0.8f, "  " + siblingId);
+
+                                ImGui.tableSetColumnIndex(1);
+                                ImGui.textColored(0.5f, 0.7f, 0.5f, 0.8f, String.valueOf(r.decodedValue()));
+                                ImGui.tableSetColumnIndex(2);
+                                ImGui.textColored(0.5f, 0.5f, 0.5f, 0.8f, String.valueOf(r.bits()));
+                                ImGui.tableSetColumnIndex(3);
+                                String subUid = "sub_" + i + "_" + j;
+                                renderInvVarLabelCell(subKey, i * 10000 + j, subUid);
+                                ImGui.tableSetColumnIndex(4);
+                                String subCode = "VarManager.getInvVarbit(" + invId + ", " + slot + ", " + siblingId + ")";
+                                ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 0.8f);
+                                if (ImGui.selectable(subCode + "##ivs_sub_" + i + "_" + j)) {
+                                    ImGui.setClipboardText(subCode);
+                                }
+                                ImGui.popStyleColor();
+                                if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy");
+                            }
+                        }
                     }
+                    ImGui.endTable();
                 }
-                ImGui.endTable();
+                ImGui.popStyleVar();
+            }
+
+            // Change history (collapsible)
+            List<XapiData.InvVarChangeEntry> changeLog = state.invVarChangeLog;
+            if (!changeLog.isEmpty()) {
+                if (ImGui.treeNode("Change History (" + changeLog.size() + ")##ivs_changes")) {
+                    ImGui.sameLine();
+                    if (ImGui.smallButton("Clear##ivs_hist")) {
+                        state.invVarChangeLog.clear();
+                    }
+                    int invId = state.invVarSearchInvId.get();
+                    int slot = state.invVarSearchSlot.get();
+                    int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg
+                            | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable;
+
+                    ImGui.pushStyleVar(ImGuiStyleVar.CellPadding, 14, 4);
+                    if (ImGui.beginTable("##ivs_changes", 6, flags)) {
+                        ImGui.tableSetupColumn("VarbitID");
+                        ImGui.tableSetupColumn("Old");
+                        ImGui.tableSetupColumn("New");
+                        ImGui.tableSetupColumn("Bits");
+                        ImGui.tableSetupColumn("Label", ImGuiTableColumnFlags.WidthStretch);
+                        ImGui.tableSetupColumn("Code");
+                        ImGui.tableSetupScrollFreeze(0, 1);
+                        ImGui.tableHeadersRow();
+
+                        // Show most recent first
+                        for (int i = changeLog.size() - 1; i >= 0; i--) {
+                            XapiData.InvVarChangeEntry r = changeLog.get(i);
+                            String annotKey = "invvarbit:" + r.varbitId();
+                            ImGui.tableNextRow();
+                            ImGui.tableSetColumnIndex(0);
+                            ImGui.textColored(1f, 1f, 0.3f, 1f, String.valueOf(r.varbitId()));
+                            ImGui.tableSetColumnIndex(1);
+                            ImGui.textColored(0.9f, 0.3f, 0.3f, 1f, String.valueOf(r.oldDecoded()));
+                            ImGui.tableSetColumnIndex(2);
+                            ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(r.newDecoded()));
+                            ImGui.tableSetColumnIndex(3);
+                            ImGui.textColored(0.6f, 0.6f, 0.6f, 1f, String.valueOf(r.bits()));
+                            ImGui.tableSetColumnIndex(4);
+                            String annot = state.varAnnotations.get(annotKey);
+                            if (annot != null && !annot.isEmpty()) {
+                                ImGui.textColored(0.7f, 0.9f, 0.7f, 1f, annot);
+                            }
+                            ImGui.tableSetColumnIndex(5);
+                            String code = "VarManager.getInvVarbit(" + invId + ", " + slot + ", " + r.varbitId() + ")";
+                            ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+                            if (ImGui.selectable(code + "##ch_" + i)) {
+                                ImGui.setClipboardText(code);
+                            }
+                            ImGui.popStyleColor();
+                            if (ImGui.isItemHovered()) ImGui.setTooltip("Click to copy");
+                        }
+                        ImGui.endTable();
+                    }
+                    ImGui.popStyleVar();
+                    ImGui.treePop();
+                }
             }
             ImGui.separator();
+        }
+    }
+
+    /** Renders the Label cell for an inv var row (main or sub-row). */
+    private void renderInvVarLabelCell(String annotKey, int rowIndex, String uidPrefix) {
+        String annot = state.varAnnotations.get(annotKey);
+        if (annotKey.equals(state.invVarEditingKey)) {
+            ImGui.pushItemWidth(ImGui.getContentRegionAvailX() - 50);
+            boolean enter = ImGui.inputText("##ivedit_" + uidPrefix + "_" + rowIndex, state.invVarAnnotationInput,
+                    imgui.flag.ImGuiInputTextFlags.EnterReturnsTrue);
+            ImGui.popItemWidth();
+            ImGui.sameLine();
+            if (enter || ImGui.smallButton("ok##ivsave_" + uidPrefix + "_" + rowIndex)) {
+                String val = state.invVarAnnotationInput.get().trim();
+                if (val.isEmpty()) state.varAnnotations.remove(annotKey);
+                else state.varAnnotations.put(annotKey, val);
+                state.invVarEditingKey = null;
+                state.settingsDirty = true;
+            }
+        } else {
+            if (ImGui.smallButton("##lbl_" + uidPrefix + "_" + rowIndex)) {
+                state.invVarEditingKey = annotKey;
+                state.invVarAnnotationInput.set(annot != null ? annot : "");
+            }
+            if (ImGui.isItemHovered()) ImGui.setTooltip(annot != null ? "Edit label" : "Add label");
+            if (annot != null && !annot.isEmpty()) {
+                ImGui.sameLine();
+                ImGui.textColored(0.7f, 0.9f, 0.7f, 1f, annot);
+            }
         }
     }
 

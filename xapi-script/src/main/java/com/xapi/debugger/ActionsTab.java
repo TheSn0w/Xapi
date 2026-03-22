@@ -79,11 +79,7 @@ final class ActionsTab {
         if (ImGui.beginPopup("##clear_actions_confirm")) {
             ImGui.text("Clear all " + state.actionLog.size() + " actions?");
             if (ImGui.button("Yes, clear")) {
-                state.actionLog.clear();
-                state.snapshotLog.clear();
-                state.lastActionSize = -1;
-                state.trimmedActionCount = 0;
-                state.actionsDirty = true;
+                state.clearActionsRequested = true;
                 ImGui.closeCurrentPopup();
             }
             ImGui.sameLine();
@@ -206,7 +202,6 @@ final class ActionsTab {
                         if (ImGui.menuItem("Remove action")) {
                             if (i < state.snapshotLog.size()) state.snapshotLog.remove(i);
                             state.actionLog.remove(i);
-                            state.actionsDirty = true;
                             ImGui.endPopup();
                             if (entry.wasBlocked()) ImGui.popStyleColor();
                             removedRow = true;
