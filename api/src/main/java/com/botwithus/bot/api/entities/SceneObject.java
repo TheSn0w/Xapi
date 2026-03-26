@@ -45,12 +45,28 @@ public class SceneObject extends EntityContext {
         return cachedType;
     }
 
-    /** The right-click interaction options for this object. */
+    /** The right-click interaction options for this object (resolves transforms). */
     public List<String> getOptions() {
+        List<String> opts = getType().options();
+        // If base type has no usable options, try the resolved transform
+        if (canTransform() && (opts == null || opts.stream().allMatch(s -> s == null || s.isEmpty()))) {
+            LocationType resolved = resolveTransform();
+            if (resolved != null && resolved.options() != null) {
+                return resolved.options();
+            }
+        }
+        return opts;
+    }
+
+    /**
+     * Returns the raw (untransformed) options from the base type definition.
+     * Use {@link #getOptions()} for the resolved options including transforms.
+     */
+    public List<String> getRawOptions() {
         return getType().options();
     }
 
-    /** Whether this object has a specific right-click option (case-insensitive). */
+    /** Whether this object has a specific right-click option (case-insensitive, resolves transforms). */
     public boolean hasOption(String option) {
         return containsOption(getOptions(), option);
     }
@@ -149,15 +165,28 @@ public class SceneObject extends EntityContext {
 
     /**
      * Interacts with this scene object using the given right-click option name.
+     * Resolves varbit/varp transforms if the base type has empty options.
+     * <p>
+     * If the cache definition has no populated options (all empty/null — common for
+     * RS3 objects like trees and bank counters), falls back to option index 1
+     * (the default left-click action).
      *
      * @param option the option text (e.g. "Open", "Bank", "Mine"), case-insensitive
-     * @return {@code true} if the option was found and the action was queued
+     * @return {@code true} if the option was found (or fallback used) and the action was queued
      */
     public boolean interact(String option) {
-        int index = findOptionIndex(getOptions(), option);
-        if (index == -1) return false;
-        interact(index);
-        return true;
+        List<String> opts = getOptions();
+        int index = findOptionIndex(opts, option);
+        if (index != -1) {
+            interact(index);
+            return true;
+        }
+        // Fallback: if all options are empty/null, use option 1 (default left-click)
+        if (opts != null && opts.stream().allMatch(s -> s == null || s.isEmpty())) {
+            interact(1);
+            return true;
+        }
+        return false;
     }
 
     /**

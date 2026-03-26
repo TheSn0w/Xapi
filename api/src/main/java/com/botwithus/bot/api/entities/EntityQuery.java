@@ -1,7 +1,10 @@
 package com.botwithus.bot.api.entities;
 
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.log.BotLogger;
+import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Entity;
+import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.query.EntityFilter;
 
 import java.util.List;
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public abstract class EntityQuery<T extends EntityContext, Q extends EntityQuery<T, Q>> {
+
+    private static final BotLogger log = LoggerFactory.getLogger(EntityQuery.class);
 
     protected final GameAPI api;
     protected final EntityFilter.Builder filterBuilder;
@@ -148,15 +153,45 @@ public abstract class EntityQuery<T extends EntityContext, Q extends EntityQuery
     }
 
     /**
-     * Returns the nearest matching entity, or null.
+     * Returns the nearest matching entity by walkable A* distance, or null.
+     * <p>
+     * Uses the transition-aware {@link WorldPathfinder} (ClaudeDecoder A*) for
+     * accurate walk distances that respect walls, doors, and collision data.
+     * Falls back to Chebyshev distance if the pathfinder is not initialized.
      */
     public T nearest() {
         filterBuilder.sortByDistance(true);
-        if (postFilter == null) {
-            filterBuilder.maxResults(1);
-        }
         List<T> results = all();
-        return results.isEmpty() ? null : results.getFirst();
+        if (results.isEmpty()) return null;
+        if (results.size() == 1) return results.getFirst();
+
+        var lp = api.getLocalPlayer();
+        int px = lp.tileX(), py = lp.tileY(), plane = lp.plane();
+
+        // Use WorldPathfinder (transition-aware A*) for accurate walk distances
+        WorldPathfinder wpf = WorldPathfinder.getInstance();
+        if (wpf != null) {
+            T best = null;
+            int bestDist = Integer.MAX_VALUE;
+            for (T entity : results) {
+                int dist = wpf.walkDistance(px, py, entity.tileX(), entity.tileY(), plane);
+                log.debug("[nearest] {} at ({},{}) walkDist={}", entity.name(), entity.tileX(), entity.tileY(), dist);
+                if (dist >= 0 && dist < bestDist) {
+                    bestDist = dist;
+                    best = entity;
+                }
+            }
+            if (best != null) {
+                log.debug("[nearest] Selected {} at ({},{}) walkDist={}", best.name(), best.tileX(), best.tileY(), bestDist);
+                return best;
+            }
+            log.debug("[nearest] All paths unreachable via WorldPathfinder, falling back to Chebyshev");
+        } else {
+            log.debug("[nearest] WorldPathfinder not initialized, falling back to Chebyshev");
+        }
+
+        // Fallback: Chebyshev distance (server-sorted results are already roughly ordered)
+        return results.getFirst();
     }
 
     /**

@@ -1,0 +1,61 @@
+{
+  "recording": true,
+  "blocking": false,
+  "selectiveBlocking": false,
+  "trackVars": true,
+  "trackChat": true,
+  "trackItemVarbits": true,
+  "categoryFilters": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "selectiveBlockCategories": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "showVarbits": false,
+  "showVarps": false,
+  "showVarcs": false,
+  "showVarcStrs": false,
+  "showItemVarbits": false,
+  "varFilterText": "",
+  "varcWatchIds": "",
+  "pinnedVars": [],
+  "varAnnotations": {
+    "varp:6890": "Grace of the Elves Porter on/off",
+    "invvarbit:4283": "Augmented Imcando Item XP",
+    "invvarbit:10429": "Grace of the Elves Porter Remaining Amount",
+    "invvarbit:16238": "Augmented Omni Guard Item XP",
+    "invvarbit:37521": "Empty Divine Charges Stored (Divine-o-matic vacuum)",
+    "invvarbit:37522": "Divine Charges Stored (Divine-o-matic vacuum)",
+    "invvarbit:37523": "Charge Container Filled (\"Divine-o-matic vacuum) out of 30000"
+  },
+  "useNamesForGeneration": true,
+  "scriptClassName": "GeneratedScript",
+  "replaySpeed": 1.0,
+  "entityDistanceFilter": 25,
+  "columnVisibility": [
+    true,
+    false,
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    true
+  ],
+  "autoScroll": true
+}

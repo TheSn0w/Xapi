@@ -5,6 +5,7 @@ import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.model.InventoryItem;
+import com.botwithus.bot.api.util.Skills;
 
 import java.util.Arrays;
 import java.util.List;
@@ -216,13 +217,45 @@ public final class WoodBox {
     // ========================== Capacity ==========================
 
     /**
-     * Get the base capacity for the equipped wood box tier.
+     * Get the base capacity for the equipped wood box tier (without WC level scaling).
      *
      * @return the base capacity, or 0 if no wood box is found
      */
     public int getBaseCapacity() {
         Tier tier = getEquippedTier();
         return tier != null ? tier.baseCapacity : 0;
+    }
+
+    /**
+     * Get the effective capacity for the equipped wood box, scaled by Woodcutting level.
+     * Capacity increases by 10 at each WC milestone: 5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105.
+     *
+     * @return the scaled capacity, or 0 if no wood box is found
+     */
+    public int getCapacity() {
+        Tier tier = getEquippedTier();
+        if (tier == null) return 0;
+        int wcLevel = Skills.getLevel(api, Skills.WOODCUTTING);
+        return tier.baseCapacity + levelBonus(wcLevel);
+    }
+
+    /**
+     * Check if the wood box is at or above its effective capacity.
+     *
+     * @return {@code true} if total stored &ge; capacity (scaled by WC level)
+     */
+    public boolean isFull() {
+        return getTotalStored() >= getCapacity();
+    }
+
+    /**
+     * Calculates the WC-level bonus: +10 for each milestone reached.
+     * Milestones: 5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105.
+     */
+    private static int levelBonus(int wcLevel) {
+        if (wcLevel < 5) return 0;
+        int milestones = Math.min(11, (wcLevel - 5) / 10 + 1);
+        return milestones * 10;
     }
 
     // ========================== Fill ==========================

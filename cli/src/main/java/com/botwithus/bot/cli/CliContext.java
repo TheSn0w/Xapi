@@ -146,6 +146,9 @@ public class CliContext {
             rpc.setEventHandler(dispatcher::dispatch);
             rpc.start();
 
+            // Initialize collision-aware pathfinder (singleton, safe to call per-connection)
+            com.botwithus.bot.api.nav.LocalPathfinder.init(Path.of("navdata/regions"));
+
             ScriptRuntime runtime = new ScriptRuntime(context);
             runtime.setConnectionName(connName);
 

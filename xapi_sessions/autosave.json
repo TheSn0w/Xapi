@@ -1,0 +1,1283 @@
+{
+  "actions": [
+    {
+      "actionId": 3,
+      "param1": 38627,
+      "param2": 3087,
+      "param3": 3231,
+      "timestamp": 1774191555713,
+      "gameTick": 5626,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Willow",
+      "optionName": "Chop down",
+      "playerX": 3086,
+      "playerY": 3230,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    }
+  ],
+  "vars": [
+    {
+      "type": "varp",
+      "varId": 4012,
+      "oldValue": 741033,
+      "newValue": 741477,
+      "timestamp": 1774191557461,
+      "gameTick": 5629
+    },
+    {
+      "type": "varp",
+      "varId": 6744,
+      "oldValue": 7494648,
+      "newValue": 7494659,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varp",
+      "varId": 1452,
+      "oldValue": 7494649,
+      "newValue": 7494659,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varp",
+      "varId": 1453,
+      "oldValue": 2033056768,
+      "newValue": 2033058176,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varp",
+      "varId": 1457,
+      "oldValue": 29978600,
+      "newValue": 29978636,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varbit",
+      "varId": 4339,
+      "oldValue": 7494649,
+      "newValue": 7494659,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 740646,
+      "newValue": 741480,
+      "timestamp": 1774191559281,
+      "gameTick": 5632
+    },
+    {
+      "type": "varbit",
+      "varId": 22144,
+      "oldValue": 7494648,
+      "newValue": 7494659,
+      "timestamp": 1774191559284,
+      "gameTick": 5632
+    },
+    {
+      "type": "varbit",
+      "varId": 22562,
+      "oldValue": 7494650,
+      "newValue": 7494659,
+      "timestamp": 1774191559284,
+      "gameTick": 5632
+    },
+    {
+      "type": "varbit",
+      "varId": 34498,
+      "oldValue": 7494648,
+      "newValue": 7494659,
+      "timestamp": 1774191559284,
+      "gameTick": 5632
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741480,
+      "newValue": 741484,
+      "timestamp": 1774191561678,
+      "gameTick": 5636
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741484,
+      "newValue": 741488,
+      "timestamp": 1774191564079,
+      "gameTick": 5640
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741488,
+      "newValue": 741492,
+      "timestamp": 1774191566485,
+      "gameTick": 5644
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741492,
+      "newValue": 741496,
+      "timestamp": 1774191568881,
+      "gameTick": 5648
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741496,
+      "newValue": 741516,
+      "timestamp": 1774191580883,
+      "gameTick": 5668
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741516,
+      "newValue": 741532,
+      "timestamp": 1774191590484,
+      "gameTick": 5684
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674206,
+      "newValue": 402674205,
+      "timestamp": 1774191591679,
+      "gameTick": 5686
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872428032,
+      "newValue": 872427776,
+      "timestamp": 1774191591679,
+      "gameTick": 5686
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 236093596,
+      "newValue": 244449437,
+      "timestamp": 1774191591679,
+      "gameTick": 5686
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 542,
+      "newValue": 541,
+      "timestamp": 1774191591685,
+      "gameTick": 5686
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 37,
+      "newValue": 36,
+      "timestamp": 1774191591685,
+      "gameTick": 5686
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 50,
+      "newValue": 49,
+      "timestamp": 1774191591685,
+      "gameTick": 5686
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 28,
+      "newValue": 29,
+      "timestamp": 1774191591685,
+      "gameTick": 5686
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 28,
+      "newValue": 29,
+      "timestamp": 1774191591685,
+      "gameTick": 5686
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741532,
+      "newValue": 741536,
+      "timestamp": 1774191592884,
+      "gameTick": 5688
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741536,
+      "newValue": 741540,
+      "timestamp": 1774191595284,
+      "gameTick": 5692
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741540,
+      "newValue": 741544,
+      "timestamp": 1774191597683,
+      "gameTick": 5696
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569859,
+      "newValue": 29569860,
+      "timestamp": 1774191599477,
+      "gameTick": 5699
+    },
+    {
+      "type": "varp",
+      "varId": 1457,
+      "oldValue": 29978636,
+      "newValue": 29978640,
+      "timestamp": 1774191600084,
+      "gameTick": 5700
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741544,
+      "newValue": 741548,
+      "timestamp": 1774191600084,
+      "gameTick": 5700
+    },
+    {
+      "type": "varbit",
+      "varId": 22562,
+      "oldValue": 7494659,
+      "newValue": 7494660,
+      "timestamp": 1774191600084,
+      "gameTick": 5700
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741548,
+      "newValue": 741552,
+      "timestamp": 1774191602482,
+      "gameTick": 5704
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741552,
+      "newValue": 741560,
+      "timestamp": 1774191607283,
+      "gameTick": 5712
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741560,
+      "newValue": 741568,
+      "timestamp": 1774191612086,
+      "gameTick": 5720
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 741568,
+      "newValue": 741572,
+      "timestamp": 1774191614480,
+      "gameTick": 5724
+    },
+    {
+      "type": "varp",
+      "varId": 4012,
+      "oldValue": 741477,
+      "newValue": 741576,
+      "timestamp": 1774191616885,
+      "gameTick": 5728
+    },
+    {
+      "type": "varp",
+      "varId": 6162,
+      "oldValue": 29927,
+      "newValue": 31975,
+      "timestamp": 1774191651681,
+      "gameTick": 5786
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 244449437,
+      "newValue": 252805278,
+      "timestamp": 1774191651681,
+      "gameTick": 5786
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674205,
+      "newValue": 402674204,
+      "timestamp": 1774191651681,
+      "gameTick": 5786
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872427776,
+      "newValue": 872427520,
+      "timestamp": 1774191651681,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 541,
+      "newValue": 540,
+      "timestamp": 1774191651683,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 29,
+      "newValue": 30,
+      "timestamp": 1774191651683,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 29,
+      "newValue": 30,
+      "timestamp": 1774191651683,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 36,
+      "newValue": 35,
+      "timestamp": 1774191651683,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 49,
+      "newValue": 48,
+      "timestamp": 1774191651683,
+      "gameTick": 5786
+    },
+    {
+      "type": "varbit",
+      "varId": 37511,
+      "oldValue": 14,
+      "newValue": 15,
+      "timestamp": 1774191651685,
+      "gameTick": 5786
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569860,
+      "newValue": 29569861,
+      "timestamp": 1774191659482,
+      "gameTick": 5799
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674204,
+      "newValue": 402674203,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varp",
+      "varId": 20,
+      "oldValue": 1929379840,
+      "newValue": 1946157056,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 252805278,
+      "newValue": 261161119,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872427520,
+      "newValue": 872427264,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 540,
+      "newValue": 539,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 35,
+      "newValue": 34,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 30,
+      "newValue": 31,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 48,
+      "newValue": 47,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 30,
+      "newValue": 31,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 94,
+      "oldValue": 115,
+      "newValue": 116,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varbit",
+      "varId": 8820,
+      "oldValue": 460,
+      "newValue": 464,
+      "timestamp": 1774191711681,
+      "gameTick": 5886
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569861,
+      "newValue": 29569862,
+      "timestamp": 1774191719481,
+      "gameTick": 5899
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674178,
+      "newValue": 402674177,
+      "timestamp": 1774193271819,
+      "gameTick": 8486
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 470057144,
+      "newValue": 478412985,
+      "timestamp": 1774193271819,
+      "gameTick": 8486
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872420864,
+      "newValue": 872420608,
+      "timestamp": 1774193271819,
+      "gameTick": 8486
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 514,
+      "newValue": 513,
+      "timestamp": 1774193271822,
+      "gameTick": 8486
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 56,
+      "newValue": 57,
+      "timestamp": 1774193271822,
+      "gameTick": 8486
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 22,
+      "newValue": 21,
+      "timestamp": 1774193271822,
+      "gameTick": 8486
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 56,
+      "newValue": 57,
+      "timestamp": 1774193271822,
+      "gameTick": 8486
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 9,
+      "newValue": 8,
+      "timestamp": 1774193271822,
+      "gameTick": 8486
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569887,
+      "newValue": 29569888,
+      "timestamp": 1774193279620,
+      "gameTick": 8499
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674177,
+      "newValue": 402674176,
+      "timestamp": 1774193331824,
+      "gameTick": 8585
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 478412985,
+      "newValue": 486768826,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872420608,
+      "newValue": 872420352,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 513,
+      "newValue": 512,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 8,
+      "newValue": 7,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 21,
+      "newValue": 20,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 57,
+      "newValue": 58,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 57,
+      "newValue": 58,
+      "timestamp": 1774193331824,
+      "gameTick": 8586
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569888,
+      "newValue": 29569889,
+      "timestamp": 1774193339621,
+      "gameTick": 8599
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674176,
+      "newValue": 402674175,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 486768826,
+      "newValue": 495124667,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872420352,
+      "newValue": 872420096,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 512,
+      "newValue": 511,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 58,
+      "newValue": 59,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 7,
+      "newValue": 6,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 58,
+      "newValue": 59,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 20,
+      "newValue": 19,
+      "timestamp": 1774193391843,
+      "gameTick": 8686
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569889,
+      "newValue": 29569890,
+      "timestamp": 1774193399644,
+      "gameTick": 8699
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674175,
+      "newValue": 402674174,
+      "timestamp": 1774193451840,
+      "gameTick": 8786
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872420096,
+      "newValue": 872419840,
+      "timestamp": 1774193451840,
+      "gameTick": 8786
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 495124667,
+      "newValue": 163968,
+      "timestamp": 1774193451840,
+      "gameTick": 8786
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 511,
+      "newValue": 510,
+      "timestamp": 1774193451845,
+      "gameTick": 8786
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 59,
+      "newValue": 0,
+      "timestamp": 1774193451845,
+      "gameTick": 8786
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 59,
+      "newValue": 0,
+      "timestamp": 1774193451845,
+      "gameTick": 8786
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 6,
+      "newValue": 5,
+      "timestamp": 1774193451845,
+      "gameTick": 8786
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 19,
+      "newValue": 18,
+      "timestamp": 1774193451845,
+      "gameTick": 8786
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569890,
+      "newValue": 29569891,
+      "timestamp": 1774193459645,
+      "gameTick": 8799
+    },
+    {
+      "type": "varp",
+      "varId": 20,
+      "oldValue": 2030043136,
+      "newValue": 2046820352,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674174,
+      "newValue": 402674173,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872419840,
+      "newValue": 872419584,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 510,
+      "newValue": 509,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 94,
+      "oldValue": 121,
+      "newValue": 122,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 5,
+      "newValue": 4,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 8820,
+      "oldValue": 484,
+      "newValue": 488,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 163968,
+      "newValue": 8519809,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 18,
+      "newValue": 17,
+      "timestamp": 1774193511844,
+      "gameTick": 8886
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569891,
+      "newValue": 29569892,
+      "timestamp": 1774193519642,
+      "gameTick": 8899
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402674173,
+      "newValue": 402674172,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 8519809,
+      "newValue": 16875650,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872419584,
+      "newValue": 872419328,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 4,
+      "newValue": 3,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 509,
+      "newValue": 508,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 1,
+      "newValue": 2,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 1,
+      "newValue": 2,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 17,
+      "newValue": 16,
+      "timestamp": 1774193571863,
+      "gameTick": 8986
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29569892,
+      "newValue": 29569893,
+      "timestamp": 1774193579665,
+      "gameTick": 8999
+    }
+  ],
+  "chat": [
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774191550874,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774191550874,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Fancy sending your friend a gift? Gift a Bond, and they can redeem for RuneScape membership, RuneCoins plus much more...",
+      "playerName": "",
+      "timestamp": 1774191550874,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774191550874,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: wuter has achieved 200 million XP in Runecrafting!",
+      "playerName": "",
+      "timestamp": 1774191550875,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774191550875,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lenat has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774191550875,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "Your wood box is too full to deposit all items from your backpack.",
+      "playerName": "",
+      "timestamp": 1774191550875,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: For becoming a master of quests and lore Hil126 has been awarded the Master Quest Cape!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Toddler has achieved 200 million XP in Farming!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rivvv has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rivvv has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: aznoD has achieved 200 million XP in Firemaking!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rare Snyboon has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lilliana has achieved 200 million XP in Cooking!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Qtip Jr has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Jones11 has achieved 200 million XP in Dungeoneering!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: E zz Y has unlocked the \u0027Jack of All Blades\u0027 title!",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 2,
+      "text": "My total wealth is 675,583,430.",
+      "playerName": "Templar Kili",
+      "timestamp": 1774191550876,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Fancy sending your friend a gift? Gift a Bond, and they can redeem for RuneScape membership, RuneCoins plus much more...",
+      "playerName": "",
+      "timestamp": 1774193267511,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: wuter has achieved 200 million XP in Runecrafting!",
+      "playerName": "",
+      "timestamp": 1774193267511,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774193267511,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774193267512,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lenat has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774193267512,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "Your wood box is too full to deposit all items from your backpack.",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: For becoming a master of quests and lore Hil126 has been awarded the Master Quest Cape!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Toddler has achieved 200 million XP in Farming!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rivvv has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rivvv has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: aznoD has achieved 200 million XP in Firemaking!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Rare Snyboon has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lilliana has achieved 200 million XP in Cooking!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Qtip Jr has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "Your wood box is too full to deposit any items from your backpack.",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Jones11 has achieved 200 million XP in Dungeoneering!",
+      "playerName": "",
+      "timestamp": 1774193267513,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: C O M E R has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774193267514,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774193267514,
+      "gameTick": 0
+    }
+  ],
+  "snapshots": [
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 12
+          }
+        ],
+        "freeSlots": 15,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": true,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Gathering: chop down willow",
+        "confidence": "high"
+      },
+      "openInterfaceId": 550
+    }
+  ],
+  "exportTime": 1774193580120,
+  "description": "autosave",
+  "lastSeenActionTimestamp": 2008703
+}

@@ -9,6 +9,5 @@ module com.xapi.debugger {
 
     provides com.botwithus.bot.api.BotScript
         with com.xapi.debugger.XapiScript,
-             com.xapi.debugger.TestScript,
-             com.xapi.debugger.SmithingTestScript;
+             com.xapi.debugger.TestScript;
 }

@@ -14,9 +14,12 @@ import com.botwithus.bot.core.rpc.RpcClient;
 import com.botwithus.bot.core.runtime.SDNScriptLoader;
 import com.botwithus.bot.core.runtime.ScriptRuntime;
 
+import com.botwithus.bot.api.nav.LocalPathfinder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -42,6 +45,9 @@ public class JBotApplication {
             dispatcher.bindAutoSubscription(gameAPI);
             rpc.setEventHandler(dispatcher::dispatch);
             rpc.start();
+
+            // Initialize collision-aware pathfinder for walk-distance queries
+            LocalPathfinder.init(Path.of("navdata/regions"));
 
             // Discover scripts from scripts/ directory (drop JARs there)
             List<BotScript> scripts = SDNScriptLoader.loadScripts();
