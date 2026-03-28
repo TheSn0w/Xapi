@@ -1,0 +1,4974 @@
+{
+ "4": {
+  "name": "Water Collected",
+  "source": "cache_text"
+ },
+ "6": {
+  "name": "Correct!",
+  "source": "cache_text"
+ },
+ "7": {
+  "name": "Gathering",
+  "source": "cache_text"
+ },
+ "8": {
+  "name": "8-East",
+  "source": "cache_text"
+ },
+ "9": {
+  "name": "Rune-Draw",
+  "source": "cache_text"
+ },
+ "10": {
+  "name": "Windspeed:",
+  "source": "cache_text"
+ },
+ "14": {
+  "name": "Your Bank PIN status:",
+  "source": "cache_text"
+ },
+ "15": {
+  "name": "Water",
+  "source": "cache_text"
+ },
+ "16": {
+  "name": "x 1,000",
+  "source": "cache_text"
+ },
+ "17": {
+  "name": "00:00",
+  "source": "cache_text"
+ },
+ "18": {
+  "name": "Teleport",
+  "source": "cache_text"
+ },
+ "20": {
+  "name": "Presets",
+  "source": "cache_text"
+ },
+ "22": {
+  "name": "3200",
+  "source": "cache_text"
+ },
+ "23": {
+  "name": "Select an Option",
+  "source": "cache_text"
+ },
+ "24": {
+  "name": "Brothers slain:",
+  "source": "cache_text"
+ },
+ "25": {
+  "name": "Which is the next shape in the above sequence?",
+  "source": "cache_text"
+ },
+ "26": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "27": {
+  "name": "Summer 2010",
+  "source": "cache_text"
+ },
+ "28": {
+  "name": "Runite: %1",
+  "source": "cache_text"
+ },
+ "29": {
+  "name": "Blast Furnace Plan",
+  "source": "cache_text"
+ },
+ "31": {
+  "name": "Draughts",
+  "source": "cache_text"
+ },
+ "32": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "36": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "37": {
+  "name": "PH: QUANTITY SELECT",
+  "source": "cache_text"
+ },
+ "38": {
+  "name": "About Smithing",
+  "source": "cache_text"
+ },
+ "40": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "41": {
+  "name": "Animals: 30/30",
+  "source": "cache_text"
+ },
+ "43": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "44": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "46": {
+  "name": "Parcels from the Hedge",
+  "source": "cache_text"
+ },
+ "47": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "51": {
+  "name": "Canifis",
+  "source": "cache_text"
+ },
+ "52": {
+  "name": "A Stable Dugout.",
+  "source": "cache_text"
+ },
+ "53": {
+  "name": "Barbarian <br> Village",
+  "source": "cache_text"
+ },
+ "54": {
+  "name": "You are here!",
+  "source": "cache_text"
+ },
+ "55": {
+  "name": "Saradomin: 0",
+  "source": "cache_text"
+ },
+ "57": {
+  "name": "Although you may be invited to join the game, you may not be eligible for rewards.",
+  "source": "cache_text"
+ },
+ "58": {
+  "name": "Health %1%",
+  "source": "cache_text"
+ },
+ "59": {
+  "name": "Safe",
+  "source": "cache_text"
+ },
+ "60": {
+  "name": "XXXX",
+  "source": "cache_text"
+ },
+ "61": {
+  "name": "Letter 1:",
+  "source": "cache_text"
+ },
+ "63": {
+  "name": "Congratulations!",
+  "source": "cache_text"
+ },
+ "64": {
+  "name": "new character name",
+  "source": "cache_text"
+ },
+ "65": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "66": {
+  "name": "+10",
+  "source": "cache_text"
+ },
+ "67": {
+  "name": "Arom Nahrea Imperium",
+  "source": "cache_text"
+ },
+ "68": {
+  "name": "Claim All",
+  "source": "cache_text"
+ },
+ "70": {
+  "name": "Become a member today, and we'll give you ...",
+  "source": "cache_text"
+ },
+ "71": {
+  "name": "You are here",
+  "source": "cache_text"
+ },
+ "72": {
+  "name": "Basic Jadinko",
+  "source": "cache_text"
+ },
+ "74": {
+  "name": "Nice points",
+  "source": "cache_text"
+ },
+ "76": {
+  "name": "Barricade the windows!",
+  "source": "cache_text"
+ },
+ "77": {
+  "name": " Progress bar text",
+  "source": "cache_text"
+ },
+ "78": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "80": {
+  "name": "Stairs to<br>Dig Site<br>exhibit",
+  "source": "cache_text"
+ },
+ "81": {
+  "name": "Stairs to<br>Dig Site<br>exhibit",
+  "source": "cache_text"
+ },
+ "82": {
+  "name": "Stairs to<br>Timeline<br>exhibit",
+  "source": "cache_text"
+ },
+ "83": {
+  "name": "Stairs to<br>Natural History<br>exhibit",
+  "source": "cache_text"
+ },
+ "86": {
+  "name": "I am ill prepared for this mission. I must abandon my duties or I shall perish.<br><br>Despair not, for I have found the enclosed artefact. It will help you enter the fortress, where more of these strange globes can be found.<br><br>Had I been able to draw them to me just a short distance, I could have succeeded!<br><br>Oh, to come so close, yet be held back for want of runes!",
+  "source": "cache_text"
+ },
+ "87": {
+  "name": "Interact here to search for a book",
+  "source": "cache_text"
+ },
+ "90": {
+  "name": "Paddock",
+  "source": "cache_text"
+ },
+ "91": {
+  "name": "Party Leader",
+  "source": "cache_text"
+ },
+ "92": {
+  "name": "You are here",
+  "source": "cache_text"
+ },
+ "94": {
+  "name": "Skip Cutscene",
+  "source": "cache_text"
+ },
+ "95": {
+  "name": "Port Tyras",
+  "source": "cache_text"
+ },
+ "99": {
+  "name": "Harold",
+  "source": "cache_text"
+ },
+ "102": {
+  "name": "Unabridged",
+  "source": "cache_text"
+ },
+ "103": {
+  "name": "What comes next?",
+  "source": "cache_text"
+ },
+ "104": {
+  "name": "Aquarius",
+  "source": "cache_text"
+ },
+ "105": {
+  "name": "Buy",
+  "source": "cache_text"
+ },
+ "109": {
+  "name": "Lent Items",
+  "source": "cache_text"
+ },
+ "110": {
+  "name": "1. Rock",
+  "source": "cache_text"
+ },
+ "112": {
+  "name": "Line1",
+  "source": "cache_text"
+ },
+ "113": {
+  "name": "That's it, it all makes sense now! If you were a dwarf, that is...",
+  "source": "cache_text"
+ },
+ "114": {
+  "name": "Schematic 1",
+  "source": "cache_text"
+ },
+ "116": {
+  "name": "Bound Items",
+  "source": "cache_text"
+ },
+ "123": {
+  "name": "Certificate of Advanced Healing",
+  "source": "cache_text"
+ },
+ "124": {
+  "name": "List of Fairy Queen's Symptoms.",
+  "source": "cache_text"
+ },
+ "125": {
+  "name": "Player name",
+  "source": "cache_text"
+ },
+ "126": {
+  "name": "Wizard Traiborn's order: ",
+  "source": "cache_text"
+ },
+ "127": {
+  "name": "Guess the bear's name:",
+  "source": "cache_text"
+ },
+ "128": {
+  "name": "x%1",
+  "source": "cache_text"
+ },
+ "129": {
+  "name": "x%1",
+  "source": "cache_text"
+ },
+ "130": {
+  "name": "x%1",
+  "source": "cache_text"
+ },
+ "132": {
+  "name": ">>>",
+  "source": "cache_text"
+ },
+ "133": {
+  "name": "[A]",
+  "source": "cache_text"
+ },
+ "135": {
+  "name": "To the NORTH",
+  "source": "cache_text"
+ },
+ "136": {
+  "name": "Double XP Daily Bundle",
+  "source": "cache_text"
+ },
+ "137": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "138": {
+  "name": "1. Ta Quir Priw",
+  "source": "cache_text"
+ },
+ "139": {
+  "name": "Gnomeball",
+  "source": "cache_text"
+ },
+ "144": {
+  "name": "< To Lift",
+  "source": "cache_text"
+ },
+ "149": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "151": {
+  "name": "Take All",
+  "source": "cache_text"
+ },
+ "152": {
+  "name": "The Giant<br>Dwarf",
+  "source": "cache_text"
+ },
+ "153": {
+  "name": "Select one of the sagas above to view instructions and play the saga.",
+  "source": "cache_text"
+ },
+ "154": {
+  "name": "Bolrie's Diary",
+  "source": "cache_text"
+ },
+ "156": {
+  "name": "lj_title",
+  "source": "cache_text"
+ },
+ "157": {
+  "name": "Page 1 of 7",
+  "source": "cache_text"
+ },
+ "168": {
+  "name": "Abandon All",
+  "source": "cache_text"
+ },
+ "169": {
+  "name": "Hide",
+  "source": "cache_text"
+ },
+ "174": {
+  "name": "wom1",
+  "source": "cache_text"
+ },
+ "175": {
+  "name": "Loading...",
+  "source": "cache_text"
+ },
+ "176": {
+  "name": "Tier 1",
+  "source": "cache_text"
+ },
+ "178": {
+  "name": "Broadcast visibility",
+  "source": "cache_text"
+ },
+ "180": {
+  "name": "Time remaining:",
+  "source": "cache_text"
+ },
+ "183": {
+  "name": "-Drogokishuun-<br>Goblins of the<br>Fierce Blades",
+  "source": "cache_text"
+ },
+ "187": {
+  "name": "Playing.............................",
+  "source": "cache_text"
+ },
+ "189": {
+  "name": "Pet Parade",
+  "source": "cache_text"
+ },
+ "194": {
+  "name": "Alchemy",
+  "source": "cache_text"
+ },
+ "195": {
+  "name": "Enchantment",
+  "source": "cache_text"
+ },
+ "196": {
+  "name": "Graveyard",
+  "source": "cache_text"
+ },
+ "197": {
+  "name": "Telekinetic Pizazz Points",
+  "source": "cache_text"
+ },
+ "198": {
+  "name": "999",
+  "source": "cache_text"
+ },
+ "199": {
+  "name": "New Game In: 23:00",
+  "source": "cache_text"
+ },
+ "200": {
+  "name": "Rhino Awareness",
+  "source": "cache_text"
+ },
+ "202": {
+  "name": "x30",
+  "source": "cache_text"
+ },
+ "204": {
+  "name": "Sunday",
+  "source": "cache_text"
+ },
+ "205": {
+  "name": "Combined",
+  "source": "cache_text"
+ },
+ "209": {
+  "name": "You currently have no Activities Tracked.<br>Please track something to show more information on this screen.",
+  "source": "cache_text"
+ },
+ "210": {
+  "name": "Click here to continue",
+  "source": "cache_text"
+ },
+ "211": {
+  "name": "Click here to continue",
+  "source": "cache_text"
+ },
+ "212": {
+  "name": "Click here to continue",
+  "source": "cache_text"
+ },
+ "213": {
+  "name": "Click here to continue",
+  "source": "cache_text"
+ },
+ "214": {
+  "name": "Click here to continue",
+  "source": "cache_text"
+ },
+ "215": {
+  "name": "Unlock the power of each gem with Treasure Hunter keys. The locked gems available are displayed in the panel below.",
+  "source": "cache_text"
+ },
+ "216": {
+  "name": "Choose your Chinchompa's Name",
+  "source": "cache_text"
+ },
+ "217": {
+  "name": "Once per day you may choose the boss encountered in a dungeon.",
+  "source": "cache_text"
+ },
+ "218": {
+  "name": "Solomon's General Store will open in a new tab.",
+  "source": "cache_text"
+ },
+ "219": {
+  "name": "You've purchased 14 days of membership.",
+  "source": "cache_text"
+ },
+ "222": {
+  "name": "9999999",
+  "source": "cache_text"
+ },
+ "223": {
+  "name": "Shiver",
+  "source": "cache_text"
+ },
+ "224": {
+  "name": "Waterbirth Island",
+  "source": "cache_text"
+ },
+ "226": {
+  "name": "Select A Reward",
+  "source": "cache_text"
+ },
+ "227": {
+  "name": "mourning_deathalter_item1",
+  "source": "cache_text"
+ },
+ "229": {
+  "name": "Enter message...",
+  "source": "cache_text"
+ },
+ "230": {
+  "name": "000000000000",
+  "source": "cache_text"
+ },
+ "231": {
+  "name": "RsPlayer",
+  "source": "cache_text"
+ },
+ "232": {
+  "name": "Important!",
+  "source": "cache_text"
+ },
+ "236": {
+  "name": "Your orders:",
+  "source": "cache_text"
+ },
+ "237": {
+  "name": "Place Object",
+  "source": "cache_text"
+ },
+ "238": {
+  "name": "ICTHLARIN'S SHIELD",
+  "source": "cache_text"
+ },
+ "239": {
+  "name": "To: Engineer Claus Mousetrap",
+  "source": "cache_text"
+ },
+ "240": {
+  "name": "Title",
+  "source": "cache_text"
+ },
+ "241": {
+  "name": "An excerpt taken from the memoirs of Thaerisk Cemphier of the Crux Eqal: <br><br>“In my time working with the Guardians of Guthix I have been lucky enough to share many conversations with Death. I have learned much of the afterlife that I believe no mortal will have ever learned before, this is my understanding. Death (also known as The Grim Reaper) was tasked with the reaping of souls. This seems to quite literally mean severing the link between",
+  "source": "cache_text"
+ },
+ "243": {
+  "name": "investigator's notebook",
+  "source": "cache_text"
+ },
+ "245": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "246": {
+  "name": "Are you sure you want to claim this reward?",
+  "source": "cache_text"
+ },
+ "247": {
+  "name": "Your<br>Points:",
+  "source": "cache_text"
+ },
+ "248": {
+  "name": "Coins",
+  "source": "cache_text"
+ },
+ "249": {
+  "name": "Surok Magis,",
+  "source": "cache_text"
+ },
+ "250": {
+  "name": "To My Business Partner,",
+  "source": "cache_text"
+ },
+ "251": {
+  "name": "Instructions for Beacon Ring",
+  "source": "cache_text"
+ },
+ "256": {
+  "name": "Hard Mode Active",
+  "source": "cache_text"
+ },
+ "265": {
+  "name": "Players:",
+  "source": "cache_text"
+ },
+ "267": {
+  "name": "Allocate your quest points to unlock perks",
+  "source": "cache_text"
+ },
+ "270": {
+  "name": "Misthalin & Asgarnia",
+  "source": "cache_text"
+ },
+ "271": {
+  "name": "Next<br>Prize",
+  "source": "cache_text"
+ },
+ "272": {
+  "name": "Saradomin<br><br>lights my way<br><br>through<br><br>the darkness of life",
+  "source": "cache_text"
+ },
+ "273": {
+  "name": "Pop the correct balloon animal to find a key",
+  "source": "cache_text"
+ },
+ "274": {
+  "name": "Logan Skareen",
+  "source": "cache_text"
+ },
+ "275": {
+  "name": "Item Name",
+  "source": "cache_text"
+ },
+ "277": {
+  "name": "Congratulations!",
+  "source": "cache_text"
+ },
+ "280": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "281": {
+  "name": "Would you like to take a moment to rate the app?",
+  "source": "cache_text"
+ },
+ "282": {
+  "name": "Page 1 of 8",
+  "source": "cache_text"
+ },
+ "286": {
+  "name": "Heat",
+  "source": "cache_text"
+ },
+ "288": {
+  "name": "Open",
+  "source": "cache_text"
+ },
+ "289": {
+  "name": "Open",
+  "source": "cache_text"
+ },
+ "290": {
+  "name": "Whitezag",
+  "source": "cache_text"
+ },
+ "294": {
+  "name": "Rum",
+  "source": "cache_text"
+ },
+ "295": {
+  "name": "Rum",
+  "source": "cache_text"
+ },
+ "299": {
+  "name": "Ape",
+  "source": "cache_text"
+ },
+ "300": {
+  "name": "6 remaining",
+  "source": "cache_text"
+ },
+ "301": {
+  "name": "You are assisting <name>",
+  "source": "cache_text"
+ },
+ "302": {
+  "name": "Difficulty: x/10",
+  "source": "cache_text"
+ },
+ "304": {
+  "name": "Save yourself !",
+  "source": "cache_text"
+ },
+ "306": {
+  "name": "Hit the red button<br>to discard an item.",
+  "source": "cache_text"
+ },
+ "307": {
+  "name": "Pick which items you want wisely! You can take only three items with you on your trip and once you look away from this wreckage you won't be able to look at its contents again.",
+  "source": "cache_text"
+ },
+ "310": {
+  "name": "Restrict Access to Stage",
+  "source": "cache_text"
+ },
+ "311": {
+  "name": "Common Jadinko",
+  "source": "cache_text"
+ },
+ "312": {
+  "name": "Total collapse in: 30",
+  "source": "cache_text"
+ },
+ "314": {
+  "name": "Ship Store",
+  "source": "cache_text"
+ },
+ "315": {
+  "name": "Rage level. ",
+  "source": "cache_text"
+ },
+ "319": {
+  "name": "Are you sure you want to clear the favourites list?",
+  "source": "cache_text"
+ },
+ "324": {
+  "name": "Auto setup in progress",
+  "source": "cache_text"
+ },
+ "325": {
+  "name": "Shots",
+  "source": "cache_text"
+ },
+ "326": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "328": {
+  "name": "Temple Repair",
+  "source": "cache_text"
+ },
+ "329": {
+  "name": "As a referred friend, you have received",
+  "source": "cache_text"
+ },
+ "331": {
+  "name": "Whatever text you need goes here!",
+  "source": "cache_text"
+ },
+ "332": {
+  "name": "Fire Battlestaff",
+  "source": "cache_text"
+ },
+ "334": {
+  "name": "You are about to give:",
+  "source": "cache_text"
+ },
+ "335": {
+  "name": "Trader's Offer",
+  "source": "cache_text"
+ },
+ "345": {
+  "name": "The quick brown fox jumped over the ",
+  "source": "cache_text"
+ },
+ "364": {
+  "name": "Reroll Reward",
+  "source": "cache_text"
+ },
+ "365": {
+  "name": "Please wait while this setting is applied.",
+  "source": "cache_text"
+ },
+ "366": {
+  "name": "Water:",
+  "source": "cache_text"
+ },
+ "367": {
+  "name": "Items left in the net will be dumped on the ground<br>when this interface is closed.",
+  "source": "cache_text"
+ },
+ "368": {
+  "name": "If the Trawler starts to fill with water, you can use bailing buckets to reduce the water level.",
+  "source": "cache_text"
+ },
+ "370": {
+  "name": "Current Kills:",
+  "source": "cache_text"
+ },
+ "371": {
+  "name": "Tutorial Island Progress",
+  "source": "cache_text"
+ },
+ "372": {
+  "name": "Title",
+  "source": "cache_text"
+ },
+ "373": {
+  "name": "Foes Remaining:",
+  "source": "cache_text"
+ },
+ "374": {
+  "name": "Centre",
+  "source": "cache_text"
+ },
+ "377": {
+  "name": "****",
+  "source": "cache_text"
+ },
+ "378": {
+  "name": "Time lasted",
+  "source": "cache_text"
+ },
+ "379": {
+  "name": "Time",
+  "source": "cache_text"
+ },
+ "380": {
+  "name": "Congratulations!",
+  "source": "cache_text"
+ },
+ "382": {
+  "name": "Don't warn me about this for the rest of the day",
+  "source": "cache_text"
+ },
+ "383": {
+  "name": "Pick a colour",
+  "source": "cache_text"
+ },
+ "387": {
+  "name": "Choose an option . . .",
+  "source": "cache_text"
+ },
+ "388": {
+  "name": "Choose lighting theme:",
+  "source": "cache_text"
+ },
+ "389": {
+  "name": "To search for an item, start by typing part of its name.<br>Then, simply select the item you want from the results on display.",
+  "source": "cache_text"
+ },
+ "390": {
+  "name": "Show riddle",
+  "source": "cache_text"
+ },
+ "391": {
+  "name": "Fishing",
+  "source": "cache_text"
+ },
+ "393": {
+  "name": "GUESS",
+  "source": "cache_text"
+ },
+ "397": {
+  "name": "Select a Piece of Furniture to Build",
+  "source": "cache_text"
+ },
+ "398": {
+  "name": "Are you sure you want to destroy this object?",
+  "source": "cache_text"
+ },
+ "399": {
+  "name": "There's no place like home...",
+  "source": "cache_text"
+ },
+ "401": {
+  "name": "PLAYER ",
+  "source": "cache_text"
+ },
+ "402": {
+  "name": "Parlour",
+  "source": "cache_text"
+ },
+ "403": {
+  "name": "XP Buffs",
+  "source": "cache_text"
+ },
+ "405": {
+  "name": "10 Extra Skills",
+  "source": "cache_text"
+ },
+ "406": {
+  "name": "Backstage",
+  "source": "cache_text"
+ },
+ "407": {
+  "name": "eeeeeeeeeeeeee",
+  "source": "cache_text"
+ },
+ "408": {
+  "name": "100",
+  "source": "cache_text"
+ },
+ "409": {
+  "name": "Choose a tool to use on each of the moving parts.",
+  "source": "cache_text"
+ },
+ "410": {
+  "name": "Spiky ball. Use stab defence.",
+  "source": "cache_text"
+ },
+ "411": {
+  "name": "Defence style",
+  "source": "cache_text"
+ },
+ "412": {
+  "name": "Attack Dummy Key",
+  "source": "cache_text"
+ },
+ "414": {
+  "name": "Congratulations!  Your team won!",
+  "source": "cache_text"
+ },
+ "415": {
+  "name": "Current Score",
+  "source": "cache_text"
+ },
+ "417": {
+  "name": "Bamboo pipe",
+  "source": "cache_text"
+ },
+ "418": {
+  "name": "Next Game In :",
+  "source": "cache_text"
+ },
+ "419": {
+  "name": "Item 1:",
+  "source": "cache_text"
+ },
+ "421": {
+  "name": "Line1",
+  "source": "cache_text"
+ },
+ "422": {
+  "name": "Customise Your Slayer Dungeon",
+  "source": "cache_text"
+ },
+ "423": {
+  "name": "Certificate of Advanced Healing",
+  "source": "cache_text"
+ },
+ "424": {
+  "name": "THE GODFATHER<br>ATTACKED US.<br> WE HAVE<br>FLED TO SAFETY.<br> IF YOU ARE LOYAL TO <br> HER MAJESTY, FIND<br>US BY USING<br>COORDINATES<br>AIR DLR DJQ AJS",
+  "source": "cache_text"
+ },
+ "425": {
+  "name": "COSMIC<br>RUNEe<br>ALTAR",
+  "source": "cache_text"
+ },
+ "427": {
+  "name": "I (insert full name here) do hereby swear fealty   ",
+  "source": "cache_text"
+ },
+ "429": {
+  "name": "Audio settings",
+  "source": "cache_text"
+ },
+ "431": {
+  "name": "Pirates'<br> Cove",
+  "source": "cache_text"
+ },
+ "432": {
+  "name": "Ket =",
+  "source": "cache_text"
+ },
+ "433": {
+  "name": "Text",
+  "source": "cache_text"
+ },
+ "434": {
+  "name": "Select the tunnels for Zemouregal's next portals.",
+  "source": "cache_text"
+ },
+ "436": {
+  "name": "Forward<br>Dive",
+  "source": "cache_text"
+ },
+ "437": {
+  "name": "Wights Killed:",
+  "source": "cache_text"
+ },
+ "438": {
+  "name": "Number of times you have stabilised the rift",
+  "source": "cache_text"
+ },
+ "440": {
+  "name": "Certificate of Qualification",
+  "source": "cache_text"
+ },
+ "441": {
+  "name": "Certificate of Qualification",
+  "source": "cache_text"
+ },
+ "444": {
+  "name": "Certificate of Qualification",
+  "source": "cache_text"
+ },
+ "445": {
+  "name": "Click here to cancel",
+  "source": "cache_text"
+ },
+ "449": {
+  "name": "Item information",
+  "source": "cache_text"
+ },
+ "451": {
+  "name": "Note (30 characters max)",
+  "source": "cache_text"
+ },
+ "458": {
+  "name": "Dials solved: ",
+  "source": "cache_text"
+ },
+ "459": {
+  "name": "Nothing",
+  "source": "cache_text"
+ },
+ "460": {
+  "name": "That's it, it all makes sense now! ",
+  "source": "cache_text"
+ },
+ "461": {
+  "name": "Island",
+  "source": "cache_text"
+ },
+ "462": {
+  "name": "Show/Select",
+  "source": "cache_text"
+ },
+ "464": {
+  "name": "Enter your date of birth to enable chat",
+  "source": "cache_text"
+ },
+ "465": {
+  "name": "Varrock Herald",
+  "source": "cache_text"
+ },
+ "469": {
+  "name": "Castle",
+  "source": "cache_text"
+ },
+ "471": {
+  "name": "Balloon Controls",
+  "source": "cache_text"
+ },
+ "473": {
+  "name": "You can earn titles by playing Barbarian Assault.  Everyone has access to the role titles via the customisation interface.  You can use these to show what role you prefer when looking for a team or just for general appearance.<br><br>When you reach level 5 in a role you unlock the Supreme version of these titles for whichever role you have mastered.<br><br>If you have mastered all four roles, and killed both the king and queen, then you are eligible for the Penance Slayer title.<br><br>All of these extra titles are available from the customisation menu too.",
+  "source": "cache_text"
+ },
+ "475": {
+  "name": "<col=FFFFFF>W,S,A,D</col>: Move Camera North/South/East/West<br><br><col=FFFFFF>Q,E</col>: Move Camera Up/Down<br><br><col=FFFFFF>Arrow Keys</col>: Rotate View<br><br><col=FFFFFF>Esc</col>: Exit<br><br><col=FFFFFF>F1</col>: Change to Focus Mode<br><br><col=FFFFFF>F2</col>: Toggle Chat Window<br><br><col=FFFFFF>Spc</col>: Toggle Help Window <br><br><col=FFFFFF>F7</col>: Save Camera Position <br><br><col=FFFFFF>F8</col>: Replay Saved Positions <br><br><col=FFFFFF>F6</col>: Clear Saved Positions",
+  "source": "cache_text"
+ },
+ "476": {
+  "name": "Collect",
+  "source": "cache_text"
+ },
+ "478": {
+  "name": "Select an item or stack of items to deposit. <br>You can deposit up to 2 items or stacks.",
+  "source": "cache_text"
+ },
+ "481": {
+  "name": "Zombie Stress Level",
+  "source": "cache_text"
+ },
+ "484": {
+  "name": "Attacker :",
+  "source": "cache_text"
+ },
+ "485": {
+  "name": "Continue?",
+  "source": "cache_text"
+ },
+ "487": {
+  "name": "Core Metals",
+  "source": "cache_text"
+ },
+ "488": {
+  "name": "Rainbow Dust",
+  "source": "cache_text"
+ },
+ "489": {
+  "name": "Continue",
+  "source": "cache_text"
+ },
+ "490": {
+  "name": "Player status for:",
+  "source": "cache_text"
+ },
+ "491": {
+  "name": "A treasure chest.",
+  "source": "cache_text"
+ },
+ "492": {
+  "name": "Team Overview",
+  "source": "cache_text"
+ },
+ "493": {
+  "name": "Please Select a Role",
+  "source": "cache_text"
+ },
+ "494": {
+  "name": "Time until next wave:",
+  "source": "cache_text"
+ },
+ "495": {
+  "name": "Eggs in Hopper",
+  "source": "cache_text"
+ },
+ "496": {
+  "name": "Introduction",
+  "source": "cache_text"
+ },
+ "497": {
+  "name": "Runners that got past",
+  "source": "cache_text"
+ },
+ "498": {
+  "name": "Kaleef<br><br>Your mission is to contact our agent inside Menaphos.<br>Use the tunnels beneath the temple of lesser gods.<br>Be vigilant of traps and the hostile natives.<br> They're about as welcoming as the Menaphites only slightly better looking.<br><br>Os",
+  "source": "cache_text"
+ },
+ "499": {
+  "name": "loading",
+  "source": "cache_text"
+ },
+ "500": {
+  "name": "20 min",
+  "source": "cache_text"
+ },
+ "502": {
+  "name": "Beach Head",
+  "source": "cache_text"
+ },
+ "503": {
+  "name": "Clockwork Toys - A Clockwork Mechanism, Chapter 1.0",
+  "source": "cache_text"
+ },
+ "505": {
+  "name": "Waterbirth <br>Island",
+  "source": "cache_text"
+ },
+ "506": {
+  "name": "Jester Controls",
+  "source": "cache_text"
+ },
+ "507": {
+  "name": "GUESS",
+  "source": "cache_text"
+ },
+ "508": {
+  "name": "The World of Magic",
+  "source": "cache_text"
+ },
+ "509": {
+  "name": "Place bar",
+  "source": "cache_text"
+ },
+ "510": {
+  "name": "Use the valves and the levers to get the balls in the holes, and then increase the pressure to fill the pipes!",
+  "source": "cache_text"
+ },
+ "513": {
+  "name": "Total points: <col=EBD090>2147483647</col>",
+  "source": "cache_text"
+ },
+ "517": {
+  "name": "Coin Pouch: 2,222,222,222",
+  "source": "cache_text"
+ },
+ "518": {
+  "name": "50% chance to act as a Sign of the Porter for an hour.",
+  "source": "cache_text"
+ },
+ "520": {
+  "name": "Cyrisus's Courage",
+  "source": "cache_text"
+ },
+ "521": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "522": {
+  "name": "Armour:",
+  "source": "cache_text"
+ },
+ "523": {
+  "name": "Player:",
+  "source": "cache_text"
+ },
+ "527": {
+  "name": "Imp repellent",
+  "source": "cache_text"
+ },
+ "528": {
+  "name": "Text",
+  "source": "cache_text"
+ },
+ "530": {
+  "name": "This is an interface type test.",
+  "source": "cache_text"
+ },
+ "532": {
+  "name": "Museum Kudos:",
+  "source": "cache_text"
+ },
+ "533": {
+  "name": "Display number",
+  "source": "cache_text"
+ },
+ "534": {
+  "name": "Display number",
+  "source": "cache_text"
+ },
+ "536": {
+  "name": "Shrink-Me-Quick Recipe",
+  "source": "cache_text"
+ },
+ "537": {
+  "name": "UPPER",
+  "source": "cache_text"
+ },
+ "538": {
+  "name": "Things to do:",
+  "source": "cache_text"
+ },
+ "539": {
+  "name": "Medium prismatic star",
+  "source": "cache_text"
+ },
+ "540": {
+  "name": "x1 of any impling type",
+  "source": "cache_text"
+ },
+ "548": {
+  "name": "Skip Cutscene",
+  "source": "cache_text"
+ },
+ "549": {
+  "name": "You will not be able to take another picture for the next two hours.<br><br> Are you sure you want to continue?",
+  "source": "cache_text"
+ },
+ "550": {
+  "name": "Ignore List",
+  "source": "cache_text"
+ },
+ "551": {
+  "name": "Morale Boosts",
+  "source": "cache_text"
+ },
+ "553": {
+  "name": "page%1",
+  "source": "cache_text"
+ },
+ "554": {
+  "name": "  - On the Infernal Legions - <br><br>  Woe to the world; it languishes beneath the demon's cloven hoof!  It is known without doubt that the demonic legions amass and grow stronger.  They may appear without warning, in places of sorrow and rot, or any wild and remote location.<br><br>  There the world bears witness to the arrival of those most dangerous of the fellborn: the demonic generals.",
+  "source": "cache_text"
+ },
+ "556": {
+  "name": "Keywords",
+  "source": "cache_text"
+ },
+ "557": {
+  "name": "Catwalk",
+  "source": "cache_text"
+ },
+ "561": {
+  "name": "Recent Wilderness Kills",
+  "source": "cache_text"
+ },
+ "562": {
+  "name": "Ullergrax",
+  "source": "cache_text"
+ },
+ "563": {
+  "name": "Hannibus's Progress",
+  "source": "cache_text"
+ },
+ "564": {
+  "name": "We've noticed activity on your account that is inappropriate for our game, and is offensive to others.<br><br><br> Any activity of this type may result in a mute, or even a permanent ban.<br><br><br> To find out more, please click on the read button below. ",
+  "source": "cache_text"
+ },
+ "565": {
+  "name": "The desert is a VERY dangerous place. Do not<br> enter if you are afraid of dying. Beware of high temperatures, sandstorms, robbers and slavers.<br> No responsibility is taken by Shantay if anything<br> bad should happen to you, in any circumstances whatsoever.",
+  "source": "cache_text"
+ },
+ "566": {
+  "name": "Local chat",
+  "source": "cache_text"
+ },
+ "567": {
+  "name": "Ribbon Bar",
+  "source": "cache_text"
+ },
+ "569": {
+  "name": "Salt solution (Level 74)",
+  "source": "cache_text"
+ },
+ "570": {
+  "name": "Audience request:",
+  "source": "cache_text"
+ },
+ "571": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "572": {
+  "name": "Mah's Nightmare",
+  "source": "cache_text"
+ },
+ "573": {
+  "name": "Rank",
+  "source": "cache_text"
+ },
+ "574": {
+  "name": "This will overwrite your currently selected action bar. Are you sure?",
+  "source": "cache_text"
+ },
+ "578": {
+  "name": "3rd July 2019",
+  "source": "cache_text"
+ },
+ "581": {
+  "name": "You have purchased 25 weeks of rental time for the wealth evaluator.",
+  "source": "cache_text"
+ },
+ "583": {
+  "name": "Top  Known  Issues",
+  "source": "cache_text"
+ },
+ "584": {
+  "name": "2x<br>XP",
+  "source": "cache_text"
+ },
+ "586": {
+  "name": "Change of address form for the citizens of Seers' Village.",
+  "source": "cache_text"
+ },
+ "587": {
+  "name": "Meet at Camel<br> We'll storm<br> She'll ensure w<br> The servants<br> silence.",
+  "source": "cache_text"
+ },
+ "588": {
+  "name": "Correct tumbler and height",
+  "source": "cache_text"
+ },
+ "589": {
+  "name": "Friends Chat Channel",
+  "source": "cache_text"
+ },
+ "591": {
+  "name": "Target:",
+  "source": "cache_text"
+ },
+ "593": {
+  "name": "Use the button below to report a <col=FF8000>player</col> for rule breaking actions within the game.",
+  "source": "cache_text"
+ },
+ "594": {
+  "name": "Suggest to temporarily mute this player",
+  "source": "cache_text"
+ },
+ "595": {
+  "name": "Completion:",
+  "source": "cache_text"
+ },
+ "596": {
+  "name": "TITLE",
+  "source": "cache_text"
+ },
+ "598": {
+  "name": "Amateur farmer ",
+  "source": "cache_text"
+ },
+ "600": {
+  "name": "Continue",
+  "source": "cache_text"
+ },
+ "601": {
+  "name": "Killcount",
+  "source": "cache_text"
+ },
+ "612": {
+  "name": "Ubersick reward info",
+  "source": "cache_text"
+ },
+ "617": {
+  "name": "Bolrie's Diary",
+  "source": "cache_text"
+ },
+ "623": {
+  "name": "Test text",
+  "source": "cache_text"
+ },
+ "624": {
+  "name": "Assign power to each ring in proportion to its area:",
+  "source": "cache_text"
+ },
+ "625": {
+  "name": "Please select your goblin from the options below:",
+  "source": "cache_text"
+ },
+ "627": {
+  "name": "Eastern Lands",
+  "source": "cache_text"
+ },
+ "628": {
+  "name": "You are here",
+  "source": "cache_text"
+ },
+ "629": {
+  "name": "Family Conflict",
+  "source": "cache_text"
+ },
+ "631": {
+  "name": "Purchase Bonus",
+  "source": "cache_text"
+ },
+ "632": {
+  "name": "Easy Requests",
+  "source": "cache_text"
+ },
+ "634": {
+  "name": "UPGRADE",
+  "source": "cache_text"
+ },
+ "635": {
+  "name": "Select abilities:",
+  "source": "cache_text"
+ },
+ "636": {
+  "name": "Yes",
+  "source": "cache_text"
+ },
+ "638": {
+  "name": "<u=B37A2F>Requirements<br>",
+  "source": "cache_text"
+ },
+ "639": {
+  "name": "Refresh",
+  "source": "cache_text"
+ },
+ "641": {
+  "name": "Free key available",
+  "source": "cache_text"
+ },
+ "642": {
+  "name": "In <col=ff8833>Salt in the Wound</col> you can control the actions of three heroes: Kennith, Ezekial and Eva.",
+  "source": "cache_text"
+ },
+ "644": {
+  "name": "CHOOSE",
+  "source": "cache_text"
+ },
+ "645": {
+  "name": "Select a destination for this portal.",
+  "source": "cache_text"
+ },
+ "646": {
+  "name": "Once your offer is running, just wait.<br>The trade could be very quick, or it might take several days.",
+  "source": "cache_text"
+ },
+ "647": {
+  "name": "Items ready to be dropped",
+  "source": "cache_text"
+ },
+ "649": {
+  "name": "South-east",
+  "source": "cache_text"
+ },
+ "650": {
+  "name": "Toggle all:",
+  "source": "cache_text"
+ },
+ "651": {
+  "name": "To inventory",
+  "source": "cache_text"
+ },
+ "652": {
+  "name": "50,000 coins",
+  "source": "cache_text"
+ },
+ "653": {
+  "name": "Select the amount of items you'd like to give",
+  "source": "cache_text"
+ },
+ "654": {
+  "name": "Random Prizes",
+  "source": "cache_text"
+ },
+ "655": {
+  "name": "Gold",
+  "source": "cache_text"
+ },
+ "656": {
+  "name": "Local chat",
+  "source": "cache_text"
+ },
+ "658": {
+  "name": " Barbarian hat",
+  "source": "cache_text"
+ },
+ "661": {
+  "name": "The runes must be in sets of three, I think, but I have had no luck in completing this conundrum. Perhaps, if my Thieving skills were greater, I could in some way interfere with the mechanism. May those who follow have more luck in this accursed place.<br><br>-Toralis of Menaphos",
+  "source": "cache_text"
+ },
+ "662": {
+  "name": "00:00",
+  "source": "cache_text"
+ },
+ "663": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "664": {
+  "name": "Certificate of Qualification",
+  "source": "cache_text"
+ },
+ "667": {
+  "name": "You are here",
+  "source": "cache_text"
+ },
+ "669": {
+  "name": "Purchase a bonus",
+  "source": "cache_text"
+ },
+ "671": {
+  "name": "The item you are about to drop has a high value.",
+  "source": "cache_text"
+ },
+ "672": {
+  "name": "1 x crew reroll",
+  "source": "cache_text"
+ },
+ "675": {
+  "name": "Never show again",
+  "source": "cache_text"
+ },
+ "676": {
+  "name": "Abilities",
+  "source": "cache_text"
+ },
+ "677": {
+  "name": "PLAYER V MONKEY",
+  "source": "cache_text"
+ },
+ "678": {
+  "name": "Use all",
+  "source": "cache_text"
+ },
+ "681": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "682": {
+  "name": "Counterweight",
+  "source": "cache_text"
+ },
+ "683": {
+  "name": "Are you sure you want to restart the puzzle?",
+  "source": "cache_text"
+ },
+ "684": {
+  "name": "Watch out for rabbits wandering around the farmyard. They are hungry and will look for flags, as they often mean hidden food! If a rabbit eats the seed under a flag, you will not get any points for it and will lose the flag. ",
+  "source": "cache_text"
+ },
+ "685": {
+  "name": "Mysteries",
+  "source": "cache_text"
+ },
+ "687": {
+  "name": "Use a spade to dig in the farmer's field and try to work out where the seeds have been planted. Try not to dig up the seeds, as this will lose you points! Usually, when you dig a square, you will uncover a number, which shows how many seeds are in the holes next to it.",
+  "source": "cache_text"
+ },
+ "688": {
+  "name": "While you are in the area, you will be able to see your points total in the top-right corner of your screen. Your points are saved, so you can leave if you wish and return another time to pick up from where you left off.",
+  "source": "cache_text"
+ },
+ "689": {
+  "name": "Points",
+  "source": "cache_text"
+ },
+ "690": {
+  "name": "Farmers wander the area looking for seeds that have been dug up by mistake. They will also collect any flags you have placed, resetting the nearby area and giving you points if the flag is in the right place.",
+  "source": "cache_text"
+ },
+ "691": {
+  "name": "Loadout 1",
+  "source": "cache_text"
+ },
+ "693": {
+  "name": "Speed Modifier:",
+  "source": "cache_text"
+ },
+ "694": {
+  "name": "Restoration Information",
+  "source": "cache_text"
+ },
+ "696": {
+  "name": "Feed The Slime",
+  "source": "cache_text"
+ },
+ "697": {
+  "name": "Grand Theft Cocoa",
+  "source": "cache_text"
+ },
+ "698": {
+  "name": "Become a Member",
+  "source": "cache_text"
+ },
+ "699": {
+  "name": "WWWWWWWWWWWW has invited you to join the group: Dungeoneering (Frozen)",
+  "source": "cache_text"
+ },
+ "700": {
+  "name": "9 MO x 64 D4",
+  "source": "cache_text"
+ },
+ "701": {
+  "name": "Send Broadcast",
+  "source": "cache_text"
+ },
+ "702": {
+  "name": "Battle members of the opposite faction in marked PvP zones around building sites and convoys.",
+  "source": "cache_text"
+ },
+ "703": {
+  "name": "BUILD",
+  "source": "cache_text"
+ },
+ "707": {
+  "name": "Click edit or 'Add a new favourite' to search for an item to favourite.",
+  "source": "cache_text"
+ },
+ "708": {
+  "name": "Symbols Discovered",
+  "source": "cache_text"
+ },
+ "711": {
+  "name": "Experience Lamps",
+  "source": "cache_text"
+ },
+ "712": {
+  "name": "Dear friend,",
+  "source": "cache_text"
+ },
+ "713": {
+  "name": "1/8",
+  "source": "cache_text"
+ },
+ "715": {
+  "name": "Favour points:",
+  "source": "cache_text"
+ },
+ "716": {
+  "name": "Chocatrice",
+  "source": "cache_text"
+ },
+ "717": {
+  "name": "Temperature reached!<br><br>New target<br>temperature set.",
+  "source": "cache_text"
+ },
+ "718": {
+  "name": "Offensive",
+  "source": "cache_text"
+ },
+ "719": {
+  "name": "COAL AND WATER SUPPLIES:<br> For your convenience, the incubator has a coal scuttle and water tank, which can hold up to twelve buckets of coal or water respectively.  Simply use a bucket of coal or water on the coal scuttle or water tank to add to the supplies.<br><br>ADJUSTING THE INCUBATOR TEMPERATURE:<br>The control panel to the left of the incubator allows you to use the coal and water supplies you have added to the incubator to heat or cool it.<br><br>INCUBATING AN EGG:<br>>  Place a suitable egg inside the incubation chamber.<br>>  Add supplies to the water tank and coal scuttle<br>>  Using the incubator controls, adjust the temperature.  The temperature gauge has a needle which shows the current temperature.  The top of the temperature gauge also has an arrow showing the temperature needed to reach the next phase of incubation.<br>> Some eggs may require you to reach several different temperatures before they hatch.<br><br>The very best of luck with hatching your eggs!",
+  "source": "cache_text"
+ },
+ "720": {
+  "name": "This is what you are selecting. Why are you not wrapping?",
+  "source": "cache_text"
+ },
+ "723": {
+  "name": "Time left : 20m",
+  "source": "cache_text"
+ },
+ "724": {
+  "name": "Welcome To RuneScape",
+  "source": "cache_text"
+ },
+ "727": {
+  "name": "Ice<br>Path",
+  "source": "cache_text"
+ },
+ "730": {
+  "name": "Time left:",
+  "source": "cache_text"
+ },
+ "731": {
+  "name": "The following item is not allowed in the arena:",
+  "source": "cache_text"
+ },
+ "732": {
+  "name": "10000",
+  "source": "cache_text"
+ },
+ "733": {
+  "name": "Ivandis Flail",
+  "source": "cache_text"
+ },
+ "734": {
+  "name": "To complete this purchase you will be temporarily logged out of the game and taken to our website.",
+  "source": "cache_text"
+ },
+ "735": {
+  "name": "Clan Name",
+  "source": "cache_text"
+ },
+ "736": {
+  "name": "Help out the estate agents by completing the contract work required.",
+  "source": "cache_text"
+ },
+ "738": {
+  "name": "Tok-Xil-Im",
+  "source": "cache_text"
+ },
+ "739": {
+  "name": "TzHaar Numbers",
+  "source": "cache_text"
+ },
+ "741": {
+  "name": "No wars in progress",
+  "source": "cache_text"
+ },
+ "744": {
+  "name": "Welcome",
+  "source": "cache_text"
+ },
+ "746": {
+  "name": "BOOST:",
+  "source": "cache_text"
+ },
+ "747": {
+  "name": "Use the buttons above to vote for strategic toggles for your faction. You may change your vote freely at any time, and as frequently as you wish.",
+  "source": "cache_text"
+ },
+ "748": {
+  "name": "Votes remaining:",
+  "source": "cache_text"
+ },
+ "749": {
+  "name": "0123456789",
+  "source": "cache_text"
+ },
+ "750": {
+  "name": "City",
+  "source": "cache_text"
+ },
+ "751": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "752": {
+  "name": "Current produce: 0",
+  "source": "cache_text"
+ },
+ "753": {
+  "name": "Boss Name",
+  "source": "cache_text"
+ },
+ "754": {
+  "name": "Items",
+  "source": "cache_text"
+ },
+ "755": {
+  "name": "Recommended Task",
+  "source": "cache_text"
+ },
+ "756": {
+  "name": "Time per move:",
+  "source": "cache_text"
+ },
+ "758": {
+  "name": "Lumbridge",
+  "source": "cache_text"
+ },
+ "760": {
+  "name": "Promotional Prizes",
+  "source": "cache_text"
+ },
+ "761": {
+  "name": "Storage",
+  "source": "cache_text"
+ },
+ "763": {
+  "name": "Inventory",
+  "source": "cache_text"
+ },
+ "766": {
+  "name": "100 / 100",
+  "source": "cache_text"
+ },
+ "767": {
+  "name": "Cross the arena before time runs out.",
+  "source": "cache_text"
+ },
+ "769": {
+  "name": "Insert a very long name here!",
+  "source": "cache_text"
+ },
+ "770": {
+  "name": "Select crystals to earn their prize<br>Complete lines for bonus prizes",
+  "source": "cache_text"
+ },
+ "772": {
+  "name": "Controls",
+  "source": "cache_text"
+ },
+ "774": {
+  "name": "Where do you want to rub the key?",
+  "source": "cache_text"
+ },
+ "779": {
+  "name": "Talismans",
+  "source": "cache_text"
+ },
+ "780": {
+  "name": "You are here",
+  "source": "cache_text"
+ },
+ "781": {
+  "name": "Waiting for players to join",
+  "source": "cache_text"
+ },
+ "783": {
+  "name": "Small Hop<br>(level 10 approx)",
+  "source": "cache_text"
+ },
+ "784": {
+  "name": "Dungeons: Myreque Hideout under the Hollows",
+  "source": "cache_text"
+ },
+ "786": {
+  "name": "Character Name",
+  "source": "cache_text"
+ },
+ "787": {
+  "name": "Landing time",
+  "source": "cache_text"
+ },
+ "788": {
+  "name": "Last fifty performances on this world:",
+  "source": "cache_text"
+ },
+ "789": {
+  "name": "On death:",
+  "source": "cache_text"
+ },
+ "791": {
+  "name": "Victory",
+  "source": "cache_text"
+ },
+ "792": {
+  "name": "Game overview",
+  "source": "cache_text"
+ },
+ "793": {
+  "name": "Don't show this again",
+  "source": "cache_text"
+ },
+ "796": {
+  "name": "1. Curl",
+  "source": "cache_text"
+ },
+ "797": {
+  "name": "Accept",
+  "source": "cache_text"
+ },
+ "798": {
+  "name": "Standard",
+  "source": "cache_text"
+ },
+ "799": {
+  "name": "Rat Pen",
+  "source": "cache_text"
+ },
+ "800": {
+  "name": " X:XX",
+  "source": "cache_text"
+ },
+ "801": {
+  "name": "22:22",
+  "source": "cache_text"
+ },
+ "802": {
+  "name": "Score:<br>12345",
+  "source": "cache_text"
+ },
+ "803": {
+  "name": "validation perks",
+  "source": "cache_text"
+ },
+ "804": {
+  "name": "Game start:",
+  "source": "cache_text"
+ },
+ "805": {
+  "name": "Trading with...",
+  "source": "cache_text"
+ },
+ "806": {
+  "name": "S<br>p<br>o<br>t<br>s<br><br>l<br>e<br>f<br>t",
+  "source": "cache_text"
+ },
+ "809": {
+  "name": "Personal score: ",
+  "source": "cache_text"
+ },
+ "810": {
+  "name": "Award",
+  "source": "cache_text"
+ },
+ "811": {
+  "name": "Are you sure you wish to log out?",
+  "source": "cache_text"
+ },
+ "812": {
+  "name": "Clan leader:",
+  "source": "cache_text"
+ },
+ "813": {
+  "name": "Clay Quality",
+  "source": "cache_text"
+ },
+ "814": {
+  "name": "Player name",
+  "source": "cache_text"
+ },
+ "820": {
+  "name": "Logging In - Please Wait",
+  "source": "cache_text"
+ },
+ "821": {
+  "name": "Warning: This is a High-Risk Wilderness world.<br><br>While you are in the Wilderness on this world, you will not be permitted to use the Protect Item prayer or curse, so you may lose ALL your items when you die.<br><br>You have been warned!",
+  "source": "cache_text"
+ },
+ "822": {
+  "name": "Please confirm your date of birth to continue.<br><br>This information will be used by Jagex to make sure we are providing you with the correct services.<br><br>Our privacy policy explains more about how we handle your personal information.",
+  "source": "cache_text"
+ },
+ "823": {
+  "name": "Add Props",
+  "source": "cache_text"
+ },
+ "824": {
+  "name": "Spotlight 1",
+  "source": "cache_text"
+ },
+ "825": {
+  "name": "Your display has been changed.<br>Do you want to keep this setting?",
+  "source": "cache_text"
+ },
+ "826": {
+  "name": "Verifying Cache (0%)",
+  "source": "cache_text"
+ },
+ "827": {
+  "name": "Policies",
+  "source": "cache_text"
+ },
+ "829": {
+  "name": "01234 43210 01234 43210",
+  "source": "cache_text"
+ },
+ "834": {
+  "name": "Blue",
+  "source": "cache_text"
+ },
+ "836": {
+  "name": "Blue",
+  "source": "cache_text"
+ },
+ "837": {
+  "name": "Players needed",
+  "source": "cache_text"
+ },
+ "840": {
+  "name": "Start with a 7 day free trial",
+  "source": "cache_text"
+ },
+ "842": {
+  "name": "If you complete a game of Mobilising Armies, your quest kit will replenish.",
+  "source": "cache_text"
+ },
+ "844": {
+  "name": "Charges left:",
+  "source": "cache_text"
+ },
+ "847": {
+  "name": "Don't show this again",
+  "source": "cache_text"
+ },
+ "848": {
+  "name": "Don't show this again",
+  "source": "cache_text"
+ },
+ "849": {
+  "name": "Wave:",
+  "source": "cache_text"
+ },
+ "851": {
+  "name": "Guardian's Gift",
+  "source": "cache_text"
+ },
+ "852": {
+  "name": "Purchase 14 days of membership, for 1 Bond.",
+  "source": "cache_text"
+ },
+ "853": {
+  "name": "Manage Bonds",
+  "source": "cache_text"
+ },
+ "856": {
+  "name": "Abandon All",
+  "source": "cache_text"
+ },
+ "857": {
+  "name": "Local",
+  "source": "cache_text"
+ },
+ "858": {
+  "name": "Channel",
+  "source": "cache_text"
+ },
+ "859": {
+  "name": "You have completed",
+  "source": "cache_text"
+ },
+ "860": {
+  "name": "This tutorial will show you basic controls, and how to get started in the world.<br>If you are new to RuneScape, we recommend you complete it.<br><br>Are you sure you want to skip it?",
+  "source": "cache_text"
+ },
+ "861": {
+  "name": "00:00:00",
+  "source": "cache_text"
+ },
+ "863": {
+  "name": "Current Enrage:",
+  "source": "cache_text"
+ },
+ "864": {
+  "name": "Rolling",
+  "source": "cache_text"
+ },
+ "865": {
+  "name": "Arch-Glacor Setup",
+  "source": "cache_text"
+ },
+ "866": {
+  "name": "A   ",
+  "source": "cache_text"
+ },
+ "868": {
+  "name": "ifquestname",
+  "source": "cache_text"
+ },
+ "870": {
+  "name": "Auto Loot Bones",
+  "source": "cache_text"
+ },
+ "877": {
+  "name": "Insert what you wish here:",
+  "source": "cache_text"
+ },
+ "880": {
+  "name": "Arteria",
+  "source": "cache_text"
+ },
+ "882": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "883": {
+  "name": "Your display has been changed. Do you want to keep this setting?",
+  "source": "cache_text"
+ },
+ "886": {
+  "name": "Harvest Bonus",
+  "source": "cache_text"
+ },
+ "889": {
+  "name": "Grand Exchange",
+  "source": "cache_text"
+ },
+ "890": {
+  "name": "Player name",
+  "source": "cache_text"
+ },
+ "891": {
+  "name": "You do not have enough RuneCoins.",
+  "source": "cache_text"
+ },
+ "892": {
+  "name": "Player",
+  "source": "cache_text"
+ },
+ "893": {
+  "name": "Storage",
+  "source": "cache_text"
+ },
+ "894": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "896": {
+  "name": "Skip Tutorial",
+  "source": "cache_text"
+ },
+ "897": {
+  "name": "Arrow keys rotate the camera.",
+  "source": "cache_text"
+ },
+ "898": {
+  "name": "Please follow the instructions below.",
+  "source": "cache_text"
+ },
+ "900": {
+  "name": "You do not have any promotional skin colours.",
+  "source": "cache_text"
+ },
+ "901": {
+  "name": "15 x Short Plank<br>15 x Long Plank<br>20 x Diagonal Plank<br>5 x Tooth Plank<br>8 x Groove Plank<br>5 x Curved Plank",
+  "source": "cache_text"
+ },
+ "902": {
+  "name": "Straight Cut",
+  "source": "cache_text"
+ },
+ "903": {
+  "name": "Short Planks",
+  "source": "cache_text"
+ },
+ "904": {
+  "name": "Info",
+  "source": "cache_text"
+ },
+ "905": {
+  "name": "x22",
+  "source": "cache_text"
+ },
+ "906": {
+  "name": "Warning! Your session will expire within the next 5 minutes. Please log out and reload your client if you wish to continue playing.",
+  "source": "cache_text"
+ },
+ "907": {
+  "name": "Next Week's Modifiers",
+  "source": "cache_text"
+ },
+ "909": {
+  "name": "Friends List",
+  "source": "cache_text"
+ },
+ "910": {
+  "name": "Select a world",
+  "source": "cache_text"
+ },
+ "911": {
+  "name": "Options",
+  "source": "cache_text"
+ },
+ "912": {
+  "name": "Clan Chat Channel",
+  "source": "cache_text"
+ },
+ "913": {
+  "name": "Now that your report has been sent, you can choose whether or not to ignore the offender. This is a temporary measure, and will only last until you log out. To permanently ignore a player, make a note of their name and add them to your Ignore List once the 'Report' windows are closed.<br><br>You cannot ignore moderators or people on your Friends List.",
+  "source": "cache_text"
+ },
+ "914": {
+  "name": "To report a player who is breaking one of our rules, first enter their name in the box below and then select 'Next'.",
+  "source": "cache_text"
+ },
+ "915": {
+  "name": "Security",
+  "source": "cache_text"
+ },
+ "916": {
+  "name": "Resources",
+  "source": "cache_text"
+ },
+ "918": {
+  "name": "You have entered your date of birth as:",
+  "source": "cache_text"
+ },
+ "919": {
+  "name": "Heaviest:",
+  "source": "cache_text"
+ },
+ "921": {
+  "name": "Personal Bests",
+  "source": "cache_text"
+ },
+ "922": {
+  "name": "Medals",
+  "source": "cache_text"
+ },
+ "923": {
+  "name": "Weights:",
+  "source": "cache_text"
+ },
+ "924": {
+  "name": "Tools",
+  "source": "cache_text"
+ },
+ "925": {
+  "name": "Boots",
+  "source": "cache_text"
+ },
+ "926": {
+  "name": "Red ",
+  "source": "cache_text"
+ },
+ "927": {
+  "name": "Final Score : 1122",
+  "source": "cache_text"
+ },
+ "928": {
+  "name": "Once Upon a Time in Gielinor: Finale",
+  "source": "cache_text"
+ },
+ "929": {
+  "name": "Resources",
+  "source": "cache_text"
+ },
+ "930": {
+  "name": "Welcome to your factory!<br><br>You have to fulfil an order of 7 Fruitcakes, 7 Nutty Eggs and 7 Tangy Egg Breads for the Easter Bunny. If you can complete the order in less that 15 turns, you will receive an additional reward for your hard work.<br><br>You start with 5 workers.<br><br>You can purchase more workers for 2 random resources each. <br><br>You can have a maximum of 15 workers employed at any time. <br><br>Every turn you pay 1 resource as wages for every 5 workers you have. <br><br>Workers can be allocated to gathering resources, making orders or repairing machines. <br><br>You can have up to 15 of each resource stored. Resources generated over 15 are lost.<br><br>Each finished product takes 2 resources to make.<br><br>Fruit Cake needs: 1 Chocolate, 1 Fruit.<br><br>Nutty Egg needs: 1 Chocolate, 1 Nuts.<br><br>Tangy Egg Bread needs 1 Fruit, 1 Nuts.<br><br>Every turn, there is a chance that something might befall the factory. You may lose some resources, find some bonus resources, or one of your machines might be in need of repair. This will be reported to you, as well as all the other details you need to know in running your factory, when you end your turn.<br><br>If a machine is broken, you can choose to alllocate a worker to repair it, or you can repair it yourself by going to the machine and performing the repair, as you have done so already. Machines that are not repaired will produce 1 less item per turn.<br><br>When you have completed the order you will be shown your score. The lower the Score, the better you have performed. Your score is broken down into the various parts that make it up. Why not see if you can beat your friends score.<br><br>You can repeat the game as many times as you like during the event.<br><br><br><br> Best of luck! ",
+  "source": "cache_text"
+ },
+ "931": {
+  "name": "Workers",
+  "source": "cache_text"
+ },
+ "932": {
+  "name": "Hit the red button<br>to discard an item.",
+  "source": "cache_text"
+ },
+ "933": {
+  "name": "Floor XX:",
+  "source": "cache_text"
+ },
+ "934": {
+  "name": "Donate a stack of items from your Backpack or coins from your Money Pouch to the Secret Santa.",
+  "source": "cache_text"
+ },
+ "935": {
+  "name": "Uncommon",
+  "source": "cache_text"
+ },
+ "936": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "937": {
+  "name": "Book Title",
+  "source": "cache_text"
+ },
+ "938": {
+  "name": "The complexity of a dungeon determines how many of your skills and abilities will be tested in a raid. Choosing a lower complexity will make the dungeon more straight-forward to complete, but it will also lower the Dungeoneering XP reward you receive at the end.<br><br>When you first start Dungeoneering, only complexity 1 will be unlocked. You must complete at least one raid at that complexity before you can unlock the next.",
+  "source": "cache_text"
+ },
+ "939": {
+  "name": "Here lie the ruins of the Duel Arena.<br><br>Once a combat ground where many fought for fame and riches, it was destroyed in the course of the Elder God Wars.<br><br>The ruins stand in honour of Het and in memory of the many combatants who fought here.",
+  "source": "cache_text"
+ },
+ "940": {
+  "name": "Your tokens: ",
+  "source": "cache_text"
+ },
+ "941": {
+  "name": "YYY bamboo",
+  "source": "cache_text"
+ },
+ "943": {
+  "name": "The quick brown fox jumped over the",
+  "source": "cache_text"
+ },
+ "944": {
+  "name": "Voyage list",
+  "source": "cache_text"
+ },
+ "945": {
+  "name": " Progress bar text",
+  "source": "cache_text"
+ },
+ "946": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "947": {
+  "name": "Floor",
+  "source": "cache_text"
+ },
+ "948": {
+  "name": "Dungeon Journal",
+  "source": "cache_text"
+ },
+ "949": {
+  "name": "Do you accept the invitation?",
+  "source": "cache_text"
+ },
+ "950": {
+  "name": "Voyages remaining:",
+  "source": "cache_text"
+ },
+ "951": {
+  "name": "Current",
+  "source": "cache_text"
+ },
+ "952": {
+  "name": "Items left: X",
+  "source": "cache_text"
+ },
+ "953": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "954": {
+  "name": "Player ~ Name",
+  "source": "cache_text"
+ },
+ "956": {
+  "name": "Right-click on an item in the shop or your inventory to see the available options.",
+  "source": "cache_text"
+ },
+ "958": {
+  "name": "Index",
+  "source": "cache_text"
+ },
+ "959": {
+  "name": "0/4",
+  "source": "cache_text"
+ },
+ "960": {
+  "name": "(Text)",
+  "source": "cache_text"
+ },
+ "970": {
+  "name": "Lorem Ipsum",
+  "source": "cache_text"
+ },
+ "974": {
+  "name": "Zanaris Needs You!",
+  "source": "cache_text"
+ },
+ "976": {
+  "name": "Auto-configuration in progress... XX%",
+  "source": "cache_text"
+ },
+ "978": {
+  "name": "If the game runs slowly on your computer, please try reducing these settings.",
+  "source": "cache_text"
+ },
+ "980": {
+  "name": "powered",
+  "source": "cache_text"
+ },
+ "981": {
+  "name": "Translation",
+  "source": "cache_text"
+ },
+ "983": {
+  "name": "Click on the purple<br>orbs to switch view.",
+  "source": "cache_text"
+ },
+ "984": {
+  "name": "You open your Emerald Chest and receive",
+  "source": "cache_text"
+ },
+ "985": {
+  "name": "Red Team Score:",
+  "source": "cache_text"
+ },
+ "986": {
+  "name": "Culprit",
+  "source": "cache_text"
+ },
+ "987": {
+  "name": "Elderly Citizen",
+  "source": "cache_text"
+ },
+ "988": {
+  "name": "0/15",
+  "source": "cache_text"
+ },
+ "989": {
+  "name": "Supplies",
+  "source": "cache_text"
+ },
+ "990": {
+  "name": "On death:",
+  "source": "cache_text"
+ },
+ "991": {
+  "name": "START NODE",
+  "source": "cache_text"
+ },
+ "993": {
+  "name": "Sorry, you have no remaining resets.",
+  "source": "cache_text"
+ },
+ "995": {
+  "name": "Skillcape Stand",
+  "source": "cache_text"
+ },
+ "997": {
+  "name": "Complete the listed tasks to unlock tiered benefits.",
+  "source": "cache_text"
+ },
+ "999": {
+  "name": "Prestige 1/5",
+  "source": "cache_text"
+ },
+ "1004": {
+  "name": "Reactions",
+  "source": "cache_text"
+ },
+ "1006": {
+  "name": "Guam leaf",
+  "source": "cache_text"
+ },
+ "1007": {
+  "name": "Strange rocks",
+  "source": "cache_text"
+ },
+ "1008": {
+  "name": "Your opponent has offered to call a truce. If you accept, the Conquest will end in a draw.",
+  "source": "cache_text"
+ },
+ "1009": {
+  "name": "Conquest Ranking: 1000",
+  "source": "cache_text"
+ },
+ "1010": {
+  "name": "Turn Options",
+  "source": "cache_text"
+ },
+ "1011": {
+  "name": "Buy:",
+  "source": "cache_text"
+ },
+ "1012": {
+  "name": "Troop Details",
+  "source": "cache_text"
+ },
+ "1013": {
+  "name": "0:00",
+  "source": "cache_text"
+ },
+ "1014": {
+  "name": "Reroll",
+  "source": "cache_text"
+ },
+ "1015": {
+  "name": "Command 1",
+  "source": "cache_text"
+ },
+ "1016": {
+  "name": "3:00",
+  "source": "cache_text"
+ },
+ "1017": {
+  "name": "Troop 1",
+  "source": "cache_text"
+ },
+ "1018": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1019": {
+  "name": "Diplomacy",
+  "source": "cache_text"
+ },
+ "1021": {
+  "name": "Maximum Turn Time",
+  "source": "cache_text"
+ },
+ "1022": {
+  "name": "Gauntlet Section",
+  "source": "cache_text"
+ },
+ "1023": {
+  "name": "NEW Shadow Faceless Assassin Outfit & Shadowstep aura plus the return of the Assassin Walk Override token from Assassin Chests!",
+  "source": "cache_text"
+ },
+ "1024": {
+  "name": "Commands",
+  "source": "cache_text"
+ },
+ "1027": {
+  "name": "Your opponent has been logged out for 1 minute.<br><br>You may wait for them to return, or take the victory and be declared the winner.",
+  "source": "cache_text"
+ },
+ "1028": {
+  "name": "YYY bones",
+  "source": "cache_text"
+ },
+ "1029": {
+  "name": "Poll Title",
+  "source": "cache_text"
+ },
+ "1033": {
+  "name": "Emote (free/members).",
+  "source": "cache_text"
+ },
+ "1034": {
+  "name": "9999999",
+  "source": "cache_text"
+ },
+ "1035": {
+  "name": "Wins: XX     Guards: XX",
+  "source": "cache_text"
+ },
+ "1036": {
+  "name": "Tutorial",
+  "source": "cache_text"
+ },
+ "1037": {
+  "name": "Town (night):",
+  "source": "cache_text"
+ },
+ "1038": {
+  "name": "The robbers team won!<br><br>You recieve 99 win point and 99 reward points for participating.",
+  "source": "cache_text"
+ },
+ "1039": {
+  "name": "Perks",
+  "source": "cache_text"
+ },
+ "1040": {
+  "name": "Time left : 20m",
+  "source": "cache_text"
+ },
+ "1041": {
+  "name": "WANTED",
+  "source": "cache_text"
+ },
+ "1042": {
+  "name": "WANTED",
+  "source": "cache_text"
+ },
+ "1043": {
+  "name": "Renown points: 1,234,567",
+  "source": "cache_text"
+ },
+ "1044": {
+  "name": "Clan Name",
+  "source": "cache_text"
+ },
+ "1046": {
+  "name": "299",
+  "source": "cache_text"
+ },
+ "1047": {
+  "name": "Select a task on the left for more information",
+  "source": "cache_text"
+ },
+ "1048": {
+  "name": "Overview",
+  "source": "cache_text"
+ },
+ "1049": {
+  "name": "Yes",
+  "source": "cache_text"
+ },
+ "1051": {
+  "name": "name",
+  "source": "cache_text"
+ },
+ "1052": {
+  "name": "The Fresh Start World Event will end in:",
+  "source": "cache_text"
+ },
+ "1053": {
+  "name": "Instructions (click to close)",
+  "source": "cache_text"
+ },
+ "1054": {
+  "name": "Instructions (click to close)",
+  "source": "cache_text"
+ },
+ "1055": {
+  "name": "The Fresh Start World Event will end in:",
+  "source": "cache_text"
+ },
+ "1056": {
+  "name": "The Fresh Start World Event will end in:",
+  "source": "cache_text"
+ },
+ "1057": {
+  "name": "Tag the above locations in order for some extra strength xp!",
+  "source": "cache_text"
+ },
+ "1058": {
+  "name": "All Tokens",
+  "source": "cache_text"
+ },
+ "1060": {
+  "name": "Reset",
+  "source": "cache_text"
+ },
+ "1061": {
+  "name": "Throw!",
+  "source": "cache_text"
+ },
+ "1066": {
+  "name": "Fresh Start Worlds is a special Members' Event",
+  "source": "cache_text"
+ },
+ "1067": {
+  "name": "Claim Wish",
+  "source": "cache_text"
+ },
+ "1068": {
+  "name": "In the pot!",
+  "source": "cache_text"
+ },
+ "1069": {
+  "name": "CPSL Mind supports those with poor mental health to live well, whatever that means for them.<br><br>They enable people to maintain positive mental health, especially those who are going through tough times.<br><br>They inspire connections and eliminate stigma within our communities for the benefit of everyone's mental health.",
+  "source": "cache_text"
+ },
+ "1070": {
+  "name": "Cooldown:",
+  "source": "cache_text"
+ },
+ "1071": {
+  "name": "Ceremonial Sword",
+  "source": "cache_text"
+ },
+ "1072": {
+  "name": "Prefix",
+  "source": "cache_text"
+ },
+ "1073": {
+  "name": "Current Instructions",
+  "source": "cache_text"
+ },
+ "1074": {
+  "name": "Cooldown:",
+  "source": "cache_text"
+ },
+ "1075": {
+  "name": "\"Shanty Title\"",
+  "source": "cache_text"
+ },
+ "1077": {
+  "name": "Murphy",
+  "source": "cache_text"
+ },
+ "1078": {
+  "name": "Zomboat Control",
+  "source": "cache_text"
+ },
+ "1079": {
+  "name": "Arrow keys rotate the camera.",
+  "source": "cache_text"
+ },
+ "1080": {
+  "name": "Event Title - This is the title of the event",
+  "source": "cache_text"
+ },
+ "1081": {
+  "name": "Identify the strain of livid:",
+  "source": "cache_text"
+ },
+ "1082": {
+  "name": "Right bosses multiply rewards by x4, x5 or x6!",
+  "source": "cache_text"
+ },
+ "1083": {
+  "name": "Protect a patch for me!",
+  "source": "cache_text"
+ },
+ "1084": {
+  "name": "Invite by rank:",
+  "source": "cache_text"
+ },
+ "1085": {
+  "name": "You have been invited by...",
+  "source": "cache_text"
+ },
+ "1086": {
+  "name": "clan_1_name",
+  "source": "cache_text"
+ },
+ "1087": {
+  "name": "winner_name",
+  "source": "cache_text"
+ },
+ "1088": {
+  "name": "Blue",
+  "source": "cache_text"
+ },
+ "1089": {
+  "name": "Clan Flag Selection",
+  "source": "cache_text"
+ },
+ "1090": {
+  "name": "New Bond<br>Bundles",
+  "source": "cache_text"
+ },
+ "1091": {
+  "name": "I am the new Pet",
+  "source": "cache_text"
+ },
+ "1092": {
+  "name": "Fremennik Province",
+  "source": "cache_text"
+ },
+ "1093": {
+  "name": "You have been invited to start a clan.",
+  "source": "cache_text"
+ },
+ "1094": {
+  "name": "0/20",
+  "source": "cache_text"
+ },
+ "1095": {
+  "name": "Clan Home Page",
+  "source": "cache_text"
+ },
+ "1096": {
+  "name": "Details for:",
+  "source": "cache_text"
+ },
+ "1097": {
+  "name": "No keyword selected.",
+  "source": "cache_text"
+ },
+ "1098": {
+  "name": "Thread ID:",
+  "source": "cache_text"
+ },
+ "1099": {
+  "name": "Forum",
+  "source": "cache_text"
+ },
+ "1100": {
+  "name": "Type or paste in your clan forum's thread ID:",
+  "source": "cache_text"
+ },
+ "1101": {
+  "name": "Yes",
+  "source": "cache_text"
+ },
+ "1102": {
+  "name": "Minimum voting rank:",
+  "source": "cache_text"
+ },
+ "1103": {
+  "name": "0/80",
+  "source": "cache_text"
+ },
+ "1105": {
+  "name": "Select a colour to edit",
+  "source": "cache_text"
+ },
+ "1107": {
+  "name": "asfsagsayhsgahsgahsga",
+  "source": "cache_text"
+ },
+ "1108": {
+  "name": "Chat name:",
+  "source": "cache_text"
+ },
+ "1109": {
+  "name": "To join a channel, use the button in the bottom-left, then enter the name of the player whose channel you wish to chat in.<br><br>Once in a Friends Chat channel, you can talk by starting your chat with an /.",
+  "source": "cache_text"
+ },
+ "1110": {
+  "name": "Loading.<br><br>Please wait...",
+  "source": "cache_text"
+ },
+ "1111": {
+  "name": "Editor",
+  "source": "cache_text"
+ },
+ "1113": {
+  "name": "Clan Battlefield",
+  "source": "cache_text"
+ },
+ "1114": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1115": {
+  "name": "Job plot<br>(Plot tier)",
+  "source": "cache_text"
+ },
+ "1116": {
+  "name": "Clan Relationships",
+  "source": "cache_text"
+ },
+ "1117": {
+  "name": "Precious Ore Left",
+  "source": "cache_text"
+ },
+ "1119": {
+  "name": "Current minimum rank:",
+  "source": "cache_text"
+ },
+ "1120": {
+  "name": "You can claim X more free chests.",
+  "source": "cache_text"
+ },
+ "1121": {
+  "name": "Empty",
+  "source": "cache_text"
+ },
+ "1122": {
+  "name": "Are you sure you want to reset all colours?",
+  "source": "cache_text"
+ },
+ "1123": {
+  "name": "Rewards",
+  "source": "cache_text"
+ },
+ "1124": {
+  "name": "Trading with...",
+  "source": "cache_text"
+ },
+ "1126": {
+  "name": "Rewards",
+  "source": "cache_text"
+ },
+ "1127": {
+  "name": "You have received a piece of hybrid armour!",
+  "source": "cache_text"
+ },
+ "1128": {
+  "name": "Volatile tool",
+  "source": "cache_text"
+ },
+ "1129": {
+  "name": "The energy will be absorbed in rows, through the pipes.",
+  "source": "cache_text"
+ },
+ "1130": {
+  "name": "Safalaan Hallow,",
+  "source": "cache_text"
+ },
+ "1131": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1132": {
+  "name": "Vanescula",
+  "source": "cache_text"
+ },
+ "1134": {
+  "name": "I can give you the answers you seek. I can tell you why you have lived so long, why you have these unexplained powers, why you have been having those visions.",
+  "source": "cache_text"
+ },
+ "1135": {
+  "name": "                         With     gone I am weak.",
+  "source": "cache_text"
+ },
+ "1136": {
+  "name": "I do not know how long I have slept, but I feel my powers rebuilt and my wounds healed",
+  "source": "cache_text"
+ },
+ "1137": {
+  "name": "NPC total:",
+  "source": "cache_text"
+ },
+ "1138": {
+  "name": "Window restored! ",
+  "source": "cache_text"
+ },
+ "1139": {
+  "name": "Coming Soon",
+  "source": "cache_text"
+ },
+ "1142": {
+  "name": "WELCOME BACK!",
+  "source": "cache_text"
+ },
+ "1143": {
+  "name": "Tier 1 Auras",
+  "source": "cache_text"
+ },
+ "1144": {
+  "name": "Items found: 12345",
+  "source": "cache_text"
+ },
+ "1146": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "1147": {
+  "name": "Select a blueprint to craft",
+  "source": "cache_text"
+ },
+ "1148": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "1149": {
+  "name": "Title",
+  "source": "cache_text"
+ },
+ "1150": {
+  "name": "The numbers around the dance floor relate to the row or column they are lined up with, and tell you how many adjacent tiles within that row or column need to be turned on.<br><br>For instance, a row with 10 next to it would need all ten tiles in that row turned on; or a column with 4 next to it means four tiles need turning on in that column.",
+  "source": "cache_text"
+ },
+ "1151": {
+  "name": "Help needed setting up welcome portal statues, per favore.",
+  "source": "cache_text"
+ },
+ "1152": {
+  "name": "Bullseye!",
+  "source": "cache_text"
+ },
+ "1153": {
+  "name": "Runes",
+  "source": "cache_text"
+ },
+ "1154": {
+  "name": "0/4",
+  "source": "cache_text"
+ },
+ "1157": {
+  "name": "Player Name",
+  "source": "cache_text"
+ },
+ "1158": {
+  "name": "Not available",
+  "source": "cache_text"
+ },
+ "1159": {
+  "name": "Handicap effect imminent!",
+  "source": "cache_text"
+ },
+ "1160": {
+  "name": "Lesson 6 - Rumble Mode",
+  "source": "cache_text"
+ },
+ "1163": {
+  "name": "Cut throat",
+  "source": "cache_text"
+ },
+ "1164": {
+  "name": "Floor Progress: XX",
+  "source": "cache_text"
+ },
+ "1166": {
+  "name": "-------",
+  "source": "cache_text"
+ },
+ "1167": {
+  "name": "----",
+  "source": "cache_text"
+ },
+ "1168": {
+  "name": "Decaying Avatar",
+  "source": "cache_text"
+ },
+ "1169": {
+  "name": "Click an eye to select your viewpoint.",
+  "source": "cache_text"
+ },
+ "1170": {
+  "name": "Revenge of the Evil Chickens",
+  "source": "cache_text"
+ },
+ "1171": {
+  "name": "999",
+  "source": "cache_text"
+ },
+ "1172": {
+  "name": "abcdefghijklmnopqrstuvwxyz",
+  "source": "cache_text"
+ },
+ "1173": {
+  "name": "Endurance Mode",
+  "source": "cache_text"
+ },
+ "1176": {
+  "name": "Alternative Thanksgiving Feast Shopping List",
+  "source": "cache_text"
+ },
+ "1178": {
+  "name": "Prestige 1/5",
+  "source": "cache_text"
+ },
+ "1180": {
+  "name": "Show event log",
+  "source": "cache_text"
+ },
+ "1181": {
+  "name": "999",
+  "source": "cache_text"
+ },
+ "1184": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1185": {
+  "name": "999",
+  "source": "cache_text"
+ },
+ "1186": {
+  "name": "You have just been handed this item!",
+  "source": "cache_text"
+ },
+ "1187": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1189": {
+  "name": "You have just been handed this item!",
+  "source": "cache_text"
+ },
+ "1190": {
+  "name": "You have just been handed this item!",
+  "source": "cache_text"
+ },
+ "1191": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1192": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1194": {
+  "name": "Whitezag",
+  "source": "cache_text"
+ },
+ "1195": {
+  "name": "Timmy's Anger Level",
+  "source": "cache_text"
+ },
+ "1196": {
+  "name": "Exit",
+  "source": "cache_text"
+ },
+ "1197": {
+  "name": "Skip Cutscene",
+  "source": "cache_text"
+ },
+ "1198": {
+  "name": "Wave Progress",
+  "source": "cache_text"
+ },
+ "1200": {
+  "name": "Firemaker's Guide",
+  "source": "cache_text"
+ },
+ "1201": {
+  "name": "Glittering spark",
+  "source": "cache_text"
+ },
+ "1203": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "1205": {
+  "name": "Previous",
+  "source": "cache_text"
+ },
+ "1206": {
+  "name": "Previous",
+  "source": "cache_text"
+ },
+ "1208": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "1209": {
+  "name": "Time elapsed",
+  "source": "cache_text"
+ },
+ "1210": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "1212": {
+  "name": "Twig's Try (Level 74)",
+  "source": "cache_text"
+ },
+ "1218": {
+  "name": "Skill",
+  "source": "cache_text"
+ },
+ "1222": {
+  "name": "Are you sure you wish to continue?",
+  "source": "cache_text"
+ },
+ "1223": {
+  "name": "Fixed camera view",
+  "source": "cache_text"
+ },
+ "1224": {
+  "name": "Requirements",
+  "source": "cache_text"
+ },
+ "1225": {
+  "name": "Soul attraction: 0%",
+  "source": "cache_text"
+ },
+ "1226": {
+  "name": "Level 120",
+  "source": "cache_text"
+ },
+ "1227": {
+  "name": "Molten Barricade Cosmetic Ability Override",
+  "source": "cache_text"
+ },
+ "1228": {
+  "name": "Underworld Emblems Emblems",
+  "source": "cache_text"
+ },
+ "1229": {
+  "name": "Hero Pass",
+  "source": "cache_text"
+ },
+ "1230": {
+  "name": "Select your maxed skills to toggle whether or not you will receive Daily Challenges for them.",
+  "source": "cache_text"
+ },
+ "1231": {
+  "name": "Power-up Description",
+  "source": "cache_text"
+ },
+ "1232": {
+  "name": "Wave:",
+  "source": "cache_text"
+ },
+ "1233": {
+  "name": "99:99",
+  "source": "cache_text"
+ },
+ "1236": {
+  "name": "If you aren't sure where to go next, check the World Map for blue squares. These show important areas in the quest.",
+  "source": "cache_text"
+ },
+ "1237": {
+  "name": "Current Direction : ",
+  "source": "cache_text"
+ },
+ "1238": {
+  "name": "2000",
+  "source": "cache_text"
+ },
+ "1239": {
+  "name": "You have uncovered ",
+  "source": "cache_text"
+ },
+ "1240": {
+  "name": "That Old Black Magic: Hermy and Bass",
+  "source": "cache_text"
+ },
+ "1241": {
+  "name": "Cheating Detected - You Have Been Banned",
+  "source": "cache_text"
+ },
+ "1243": {
+  "name": "WARNING: Memory data needs recovering.",
+  "source": "cache_text"
+ },
+ "1244": {
+  "name": "You are awarded:",
+  "source": "cache_text"
+ },
+ "1245": {
+  "name": "Double XP Tokens can be exchanged in the Double XP Store.",
+  "source": "cache_text"
+ },
+ "1246": {
+  "name": "Egg",
+  "source": "cache_text"
+ },
+ "1247": {
+  "name": "Fire Bolt",
+  "source": "cache_text"
+ },
+ "1248": {
+  "name": "Continue",
+  "source": "cache_text"
+ },
+ "1253": {
+  "name": "Treasure Hunter",
+  "source": "cache_text"
+ },
+ "1254": {
+  "name": "You can't log out at the moment.",
+  "source": "cache_text"
+ },
+ "1255": {
+  "name": "Solomon's General Store will open in a new tab.",
+  "source": "cache_text"
+ },
+ "1256": {
+  "name": "Today's Modifier:",
+  "source": "cache_text"
+ },
+ "1257": {
+  "name": "Since the last build tick MemberName has produced:",
+  "source": "cache_text"
+ },
+ "1258": {
+  "name": "Next week",
+  "source": "cache_text"
+ },
+ "1259": {
+  "name": "Island Layout",
+  "source": "cache_text"
+ },
+ "1260": {
+  "name": "Upkeep costs",
+  "source": "cache_text"
+ },
+ "1261": {
+  "name": "Next week",
+  "source": "cache_text"
+ },
+ "1262": {
+  "name": "This area is very dangerous and death is more than a possibility! Are you sure you want to enter?",
+  "source": "cache_text"
+ },
+ "1263": {
+  "name": "What sort of XP would you like?",
+  "source": "cache_text"
+ },
+ "1264": {
+  "name": "Header",
+  "source": "cache_text"
+ },
+ "1265": {
+  "name": "Sell",
+  "source": "cache_text"
+ },
+ "1268": {
+  "name": "Some text goes here",
+  "source": "cache_text"
+ },
+ "1269": {
+  "name": "Current Reward Value: XXXXXXXXXX coins!",
+  "source": "cache_text"
+ },
+ "1270": {
+  "name": "Memories Recovered",
+  "source": "cache_text"
+ },
+ "1271": {
+  "name": "The Springbloom Witch outfit and staff, and the Witch's Ride walk override",
+  "source": "cache_text"
+ },
+ "1272": {
+  "name": "Nice list entries",
+  "source": "cache_text"
+ },
+ "1273": {
+  "name": "You  are buying",
+  "source": "cache_text"
+ },
+ "1274": {
+  "name": "33123456",
+  "source": "cache_text"
+ },
+ "1275": {
+  "name": "Ships",
+  "source": "cache_text"
+ },
+ "1276": {
+  "name": "Your Crew",
+  "source": "cache_text"
+ },
+ "1278": {
+  "name": "You can claim X more free chests.",
+  "source": "cache_text"
+ },
+ "1279": {
+  "name": "Select an NPC",
+  "source": "cache_text"
+ },
+ "1280": {
+  "name": "Select a Daily Buff",
+  "source": "cache_text"
+ },
+ "1282": {
+  "name": "Prize 1",
+  "source": "cache_text"
+ },
+ "1283": {
+  "name": "Recolour Gear Set",
+  "source": "cache_text"
+ },
+ "1284": {
+  "name": "All calendar entries and their details are subject to change.",
+  "source": "cache_text"
+ },
+ "1285": {
+  "name": "25,000",
+  "source": "cache_text"
+ },
+ "1286": {
+  "name": "Species",
+  "source": "cache_text"
+ },
+ "1287": {
+  "name": "Docks",
+  "source": "cache_text"
+ },
+ "1288": {
+  "name": "1,500",
+  "source": "cache_text"
+ },
+ "1289": {
+  "name": "Harvest Hollow",
+  "source": "cache_text"
+ },
+ "1290": {
+  "name": "Frozen Dungeon",
+  "source": "cache_text"
+ },
+ "1292": {
+  "name": "You are about to enter a dangerous area where others can attack you.<br><br>If you die you will lose all the items you are carrying.",
+  "source": "cache_text"
+ },
+ "1294": {
+  "name": "You will see the following head icons:",
+  "source": "cache_text"
+ },
+ "1295": {
+  "name": "Rewards and Miscellaneous",
+  "source": "cache_text"
+ },
+ "1296": {
+  "name": "Supreme Champions:<br>None",
+  "source": "cache_text"
+ },
+ "1297": {
+  "name": "Buy/Activate",
+  "source": "cache_text"
+ },
+ "1298": {
+  "name": "Size 2",
+  "source": "cache_text"
+ },
+ "1299": {
+  "name": "Loading...",
+  "source": "cache_text"
+ },
+ "1300": {
+  "name": "Create a Group",
+  "source": "cache_text"
+ },
+ "1301": {
+  "name": "WWWWWWWWWWWW has invited you to join the group: Dungeoneering (Frozen)",
+  "source": "cache_text"
+ },
+ "1302": {
+  "name": "Next Group Reward",
+  "source": "cache_text"
+ },
+ "1304": {
+  "name": "PIN",
+  "source": "cache_text"
+ },
+ "1307": {
+  "name": "Regular",
+  "source": "cache_text"
+ },
+ "1308": {
+  "name": "Co-op",
+  "source": "cache_text"
+ },
+ "1310": {
+  "name": "You have been invited to a Slayer group by:",
+  "source": "cache_text"
+ },
+ "1311": {
+  "name": "Buy Keepsake Keys",
+  "source": "cache_text"
+ },
+ "1312": {
+  "name": "Choose your Motto",
+  "source": "cache_text"
+ },
+ "1313": {
+  "name": "Time remaining:  5:00",
+  "source": "cache_text"
+ },
+ "1314": {
+  "name": "Total XP:",
+  "source": "cache_text"
+ },
+ "1315": {
+  "name": "Recolour Gear",
+  "source": "cache_text"
+ },
+ "1316": {
+  "name": "Teleport",
+  "source": "cache_text"
+ },
+ "1317": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1318": {
+  "name": "Santa's Lodge",
+  "source": "cache_text"
+ },
+ "1319": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "1320": {
+  "name": "Gift Bonus",
+  "source": "cache_text"
+ },
+ "1321": {
+  "name": "Customisation Presets",
+  "source": "cache_text"
+ },
+ "1323": {
+  "name": "Enemy Radar",
+  "source": "cache_text"
+ },
+ "1324": {
+  "name": "Choose the starting position of your fleet by dragging and dropping them onto a square.",
+  "source": "cache_text"
+ },
+ "1326": {
+  "name": "Torpedoes",
+  "source": "cache_text"
+ },
+ "1329": {
+  "name": "Easy",
+  "source": "cache_text"
+ },
+ "1330": {
+  "name": "Levitate (Level 50)",
+  "source": "cache_text"
+ },
+ "1332": {
+  "name": "1. Rock",
+  "source": "cache_text"
+ },
+ "1333": {
+  "name": "Active race!",
+  "source": "cache_text"
+ },
+ "1335": {
+  "name": "Boat skins",
+  "source": "cache_text"
+ },
+ "1337": {
+  "name": "Choose a Promotion",
+  "source": "cache_text"
+ },
+ "1338": {
+  "name": "Your final score was:",
+  "source": "cache_text"
+ },
+ "1339": {
+  "name": "Back to Promotion Selection",
+  "source": "cache_text"
+ },
+ "1340": {
+  "name": "test",
+  "source": "cache_text"
+ },
+ "1341": {
+  "name": "Score:",
+  "source": "cache_text"
+ },
+ "1342": {
+  "name": "Prize 1",
+  "source": "cache_text"
+ },
+ "1343": {
+  "name": "Daily Challenges",
+  "source": "cache_text"
+ },
+ "1344": {
+  "name": "Currently on Spotlight",
+  "source": "cache_text"
+ },
+ "1345": {
+  "name": "Latest Content",
+  "source": "cache_text"
+ },
+ "1346": {
+  "name": "Read FAQ",
+  "source": "cache_text"
+ },
+ "1347": {
+  "name": "Warning!",
+  "source": "cache_text"
+ },
+ "1348": {
+  "name": "As part of our ongoing investigation into how monetisation is implemented within RuneScape, we are running a series of experiments.",
+  "source": "cache_text"
+ },
+ "1350": {
+  "name": "In the 1960s, poaching had reduced the number of wild black rhinos in Africa to around 70,000. How many wild black rhinos are there today?",
+  "source": "cache_text"
+ },
+ "1351": {
+  "name": "Tutorial",
+  "source": "cache_text"
+ },
+ "1353": {
+  "name": "WELCOME BACK!",
+  "source": "cache_text"
+ },
+ "1357": {
+  "name": "Welcome Back",
+  "source": "cache_text"
+ },
+ "1358": {
+  "name": "Tokens:",
+  "source": "cache_text"
+ },
+ "1359": {
+  "name": "NEW",
+  "source": "cache_text"
+ },
+ "1360": {
+  "name": "Choose a person",
+  "source": "cache_text"
+ },
+ "1365": {
+  "name": "Opponent:",
+  "source": "cache_text"
+ },
+ "1366": {
+  "name": "Before the duel...",
+  "source": "cache_text"
+ },
+ "1367": {
+  "name": "vs.",
+  "source": "cache_text"
+ },
+ "1370": {
+  "name": "Value",
+  "source": "cache_text"
+ },
+ "1373": {
+  "name": "Building 1",
+  "source": "cache_text"
+ },
+ "1374": {
+  "name": "The Evolution of Combat is now live!",
+  "source": "cache_text"
+ },
+ "1377": {
+  "name": "Region Information",
+  "source": "cache_text"
+ },
+ "1378": {
+  "name": "Ranks Earned",
+  "source": "cache_text"
+ },
+ "1379": {
+  "name": "Choose which eastern scroll your crews will seek.",
+  "source": "cache_text"
+ },
+ "1381": {
+  "name": "Present Collection",
+  "source": "cache_text"
+ },
+ "1382": {
+  "name": "Some mince pies",
+  "source": "cache_text"
+ },
+ "1383": {
+  "name": "Kennels",
+  "source": "cache_text"
+ },
+ "1384": {
+  "name": "Are you sure you wish to bank:",
+  "source": "cache_text"
+ },
+ "1385": {
+  "name": "Select the items your pet should scavenge:",
+  "source": "cache_text"
+ },
+ "1386": {
+  "name": "Are you sure you wish to leave?  You will lose your progress with this statue's scaffolding.",
+  "source": "cache_text"
+ },
+ "1387": {
+  "name": "Search...",
+  "source": "cache_text"
+ },
+ "1390": {
+  "name": "Players Ready:",
+  "source": "cache_text"
+ },
+ "1391": {
+  "name": "7:00",
+  "source": "cache_text"
+ },
+ "1392": {
+  "name": "1st",
+  "source": "cache_text"
+ },
+ "1394": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1397": {
+  "name": "Reward Tier",
+  "source": "cache_text"
+ },
+ "1398": {
+  "name": "Answer 2",
+  "source": "cache_text"
+ },
+ "1402": {
+  "name": "Please think carefully!",
+  "source": "cache_text"
+ },
+ "1403": {
+  "name": "Castle Wars now rewards players using a dual ticket system:<br>Win: 2 Gold Tickets and 1 Silver Ticket<br>Draw: 1 Gold Ticket and 1 Silver Ticket<br>Lose: 1 Silver Ticket<br>Items in the Castle Wars shop have been changed to reflect these changes.",
+  "source": "cache_text"
+ },
+ "1404": {
+  "name": "Default Interface Mode",
+  "source": "cache_text"
+ },
+ "1405": {
+  "name": "Enter the main body of your report here:",
+  "source": "cache_text"
+ },
+ "1406": {
+  "name": "WikiSync",
+  "source": "cache_text"
+ },
+ "1407": {
+  "name": "Tools",
+  "source": "cache_text"
+ },
+ "1408": {
+  "name": "Tools",
+  "source": "cache_text"
+ },
+ "1409": {
+  "name": "I'm a placeholder overview",
+  "source": "cache_text"
+ },
+ "1411": {
+  "name": "Clan Profile Editor",
+  "source": "cache_text"
+ },
+ "1413": {
+  "name": "Bring him down!",
+  "source": "cache_text"
+ },
+ "1414": {
+  "name": "Pig Display List",
+  "source": "cache_text"
+ },
+ "1415": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1416": {
+  "name": "Playing.............................",
+  "source": "cache_text"
+ },
+ "1419": {
+  "name": "Waiting for hiscores to be calculated.",
+  "source": "cache_text"
+ },
+ "1420": {
+  "name": "Done",
+  "source": "cache_text"
+ },
+ "1422": {
+  "name": "Legend",
+  "source": "cache_text"
+ },
+ "1423": {
+  "name": "Don't show this message again",
+  "source": "cache_text"
+ },
+ "1424": {
+  "name": "I'm a placeholder overview",
+  "source": "cache_text"
+ },
+ "1427": {
+  "name": "To join a channel, use the button in the bottom-left, then enter the name of the player whose channel you wish to chat in.<br><br>Once in a Friends Chat channel, you can talk by starting your chat with an /.",
+  "source": "cache_text"
+ },
+ "1428": {
+  "name": "Unfortunately you cannot change your display name at this time. Please visit our Support Centre.",
+  "source": "cache_text"
+ },
+ "1431": {
+  "name": "Click on the drawers to add buttons to this panel.",
+  "source": "cache_text"
+ },
+ "1433": {
+  "name": "Management Windows",
+  "source": "cache_text"
+ },
+ "1436": {
+  "name": "Action Bar",
+  "source": "cache_text"
+ },
+ "1440": {
+  "name": "Loading.<br><br>Please wait...",
+  "source": "cache_text"
+ },
+ "1441": {
+  "name": "Ignore List",
+  "source": "cache_text"
+ },
+ "1442": {
+  "name": "Reward Tier",
+  "source": "cache_text"
+ },
+ "1443": {
+  "name": "Relic Name",
+  "source": "cache_text"
+ },
+ "1444": {
+  "name": "Group Ironman Windows",
+  "source": "cache_text"
+ },
+ "1446": {
+  "name": "Game Experience",
+  "source": "cache_text"
+ },
+ "1447": {
+  "name": "FEATURE COMING SOON",
+  "source": "cache_text"
+ },
+ "1448": {
+  "name": "Loading...",
+  "source": "cache_text"
+ },
+ "1451": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1453": {
+  "name": "Guthix Butterfly",
+  "source": "cache_text"
+ },
+ "1454": {
+  "name": "Requirements",
+  "source": "cache_text"
+ },
+ "1457": {
+  "name": "Quick Prayers",
+  "source": "cache_text"
+ },
+ "1458": {
+  "name": "Quick Prayers",
+  "source": "cache_text"
+ },
+ "1463": {
+  "name": "9999",
+  "source": "cache_text"
+ },
+ "1465": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "1467": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1470": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1471": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1472": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1473": {
+  "name": "1000K",
+  "source": "cache_text"
+ },
+ "1474": {
+  "name": "1000K",
+  "source": "cache_text"
+ },
+ "1475": {
+  "name": "Display Windows",
+  "source": "cache_text"
+ },
+ "1476": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1477": {
+  "name": "Skip Cutscene",
+  "source": "cache_text"
+ },
+ "1481": {
+  "name": "Dolly's Pumpkin Order",
+  "source": "cache_text"
+ },
+ "1484": {
+  "name": "Upgrade",
+  "source": "cache_text"
+ },
+ "1485": {
+  "name": "Max",
+  "source": "cache_text"
+ },
+ "1486": {
+  "name": "Tooltip text",
+  "source": "cache_text"
+ },
+ "1487": {
+  "name": "Press Enter to confirm",
+  "source": "cache_text"
+ },
+ "1489": {
+  "name": "200",
+  "source": "cache_text"
+ },
+ "1490": {
+  "name": "Tap to find target",
+  "source": "cache_text"
+ },
+ "1494": {
+  "name": "The Marketplace is currently initialising. Please wait.",
+  "source": "cache_text"
+ },
+ "1496": {
+  "name": "All new graphics engine",
+  "source": "cache_text"
+ },
+ "1497": {
+  "name": "Vote to choose which buff you will receive, when doing battle with the rival faction's minions. ",
+  "source": "cache_text"
+ },
+ "1498": {
+  "name": "The Marketplace is currently initialising. Please wait.",
+  "source": "cache_text"
+ },
+ "1500": {
+  "name": "Select a quest",
+  "source": "cache_text"
+ },
+ "1501": {
+  "name": "x days",
+  "source": "cache_text"
+ },
+ "1502": {
+  "name": "Release Camera",
+  "source": "cache_text"
+ },
+ "1503": {
+  "name": "Combat Lvl: %1",
+  "source": "cache_text"
+ },
+ "1507": {
+  "name": "Legacy Mode",
+  "source": "cache_text"
+ },
+ "1508": {
+  "name": "New Record!",
+  "source": "cache_text"
+ },
+ "1510": {
+  "name": "Sorry, you don't have enough bonds to buy that package.<br><br>You can purchase more bonds from the Grand Exchange, or click the 'Buy Bonds' button below to purchase some directly from our store.",
+  "source": "cache_text"
+ },
+ "1513": {
+  "name": "Screen Sizing",
+  "source": "cache_text"
+ },
+ "1515": {
+  "name": "Burn 0%",
+  "source": "cache_text"
+ },
+ "1517": {
+  "name": "Wave 1",
+  "source": "cache_text"
+ },
+ "1519": {
+  "name": "Ready",
+  "source": "cache_text"
+ },
+ "1521": {
+  "name": "WWWWWWWWWWWW has invited you to join the group: Dungeoneering (Frozen)",
+  "source": "cache_text"
+ },
+ "1523": {
+  "name": "0/12",
+  "source": "cache_text"
+ },
+ "1524": {
+  "name": "Grouping System",
+  "source": "cache_text"
+ },
+ "1526": {
+  "name": "Loading group data...",
+  "source": "cache_text"
+ },
+ "1527": {
+  "name": "Use this icon on your 'Group Members' interface if you close this window.",
+  "source": "cache_text"
+ },
+ "1528": {
+  "name": "Ready",
+  "source": "cache_text"
+ },
+ "1529": {
+  "name": "Please select an option from the list below:",
+  "source": "cache_text"
+ },
+ "1532": {
+  "name": "Tries: 0",
+  "source": "cache_text"
+ },
+ "1533": {
+  "name": "9999999",
+  "source": "cache_text"
+ },
+ "1535": {
+  "name": "Rush of Blood",
+  "source": "cache_text"
+ },
+ "1537": {
+  "name": "Cancel",
+  "source": "cache_text"
+ },
+ "1539": {
+  "name": "Reset your skills?",
+  "source": "cache_text"
+ },
+ "1541": {
+  "name": "Bestial Ghost",
+  "source": "cache_text"
+ },
+ "1542": {
+  "name": "0:00",
+  "source": "cache_text"
+ },
+ "1543": {
+  "name": "<col=aed0e0>General Rewards: </col>You can use both event points and trophies to purchase reward lamps. Points are gained by dismissing ghosts. Trophies are given once a day when you participate in dismissing a demonic ghost. Trophies can also be used to purchase the Ghost Hunter title and Proto Pack emote. The title is available through the Title tab on your Wardrobe interface.",
+  "source": "cache_text"
+ },
+ "1544": {
+  "name": "Ghostly Druid",
+  "source": "cache_text"
+ },
+ "1545": {
+  "name": "Cres currently active: 0",
+  "source": "cache_text"
+ },
+ "1547": {
+  "name": "Enter Room",
+  "source": "cache_text"
+ },
+ "1548": {
+  "name": "Select a book from the left to stack in the pile on the right, starting from the bottom.",
+  "source": "cache_text"
+ },
+ "1549": {
+  "name": "Basement",
+  "source": "cache_text"
+ },
+ "1550": {
+  "name": "Time:",
+  "source": "cache_text"
+ },
+ "1551": {
+  "name": "Correct pose:",
+  "source": "cache_text"
+ },
+ "1552": {
+  "name": "1. Crane",
+  "source": "cache_text"
+ },
+ "1553": {
+  "name": "Storage",
+  "source": "cache_text"
+ },
+ "1554": {
+  "name": "Exchange",
+  "source": "cache_text"
+ },
+ "1555": {
+  "name": "Recipes",
+  "source": "cache_text"
+ },
+ "1556": {
+  "name": "Cape Unlocked",
+  "source": "cache_text"
+ },
+ "1559": {
+  "name": "Prayer",
+  "source": "cache_text"
+ },
+ "1561": {
+  "name": "Set your status and personal message for other players to see.",
+  "source": "cache_text"
+ },
+ "1562": {
+  "name": "Buy",
+  "source": "cache_text"
+ },
+ "1564": {
+  "name": "REQUIRED POWER: 25. CURRENT POWER: 25.",
+  "source": "cache_text"
+ },
+ "1565": {
+  "name": "Kipple's debate progress.",
+  "source": "cache_text"
+ },
+ "1566": {
+  "name": "YES",
+  "source": "cache_text"
+ },
+ "1567": {
+  "name": "Presents left to deliver: 16",
+  "source": "cache_text"
+ },
+ "1569": {
+  "name": "Approval rating:",
+  "source": "cache_text"
+ },
+ "1570": {
+  "name": "Dominion Factor:",
+  "source": "cache_text"
+ },
+ "1571": {
+  "name": "Snowverload",
+  "source": "cache_text"
+ },
+ "1572": {
+  "name": "You can teleport to locations within the Elven Lands a total of 5 times per day.",
+  "source": "cache_text"
+ },
+ "1575": {
+  "name": "Power comes from presents!",
+  "source": "cache_text"
+ },
+ "1577": {
+  "name": "Name",
+  "source": "cache_text"
+ },
+ "1579": {
+  "name": "This is the question.",
+  "source": "cache_text"
+ },
+ "1580": {
+  "name": "Prize money:",
+  "source": "cache_text"
+ },
+ "1581": {
+  "name": "Clan Cup - Acorn Collection",
+  "source": "cache_text"
+ },
+ "1582": {
+  "name": "Total Kills",
+  "source": "cache_text"
+ },
+ "1583": {
+  "name": "5d  0h  0m",
+  "source": "cache_text"
+ },
+ "1584": {
+  "name": "NEW! - Love Potions",
+  "source": "cache_text"
+ },
+ "1587": {
+  "name": "World",
+  "source": "cache_text"
+ },
+ "1588": {
+  "name": "Start skilling to populate some data.",
+  "source": "cache_text"
+ },
+ "1590": {
+  "name": "Select",
+  "source": "cache_text"
+ },
+ "1591": {
+  "name": "Hardmode:",
+  "source": "cache_text"
+ },
+ "1592": {
+  "name": "Training points: 1000",
+  "source": "cache_text"
+ },
+ "1593": {
+  "name": "Light & Shadow Balance",
+  "source": "cache_text"
+ },
+ "1594": {
+  "name": "#CURRENCY: 1,234,567",
+  "source": "cache_text"
+ },
+ "1596": {
+  "name": "Dimension of Disaster: Curse of Arrav",
+  "source": "cache_text"
+ },
+ "1597": {
+  "name": "Required Jadinko",
+  "source": "cache_text"
+ },
+ "1598": {
+  "name": "Machine contents",
+  "source": "cache_text"
+ },
+ "1600": {
+  "name": "Progress",
+  "source": "cache_text"
+ },
+ "1601": {
+  "name": "Congratulations! You've completed the Easter 2015 event and earned the following rewards (click them to open the relevant interface):",
+  "source": "cache_text"
+ },
+ "1602": {
+  "name": "Easter Stats",
+  "source": "cache_text"
+ },
+ "1608": {
+  "name": "Brassica Prime Wins!",
+  "source": "cache_text"
+ },
+ "1609": {
+  "name": "This is where the title goes",
+  "source": "cache_text"
+ },
+ "1610": {
+  "name": "Useful Tools",
+  "source": "cache_text"
+ },
+ "1611": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1612": {
+  "name": "Positive",
+  "source": "cache_text"
+ },
+ "1613": {
+  "name": "Select an object to place",
+  "source": "cache_text"
+ },
+ "1614": {
+  "name": "2 skip credits",
+  "source": "cache_text"
+ },
+ "1615": {
+  "name": "Tiny salvage",
+  "source": "cache_text"
+ },
+ "1616": {
+  "name": "100%",
+  "source": "cache_text"
+ },
+ "1619": {
+  "name": "You have found the following fish:",
+  "source": "cache_text"
+ },
+ "1620": {
+  "name": "Guaranteed Purple!",
+  "source": "cache_text"
+ },
+ "1621": {
+  "name": "The following items are part of this set:",
+  "source": "cache_text"
+ },
+ "1622": {
+  "name": "Loot All",
+  "source": "cache_text"
+ },
+ "1624": {
+  "name": "Thaler:",
+  "source": "cache_text"
+ },
+ "1626": {
+  "name": "Death Reclaim",
+  "source": "cache_text"
+ },
+ "1627": {
+  "name": "Dye:",
+  "source": "cache_text"
+ },
+ "1630": {
+  "name": "Armour",
+  "source": "cache_text"
+ },
+ "1631": {
+  "name": "250",
+  "source": "cache_text"
+ },
+ "1632": {
+  "name": "Click the skills to toggle whether or not you will use your pulse core XP charges when training these skills.",
+  "source": "cache_text"
+ },
+ "1634": {
+  "name": "Rank",
+  "source": "cache_text"
+ },
+ "1635": {
+  "name": "Skill",
+  "source": "cache_text"
+ },
+ "1637": {
+  "name": "Challenge Gem - Skilling Competition",
+  "source": "cache_text"
+ },
+ "1638": {
+  "name": "Type",
+  "source": "cache_text"
+ },
+ "1639": {
+  "name": "0000",
+  "source": "cache_text"
+ },
+ "1641": {
+  "name": "Toggle all:",
+  "source": "cache_text"
+ },
+ "1643": {
+  "name": "CONGRATULATIONS!",
+  "source": "cache_text"
+ },
+ "1644": {
+  "name": "It's a frantic race!",
+  "source": "cache_text"
+ },
+ "1645": {
+  "name": "Done",
+  "source": "cache_text"
+ },
+ "1647": {
+  "name": "What ballad should be played on V's arrival?",
+  "source": "cache_text"
+ },
+ "1649": {
+  "name": "125",
+  "source": "cache_text"
+ },
+ "1650": {
+  "name": "Remaining",
+  "source": "cache_text"
+ },
+ "1653": {
+  "name": "Are  you wish to reset your progress?",
+  "source": "cache_text"
+ },
+ "1654": {
+  "name": "Next reward: ubersick reward",
+  "source": "cache_text"
+ },
+ "1657": {
+  "name": "Armadyl",
+  "source": "cache_text"
+ },
+ "1658": {
+  "name": "First Faction",
+  "source": "cache_text"
+ },
+ "1660": {
+  "name": "Prestige Level - 0",
+  "source": "cache_text"
+ },
+ "1665": {
+  "name": "House Settings",
+  "source": "cache_text"
+ },
+ "1666": {
+  "name": "Loading...",
+  "source": "cache_text"
+ },
+ "1667": {
+  "name": "It’s time to take your adventuring exam, and you are super nervous. The paper seems to be covered in random scribbles and unreadable symbols, which is making it pretty tricky to answer the questions. Worse, you keep on having to stop the exam in order to go to adventuring lessons.  This is totally stupid and a waste of time as you’ve also got to get ready to go adventuring.  You scamper up and down the halls of adventuring school, checking your schedule and getting more and more frustrated as you discover dozens of subjects you’ve not attended for months are now due for final exams.  But wait…none of this makes any sense!  You’ve been an adventurer for years, and even then you didn’t go to a school to learn how to do it.  This must be a crazy dream.  That explains why all the teachers are clouds of shrieking bats.  You wake up with a start.",
+  "source": "cache_text"
+ },
+ "1669": {
+  "name": "Select a pose:",
+  "source": "cache_text"
+ },
+ "1675": {
+  "name": "Unlocked<br>tomorrow",
+  "source": "cache_text"
+ },
+ "1681": {
+  "name": "Start skilling to populate some data.",
+  "source": "cache_text"
+ },
+ "1685": {
+  "name": "Combat XP",
+  "source": "cache_text"
+ },
+ "1686": {
+  "name": "Noumenon Favour: 0",
+  "source": "cache_text"
+ },
+ "1687": {
+  "name": "Community <br>Progress<br>100.0%",
+  "source": "cache_text"
+ },
+ "1689": {
+  "name": "Moves left:",
+  "source": "cache_text"
+ },
+ "1691": {
+  "name": "Total Value:",
+  "source": "cache_text"
+ },
+ "1694": {
+  "name": "Food to cook:",
+  "source": "cache_text"
+ },
+ "1697": {
+  "name": "Outside Lane: 75% XP<br>Middle Lane: 100% XP<br>Inside Lane: 125% XP",
+  "source": "cache_text"
+ },
+ "1701": {
+  "name": "Claim free present",
+  "source": "cache_text"
+ },
+ "1703": {
+  "name": "Brace's Friend List",
+  "source": "cache_text"
+ },
+ "1704": {
+  "name": "Train to wield Vannaka's two-handed sword in one hand!<br><br>Use only your senses to react to ripples in the water and eviscerate the giant sea rats that try to attack you.",
+  "source": "cache_text"
+ },
+ "1705": {
+  "name": "Check",
+  "source": "cache_text"
+ },
+ "1706": {
+  "name": "Code : _ _ _",
+  "source": "cache_text"
+ },
+ "1707": {
+  "name": "Elite Skill",
+  "source": "cache_text"
+ },
+ "1708": {
+  "name": "Current Project ",
+  "source": "cache_text"
+ },
+ "1709": {
+  "name": "Item Information",
+  "source": "cache_text"
+ },
+ "1710": {
+  "name": "current glow",
+  "source": "cache_text"
+ },
+ "1711": {
+  "name": "Level information",
+  "source": "cache_text"
+ },
+ "1712": {
+  "name": "Create",
+  "source": "cache_text"
+ },
+ "1714": {
+  "name": "Select a gizmo to remove.",
+  "source": "cache_text"
+ },
+ "1715": {
+  "name": "Unlocked<br>tomorrow",
+  "source": "cache_text"
+ },
+ "1716": {
+  "name": "Prestige Level - 0",
+  "source": "cache_text"
+ },
+ "1717": {
+  "name": "Rose Petals",
+  "source": "cache_text"
+ },
+ "1718": {
+  "name": "Marimbo",
+  "source": "cache_text"
+ },
+ "1723": {
+  "name": "10/10",
+  "source": "cache_text"
+ },
+ "1724": {
+  "name": "From far below came strains of gruff, tuneless humming. I rubbed my eyes, and peered down through the branches to see a stocky dwarf staggering towards the tree's roots. He leant against the trunk with one hand, chuckled to himself – as if at some private joke – and fumbled with his breeches. There was a trickling sound, and I grimaced. <br><br>Ugh…right. After this, I can sleep?<br><br>Silence. Good enough for me.<br><br>I clambered up into the high branches, and squinted around until I found a giant leaf, still welling with water from the night's rain. I flipped it with the end of my staff, and rainwater gushed down to the sound of dwarven curses. <br><br>I lay back in the morning sun and laughed, the boughs bobbing in time.",
+  "source": "cache_text"
+ },
+ "1725": {
+  "name": "Total Souls:",
+  "source": "cache_text"
+ },
+ "1726": {
+  "name": "Metal amount: 1337",
+  "source": "cache_text"
+ },
+ "1727": {
+  "name": "Sanity",
+  "source": "cache_text"
+ },
+ "1729": {
+  "name": "Portcullis",
+  "source": "cache_text"
+ },
+ "1739": {
+  "name": "Reset Tracker Layout",
+  "source": "cache_text"
+ },
+ "1740": {
+  "name": "Subscribe",
+  "source": "cache_text"
+ },
+ "1742": {
+  "name": "Community <br>Progress<br>100.0%",
+  "source": "cache_text"
+ },
+ "1744": {
+  "name": "Hint",
+  "source": "cache_text"
+ },
+ "1745": {
+  "name": "Flight of the Butterflies",
+  "source": "cache_text"
+ },
+ "1746": {
+  "name": "Killcount",
+  "source": "cache_text"
+ },
+ "1747": {
+  "name": "Ubersick reward info",
+  "source": "cache_text"
+ },
+ "1750": {
+  "name": "Auto Loot Bones",
+  "source": "cache_text"
+ },
+ "1751": {
+  "name": "Runecrafting Progress",
+  "source": "cache_text"
+ },
+ "1752": {
+  "name": "Scanning...",
+  "source": "cache_text"
+ },
+ "1754": {
+  "name": "Solar Glare",
+  "source": "cache_text"
+ },
+ "1755": {
+  "name": "Benedict's Scrapbook",
+  "source": "cache_text"
+ },
+ "1757": {
+  "name": "Bitey the Dragon was last seen by Milly in Rimmington. You should speak to her to start your investigation.",
+  "source": "cache_text"
+ },
+ "1758": {
+  "name": "Mega May",
+  "source": "cache_text"
+ },
+ "1759": {
+  "name": "Current case",
+  "source": "cache_text"
+ },
+ "1760": {
+  "name": "May Weekends",
+  "source": "cache_text"
+ },
+ "1762": {
+  "name": "Tier 1",
+  "source": "cache_text"
+ },
+ "1763": {
+  "name": "5:00",
+  "source": "cache_text"
+ },
+ "1764": {
+  "name": "Maze Map",
+  "source": "cache_text"
+ },
+ "1766": {
+  "name": "Claim<br>Prize",
+  "source": "cache_text"
+ },
+ "1767": {
+  "name": "Abyssal Whip",
+  "source": "cache_text"
+ },
+ "1768": {
+  "name": "Correct pose:",
+  "source": "cache_text"
+ },
+ "1770": {
+  "name": "Phase: 1",
+  "source": "cache_text"
+ },
+ "1771": {
+  "name": "Current Enrage:",
+  "source": "cache_text"
+ },
+ "1772": {
+  "name": "Combat XP",
+  "source": "cache_text"
+ },
+ "1773": {
+  "name": "Accept",
+  "source": "cache_text"
+ },
+ "1774": {
+  "name": "Rewards",
+  "source": "cache_text"
+ },
+ "1775": {
+  "name": "Choose your preferred Interface and Combat mode:",
+  "source": "cache_text"
+ },
+ "1776": {
+  "name": "Inventory",
+  "source": "cache_text"
+ },
+ "1780": {
+  "name": "15th August",
+  "source": "cache_text"
+ },
+ "1784": {
+  "name": "There is currently no active seasonal event.",
+  "source": "cache_text"
+ },
+ "1785": {
+  "name": "Welcome to Crablet Plunder!<br>Log in daily to catch crablets capable of shelling out XP in a variety of skills! Keep coming back and you'll build up a chain bonus. For more information, press the Info button below.<br>To go straight to the event, hit Play! ",
+  "source": "cache_text"
+ },
+ "1786": {
+  "name": "The Arc",
+  "source": "cache_text"
+ },
+ "1787": {
+  "name": "WWWWWWWWWWWW",
+  "source": "cache_text"
+ },
+ "1788": {
+  "name": "Rank",
+  "source": "cache_text"
+ },
+ "1789": {
+  "name": "Rollover a gametype on the left for more for more information!",
+  "source": "cache_text"
+ },
+ "1790": {
+  "name": "Favourite",
+  "source": "cache_text"
+ },
+ "1794": {
+  "name": "Current Reward Value: XXXXXXXXXX coins!",
+  "source": "cache_text"
+ },
+ "1795": {
+  "name": "Security Web Links",
+  "source": "cache_text"
+ },
+ "1796": {
+  "name": "Herblore Progress",
+  "source": "cache_text"
+ },
+ "1797": {
+  "name": "Type",
+  "source": "cache_text"
+ },
+ "1798": {
+  "name": "Graine de roustiboisier",
+  "source": "cache_text"
+ },
+ "1799": {
+  "name": "Outside track: Low efficiency<br>Middle track: Medium efficiency<br>Inside track: High efficiency",
+  "source": "cache_text"
+ },
+ "1800": {
+  "name": "1. Slow",
+  "source": "cache_text"
+ },
+ "1801": {
+  "name": "Prestige 1/5",
+  "source": "cache_text"
+ },
+ "1802": {
+  "name": "Description",
+  "source": "cache_text"
+ },
+ "1803": {
+  "name": "Teleport to Event",
+  "source": "cache_text"
+ },
+ "1804": {
+  "name": "Ultra Rare Prizes",
+  "source": "cache_text"
+ },
+ "1806": {
+  "name": "Mah's Nightmare",
+  "source": "cache_text"
+ },
+ "1807": {
+  "name": "Open in Browser",
+  "source": "cache_text"
+ },
+ "1808": {
+  "name": "Christmas Quest Episodes",
+  "source": "cache_text"
+ },
+ "1810": {
+  "name": "Summary :",
+  "source": "cache_text"
+ },
+ "1812": {
+  "name": "Current Charge : 500",
+  "source": "cache_text"
+ },
+ "1813": {
+  "name": "Would you like to buy a bond from the grand exchange for +5% base price?",
+  "source": "cache_text"
+ },
+ "1815": {
+  "name": "Skill 99s",
+  "source": "cache_text"
+ },
+ "1817": {
+  "name": "Prestige 1/5",
+  "source": "cache_text"
+ },
+ "1818": {
+  "name": "Sliske has placed you and the other gods into a Labyrinth that seems to span as far as your eyes can see.<br><br>There are two stages of the Labyrinth and each stage has been split into four sections.<br><br>The exit of the Labyrinth is always in the most <col=0xFFFFFF>north-easterly room of the north east section</col>.<br><br>Some parts of the Labyrinth seem to be impassable because that room needs to be rotated. If you encounter one of these rooms you will need to find and complete one of Sliske's devious puzzle rooms to rotate it to the correct position.<br><br>Beware: You are racing against all the other gods and the longer you take working out your path, the further ahead they get. <col=0xffffff>Time stands still when you are in a room, but advances when you leave through an archway</col>. Choose your steps carefully.",
+  "source": "cache_text"
+ },
+ "1820": {
+  "name": "Interaction 1",
+  "source": "cache_text"
+ },
+ "1821": {
+  "name": "Engrams must be charged and handed into Orla before you can display their echo on a plinth. Displaying echoes is not required for any passive beneficial effects.",
+  "source": "cache_text"
+ },
+ "1822": {
+  "name": "Calibrating the energies here gives you bonus effects related to Divination.<br>Your selection will be locked in once confirmed, but will be adjustable once per week, or whenever you charge a new engram.",
+  "source": "cache_text"
+ },
+ "1824": {
+  "name": "Reputation:",
+  "source": "cache_text"
+ },
+ "1825": {
+  "name": "Select a skillcape perk",
+  "source": "cache_text"
+ },
+ "1826": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1827": {
+  "name": "Use all",
+  "source": "cache_text"
+ },
+ "1829": {
+  "name": "1: ",
+  "source": "cache_text"
+ },
+ "1830": {
+  "name": "Press Enter to confirm",
+  "source": "cache_text"
+ },
+ "1842": {
+  "name": "Set your status and personal message for other players to see.",
+  "source": "cache_text"
+ },
+ "1843": {
+  "name": "Search...",
+  "source": "cache_text"
+ },
+ "1845": {
+  "name": "Purchase",
+  "source": "cache_text"
+ },
+ "1846": {
+  "name": "Continue",
+  "source": "cache_text"
+ },
+ "1851": {
+  "name": "Reward Information",
+  "source": "cache_text"
+ },
+ "1852": {
+  "name": "Combat",
+  "source": "cache_text"
+ },
+ "1857": {
+  "name": "Completionist Capes",
+  "source": "cache_text"
+ },
+ "1859": {
+  "name": "1. Step",
+  "source": "cache_text"
+ },
+ "1860": {
+  "name": "Card 1",
+  "source": "cache_text"
+ },
+ "1861": {
+  "name": "Tokens : 00000",
+  "source": "cache_text"
+ },
+ "1862": {
+  "name": "Trixie has asked for the following items:",
+  "source": "cache_text"
+ },
+ "1863": {
+  "name": "The Great Zoltan Speaks!",
+  "source": "cache_text"
+ },
+ "1864": {
+  "name": "Bronze Challenge",
+  "source": "cache_text"
+ },
+ "1865": {
+  "name": "World started",
+  "source": "cache_text"
+ },
+ "1866": {
+  "name": "9999",
+  "source": "cache_text"
+ },
+ "1867": {
+  "name": "Match Setup",
+  "source": "cache_text"
+ },
+ "1868": {
+  "name": "PLACEHOLDER Mutator Description 1 Text - Blah blah blah blah blah",
+  "source": "cache_text"
+ },
+ "1870": {
+  "name": "Hunt for these prizes!",
+  "source": "cache_text"
+ },
+ "1872": {
+  "name": "HOME",
+  "source": "cache_text"
+ },
+ "1875": {
+  "name": "Object Text",
+  "source": "cache_text"
+ },
+ "1877": {
+  "name": "Corruption",
+  "source": "cache_text"
+ },
+ "1879": {
+  "name": "Monsters collected:<br>100/150",
+  "source": "cache_text"
+ },
+ "1890": {
+  "name": "Prayers",
+  "source": "cache_text"
+ },
+ "1891": {
+  "name": "0000/0000",
+  "source": "cache_text"
+ },
+ "1892": {
+  "name": "Skills",
+  "source": "cache_text"
+ },
+ "1894": {
+  "name": "Clear Path",
+  "source": "cache_text"
+ },
+ "1895": {
+  "name": "Clear Path",
+  "source": "cache_text"
+ },
+ "1896": {
+  "name": "Close",
+  "source": "cache_text"
+ },
+ "1898": {
+  "name": "RuneFest 2017",
+  "source": "cache_text"
+ },
+ "1899": {
+  "name": "Current Siphon Storage",
+  "source": "cache_text"
+ },
+ "1900": {
+  "name": "WITHDRAW ALL",
+  "source": "cache_text"
+ },
+ "1901": {
+  "name": "Machines available for this hotspot:",
+  "source": "cache_text"
+ },
+ "1902": {
+  "name": "1 week 3 days 19 hours 45 minutes",
+  "source": "cache_text"
+ },
+ "1903": {
+  "name": "! You have no items to process !",
+  "source": "cache_text"
+ },
+ "1905": {
+  "name": "Get the requested drink from each of the Inns before the 6th November to win 2 large prismatic lamps. You will receive a small prismatic lamp for each task on the list you complete.",
+  "source": "cache_text"
+ },
+ "1906": {
+  "name": "1. Stamp",
+  "source": "cache_text"
+ },
+ "1908": {
+  "name": "Outside Lane: 75% XP<br>Middle Lane: 100% XP<br>Inside Lane: 125% XP",
+  "source": "cache_text"
+ },
+ "1909": {
+  "name": "1. Walk",
+  "source": "cache_text"
+ },
+ "1910": {
+  "name": "Current Streak<br> 0 Unsummoned",
+  "source": "cache_text"
+ },
+ "1911": {
+  "name": "00/00",
+  "source": "cache_text"
+ },
+ "1913": {
+  "name": "Ghostly Druid",
+  "source": "cache_text"
+ },
+ "1916": {
+  "name": "Back",
+  "source": "cache_text"
+ },
+ "1920": {
+  "name": "Loading...",
+  "source": "cache_text"
+ },
+ "1921": {
+  "name": "loading map",
+  "source": "cache_text"
+ },
+ "1922": {
+  "name": "To reopen this interface, tap these icons. ",
+  "source": "cache_text"
+ },
+ "1923": {
+  "name": "999",
+  "source": "cache_text"
+ },
+ "1924": {
+  "name": "Combat Bar Buttons",
+  "source": "cache_text"
+ },
+ "1928": {
+  "name": "Fare:",
+  "source": "cache_text"
+ },
+ "1929": {
+  "name": "Select an aura to view more information about it. Use the search icon next to the dropdown menu to find specific auras.",
+  "source": "cache_text"
+ },
+ "1930": {
+  "name": "Level",
+  "source": "cache_text"
+ },
+ "1931": {
+  "name": "Reset",
+  "source": "cache_text"
+ },
+ "1933": {
+  "name": "Click on the combat styles to cycle through them.<br>Match them all to unlock the lockbox.",
+  "source": "cache_text"
+ },
+ "1934": {
+  "name": "Are you sure you want to reset?<br><br>Any progress made will be lost.<br><br>This cannot be undone.",
+  "source": "cache_text"
+ },
+ "1936": {
+  "name": "Built",
+  "source": "cache_text"
+ },
+ "1938": {
+  "name": "Fishing Frenzy",
+  "source": "cache_text"
+ },
+ "1943": {
+  "name": "Confirm",
+  "source": "cache_text"
+ },
+ "1944": {
+  "name": "Icon Button",
+  "source": "cache_text"
+ },
+ "1945": {
+  "name": "Revolution Action Bar:",
+  "source": "cache_text"
+ },
+ "13": {
+  "name": "First click the FIRST digit.",
+  "source": "cs2_settext"
+ },
+ "191": {
+  "name": "Santa's Lodge",
+  "source": "cs2_settext"
+ },
+ "794": {
+  "name": "<br><br><col=302008>Profession<br>Town crier<br>Cook<br>Rune seller<br>Apothecary<br>Fancy dress store owner<br>Fur seller<br>Economist<br>Cart expert<br>Unemployed<br>Minor noble<br>Banker<br>Legitimate businessman<br>Housewife<br>Baby<br>Travelling merchant<br>Baby",
+  "source": "cs2_settext"
+ },
+ "845": {
+  "name": "Pinch to<br>zoom your camera",
+  "source": "cs2_settext"
+ },
+ "862": {
+  "name": "Fill mode",
+  "source": "cs2_settext"
+ },
+ "972": {
+  "name": "<u>Bre'egth:</u> <br><br>Aggressive female ork found patrolling Zanaris near the windmill. Intelligence leads us to believe that a recent fist fight with a subordinate left Bre'egth with one less tooth in her head, and one subordinate permanently relocated somewhere else.",
+  "source": "cs2_settext"
+ },
+ "1050": {
+  "name": "And so Thok made good on his word and made Bone Face pay for getting in the way of his next adventure.",
+  "source": "cs2_settext"
+ },
+ "1251": {
+  "name": "Done",
+  "source": "cs2_settext"
+ },
+ "1336": {
+  "name": "Hunt for the Golden Eggs",
+  "source": "cs2_settext"
+ },
+ "1396": {
+  "name": "Enter Lobby",
+  "source": "cs2_settext"
+ },
+ "1401": {
+  "name": "Nominate this Account",
+  "source": "cs2_settext"
+ },
+ "1469": {
+  "name": "Enter name of friend to add to list",
+  "source": "cs2_settext"
+ },
+ "1495": {
+  "name": "Claim",
+  "source": "cs2_settext"
+ }
+}

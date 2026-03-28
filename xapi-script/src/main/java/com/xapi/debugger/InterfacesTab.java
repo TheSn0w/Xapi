@@ -6,22 +6,71 @@ import com.botwithus.bot.api.model.Component;
 import com.botwithus.bot.api.model.MiniMenuEntry;
 import com.botwithus.bot.api.model.OpenInterface;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiTableFlags;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 final class InterfacesTab {
 
+    private static final Logger log = LoggerFactory.getLogger(InterfacesTab.class);
+
     private final XapiState state;
+    private final Map<Integer, String> interfaceNames = new HashMap<>();
 
     InterfacesTab(XapiState s) {
         this.state = s;
+        loadInterfaceNames();
+    }
+
+    private void loadInterfaceNames() {
+        try {
+            var is = getClass().getResourceAsStream("/interface_names.json");
+            if (is != null) {
+                String json = new String(is.readAllBytes());
+                is.close();
+                JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+                for (var entry : root.entrySet()) {
+                    int id = Integer.parseInt(entry.getKey());
+                    JsonObject obj = entry.getValue().getAsJsonObject();
+                    String name = obj.has("name") ? obj.get("name").getAsString() : null;
+                    if (name != null && !name.isEmpty()
+                            && !name.equals("Insert a very long name here!")) {
+                        interfaceNames.put(id, name);
+                    }
+                }
+                log.debug("[Interfaces] Loaded {} interface names from enrichment", interfaceNames.size());
+            }
+        } catch (Exception e) {
+            log.warn("[Interfaces] Failed to load interface_names.json: {}", e.getMessage());
+        }
+    }
+
+    /** Returns the enriched name for an interface, or empty string if unknown. */
+    String getInterfaceName(int ifaceId) {
+        return interfaceNames.getOrDefault(ifaceId, "");
+    }
+
+    /** Formats an interface label like "Interface 1477 — Skip Cutscene" or just "Interface 1477". */
+    private String ifaceLabel(int ifaceId) {
+        String name = interfaceNames.get(ifaceId);
+        if (name != null) {
+            return "Interface " + ifaceId + " \u2014 " + name;
+        }
+        return "Interface " + ifaceId;
     }
 
     void render() {
@@ -56,7 +105,7 @@ final class InterfacesTab {
 
         for (OpenInterface iface : sorted) {
             int ifaceId = iface.interfaceId();
-            boolean open = ImGui.treeNode("Interface " + ifaceId + "##iface_" + ifaceId);
+            boolean open = ImGui.treeNode(ifaceLabel(ifaceId) + "##iface_" + ifaceId);
             if (ImGui.isItemClicked()) {
                 state.inspectInterfaceId = ifaceId;
             }
@@ -165,9 +214,11 @@ final class InterfacesTab {
         if (ImGui.smallButton("Copy All")) {
             StringBuilder sb = new StringBuilder();
             for (InterfaceEvent ev : state.interfaceEventLog) {
-                sb.append(String.format("[%s] Tick:%d Interface:%d %s\n",
+                String evName = getInterfaceName(ev.interfaceId());
+                String evNameTag = evName.isEmpty() ? "" : " (" + evName + ")";
+                sb.append(String.format("[%s] Tick:%d Interface:%d%s %s\n",
                         XapiState.TIME_FMT.format(Instant.ofEpochMilli(ev.timestamp()).atZone(ZoneId.systemDefault()).toLocalTime()),
-                        ev.gameTick(), ev.interfaceId(), ev.type()));
+                        ev.gameTick(), ev.interfaceId(), evNameTag, ev.type()));
                 if ("OPENED".equals(ev.type())) {
                     for (InterfaceComponentSnapshot cs : ev.components()) {
                         if ((cs.text() != null && !cs.text().isEmpty()) || !cs.options().isEmpty()) {
@@ -207,8 +258,10 @@ final class InterfacesTab {
                 }
             }
 
-            String header = String.format("[%s] Tick:%d  %s  Interface %d  %s",
-                    time, ev.gameTick(), ev.type(), ev.interfaceId(), summary);
+            String ifName = getInterfaceName(ev.interfaceId());
+            String nameTag = ifName.isEmpty() ? "" : " \u2014 " + ifName;
+            String header = String.format("[%s] Tick:%d  %s  Interface %d%s  %s",
+                    time, ev.gameTick(), ev.type(), ev.interfaceId(), nameTag, summary);
 
             // Color: green for OPENED, red for CLOSED
             if (isOpen) {
@@ -317,10 +370,11 @@ final class InterfacesTab {
 
             if (ImGui.treeNode(header + "##menu_" + i)) {
                 int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
-                if (ImGui.beginTable("##menu_tbl_" + i, 5, flags)) {
+                if (ImGui.beginTable("##menu_tbl_" + i, 6, flags)) {
                     ImGui.tableSetupColumn("Option", 0, 1.5f);
-                    ImGui.tableSetupColumn("Action", 0, 0.5f);
-                    ImGui.tableSetupColumn("ItemId", 0, 0.5f);
+                    ImGui.tableSetupColumn("Action", 0, 0.4f);
+                    ImGui.tableSetupColumn("Interface", 0, 1f);
+                    ImGui.tableSetupColumn("ItemId", 0, 0.4f);
                     ImGui.tableSetupColumn("Params", 0, 1f);
                     ImGui.tableSetupColumn("Code", 0, 1.5f);
                     ImGui.tableHeadersRow();
@@ -332,10 +386,19 @@ final class InterfacesTab {
                         ImGui.textColored(1f, 0.9f, 0.6f, 1f, me.optionText() != null ? me.optionText() : "");
                         ImGui.tableSetColumnIndex(1); ImGui.text(String.valueOf(me.actionId()));
                         ImGui.tableSetColumnIndex(2);
-                        if (me.itemId() > 0) ImGui.text(String.valueOf(me.itemId()));
+                        int menuIfaceId = me.param3() >>> 16;
+                        int menuCompId = me.param3() & 0xFFFF;
+                        if (menuIfaceId > 0) {
+                            String menuIfName = getInterfaceName(menuIfaceId);
+                            String ifLabel = menuIfaceId + ":" + menuCompId;
+                            if (!menuIfName.isEmpty()) ifLabel += " (" + menuIfName + ")";
+                            ImGui.text(ifLabel);
+                        }
                         ImGui.tableSetColumnIndex(3);
-                        ImGui.text("p1:" + me.param1() + " p2:" + me.param2() + " p3:" + me.param3());
+                        if (me.itemId() > 0) ImGui.text(String.valueOf(me.itemId()));
                         ImGui.tableSetColumnIndex(4);
+                        ImGui.text("p1:" + me.param1() + " p2:" + me.param2() + " p3:" + me.param3());
+                        ImGui.tableSetColumnIndex(5);
                         String code = "api.queueAction(new GameAction(" + me.actionId()
                                 + ", " + me.param1() + ", " + me.param2() + ", " + me.param3() + "));";
                         ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
