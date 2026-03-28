@@ -8,6 +8,7 @@ import com.botwithus.bot.api.ScriptCategory;
 import com.botwithus.bot.api.ScriptContext;
 import com.botwithus.bot.api.ScriptManifest;
 import com.botwithus.bot.api.event.*;
+import com.botwithus.bot.api.inventory.ActionBar;
 import com.botwithus.bot.api.inventory.ActionTranslator;
 import com.botwithus.bot.api.inventory.ActionTypes;
 import com.botwithus.bot.api.inventory.Smithing;
@@ -30,6 +31,9 @@ import com.botwithus.bot.core.impl.ActionDebugger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.Map;
+import java.util.List;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -76,6 +80,7 @@ public class XapiScript implements BotScript {
     private InventoryTab inventoryTab;
     private ProductionTab productionTab;
     private SmithingTab smithingTab;
+    private ActionBarTab actionBarTab;
 
     // ── Helper instances ─────────────────────────────────────────────────
     private NameResolver nameResolver;
@@ -124,6 +129,7 @@ public class XapiScript implements BotScript {
         inventoryTab = new InventoryTab(state);
         productionTab = new ProductionTab(state);
         smithingTab = new SmithingTab(state);
+        actionBarTab = new ActionBarTab(state);
 
         // Initialize entity facades
         GameAPI gameApi = ctx.getGameAPI();
@@ -177,6 +183,106 @@ public class XapiScript implements BotScript {
         // Data collection is done in onLoop() to avoid backpressure —
         // onTick fires every 600ms regardless of whether previous RPC calls finished,
         // whereas onLoop naturally waits for the current iteration to complete.
+
+        // Always poll VarC 2092 (GCD) and ability varcs on tick when Action Bar tab is active
+        if (state.activeTab == 10) {
+            loadAbilityVarcs(); // Ensure varc mappings are loaded before polling
+            try {
+                GameAPI api = state.ctx.getGameAPI();
+
+                // Poll GCD (VarC 2092)
+                int gcdVal = api.getVarcInt(2092);
+                Integer prevGcd = state.tickProbeVarcValues.put("varc:2092", gcdVal);
+                boolean gcdFired = prevGcd != null && gcdVal > prevGcd;
+
+                if (gcdFired) {
+                    long now = System.currentTimeMillis();
+                    state.lastAbilityActivationTime = now;
+                    state.lastAbilityActivationTick = state.currentTick;
+
+                    // Identify which ability by polling all known ability varcs
+                    String abilityName = "";
+                    int detectedVarc = 0;
+                    for (var entry : varcToAbilityName.entrySet()) {
+                        int varcId = entry.getKey();
+                        try {
+                            int val = api.getVarcInt(varcId);
+                            String key = "ability_varc:" + varcId;
+                            Integer prev = state.tickProbeVarcValues.put(key, val);
+                            if (prev != null && val != prev && val > prev) {
+                                abilityName = entry.getValue();
+                                detectedVarc = varcId;
+                                break; // Found the one that changed
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    // Fallback: VarC 2215 stores the struct ID for abilities using the generic path
+                    if (abilityName.isEmpty()) {
+                        try {
+                            int genericStructId = api.getVarcInt(2215);
+                            Integer prevGeneric = state.tickProbeVarcValues.put("ability_varc:2215", genericStructId);
+                            if (prevGeneric != null && genericStructId != prevGeneric && genericStructId > 0) {
+                                // Look up struct name from sprite cache
+                                abilityName = resolveStructName(api, genericStructId);
+                                detectedVarc = 2215;
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    // GCD fired but no ability varc changed — this is the auto-attack.
+                    // Try to find the auto-attack name from the action bar entries.
+                    if (abilityName.isEmpty()) {
+                        for (var abEntry : state.actionBarEntries) {
+                            if (abEntry.name().contains("Attack") || abEntry.name().contains("attack")) {
+                                abilityName = abEntry.name();
+                                break;
+                            }
+                        }
+                        if (abilityName.isEmpty()) abilityName = "Auto-attack";
+                    }
+
+                    // Adrenaline delta as extra info
+                    int adrenNow = api.getVarp(679);
+                    int adrenDelta = adrenNow - state.lastPolledAdrenaline;
+                    String option = "";
+                    if (adrenDelta != 0) option = String.format("Adren: %+d", adrenDelta);
+                    if (detectedVarc > 0) option += (option.isEmpty() ? "" : " | ") + "VarC:" + detectedVarc;
+
+                    state.actionBarHistory.add(new XapiData.ActionBarActivation(
+                            now, state.currentTick, 0, 0, 0, abilityName, option));
+                    while (state.actionBarHistory.size() > 200) state.actionBarHistory.remove(0);
+                }
+
+                // Track adrenaline for delta detection
+                state.lastPolledAdrenaline = api.getVarp(679);
+            } catch (Exception ignored) {}
+        }
+
+        // Poll watched VarCs on every tick for change detection (varcs have no events)
+        if (state.activeTab == 10 && state.probeVarcIds.length > 0) {
+            try {
+                GameAPI api = state.ctx.getGameAPI();
+                for (int varcId : state.probeVarcIds) {
+                    try {
+                        int val = api.getVarcInt(varcId);
+                        String key = "varc:" + varcId;
+                        Integer prev = state.tickProbeVarcValues.put(key, val);
+                        if (prev != null && prev != val) {
+                            state.varcChangeLog.add(new XapiData.VarcChange(
+                                    System.currentTimeMillis(), state.currentTick, varcId, prev, val));
+                            while (state.varcChangeLog.size() > 200) state.varcChangeLog.remove(0);
+
+                            // VarC 2092 increased = GCD just started (lasts 3 ticks / 1.8s)
+                            if (varcId == 2092 && val > prev) {
+                                state.lastAbilityActivationTime = System.currentTimeMillis();
+                                state.lastAbilityActivationTick = state.currentTick;
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                }
+            } catch (Exception ignored) {}
+        }
     }
 
     private void onActionExecuted(ActionExecutedEvent e) {
@@ -249,11 +355,37 @@ public class XapiScript implements BotScript {
                 }
             } catch (Exception ignored) {}
 
+            long actionTime = System.currentTimeMillis();
             state.actionLog.add(new LogEntry(
                     e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3(),
-                    System.currentTimeMillis(), state.currentTick, false, "client",
+                    actionTime, state.currentTick, false, "client",
                     names[0], names[1], px, py, pp, pa, pm
             ));
+
+            // Track action bar activations
+            if (e.getActionId() == 57 || e.getActionId() == 58) { // COMPONENT or SELECT_COMPONENT_ITEM
+                int packed = e.getParam3();
+                int ifaceId = packed >>> 16;
+                int compId = packed & 0xFFFF;
+                if (ifaceId == 1430 || ifaceId == 1670 || ifaceId == 1671 || ifaceId == 1672 || ifaceId == 1673) {
+                    int slot = resolveSlotNumber(ifaceId, compId);
+                    String slotName = names[0] != null ? names[0] : "";
+                    String optName = names[1] != null ? names[1] : "";
+                    // Try to get better name from current action bar entries
+                    for (var abEntry : state.actionBarEntries) {
+                        if (abEntry.interfaceId() == ifaceId && abEntry.componentId() == compId && !abEntry.name().isEmpty()) {
+                            slotName = abEntry.name();
+                            break;
+                        }
+                    }
+                    state.actionBarHistory.add(new ActionBarActivation(
+                            actionTime, state.currentTick, ifaceId, compId, slot, slotName, optName));
+                    while (state.actionBarHistory.size() > 200) state.actionBarHistory.remove(0);
+                    // Track GCD
+                    state.lastAbilityActivationTime = actionTime;
+                    state.lastAbilityActivationTick = state.currentTick;
+                }
+            }
 
             // Build interaction snapshot from cached state (no RPC calls)
             try {
@@ -426,6 +558,11 @@ public class XapiScript implements BotScript {
             try { inspectorCollector.collectSmithingData(api); } catch (Exception e) { log.debug("collectSmithingData failed: {}", e.getMessage()); }
             try { inspectorCollector.collectActiveSmithingData(api); } catch (Exception e) { log.debug("collectActiveSmithingData failed: {}", e.getMessage()); }
         }
+        // Action bar collector — only when Action Bar tab (10) is active
+        if (tab == 10) {
+            try { collectActionBarData(api); } catch (Exception e) { log.debug("collectActionBarData failed: {}", e.getMessage()); }
+        }
+
         try { inventoryTracker.collectInventoryDiff(api); } catch (Exception e) { log.debug("collectInventoryDiff failed: {}", e.getMessage()); }
 
         // Mini menu poll + pre-resolve action names — only when Actions tab (0) is active
@@ -538,6 +675,10 @@ public class XapiScript implements BotScript {
         // Auto-save if data changed since last save
         sessionManager.doAutoSaveIfChanged();
 
+        // Poll faster when debug probe is active on Action Bar tab
+        if (state.activeTab == 10 && state.probeActive) {
+            return 50; // ~20 reads/sec for catching fast-changing varcs
+        }
         return 600;
     }
 
@@ -565,6 +706,385 @@ public class XapiScript implements BotScript {
         state.replaying = false;
     }
 
+    // ── Action bar data collection (onLoop thread, RPC-safe) ──────────
+
+    private static final java.nio.file.Path SPRITE_CACHE_FILE = XapiState.SESSION_DIR.resolve("ability_cache.json");
+    // Varc ID → ability name mapping (loaded from ability_varcs.json resource)
+    private volatile Map<Integer, String> varcToAbilityName = Map.of();
+    private volatile boolean abilityVarcsLoaded;
+
+    private ActionBar actionBarApi;
+    private final java.util.concurrent.ConcurrentHashMap<Integer, String> cachedSpriteNames = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<Integer, String> cachedSpriteDescs = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<Integer, String> cachedSpriteTypes = new java.util.concurrent.ConcurrentHashMap<>();
+    // [baseAdrenCost(2798), adrenType(2799), specCost(4332), canCastDuringGCD(5550), requiresTarget(3394)]
+    private final java.util.concurrent.ConcurrentHashMap<Integer, int[]> cachedSpriteStats = new java.util.concurrent.ConcurrentHashMap<>();
+    private volatile boolean spriteMapBuilt;
+    private volatile boolean spriteMapBuilding;
+    private final java.util.Queue<int[]> pendingCategoryEnums = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    private volatile int spriteCategoriesTotal;
+    private volatile int spriteCategoriesDone;
+    // Previous slot snapshot for change detection (key: "ifaceId:slot")
+    private final java.util.concurrent.ConcurrentHashMap<String, String> previousSlotNames = new java.util.concurrent.ConcurrentHashMap<>();
+
+    // Slot type names from enum 13199 keys
+    private static final Map<Integer, String> SLOT_TYPE_NAMES = Map.of(
+            1, "Melee", 2, "Strength", 3, "Defence", 4, "Other",
+            5, "Ranged", 6, "Magic", 10, "Item", 11, "Teleport",
+            13, "Familiar", 17, "Necromancy"
+    );
+
+    private static int resolveSlotNumber(int interfaceId, int componentId) {
+        int base = switch (interfaceId) {
+            case 1430 -> 64;  case 1670 -> 21;  case 1671 -> 19;
+            case 1672, 1673 -> 16;  default -> -1;
+        };
+        if (base < 0) return -1;
+        int offset = componentId - base;
+        if (offset < 0 || offset % 13 != 0) return -1;
+        int slot = offset / 13 + 1;
+        return slot <= 14 ? slot : -1;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadAbilityVarcs() {
+        if (abilityVarcsLoaded) return;
+        abilityVarcsLoaded = true;
+        String json = null;
+
+        // Try classpath resource first
+        try {
+            var is = getClass().getResourceAsStream("/ability_varcs.json");
+            if (is != null) {
+                json = new String(is.readAllBytes());
+                is.close();
+                log.debug("[ActionBar] Loaded ability_varcs.json from classpath");
+            }
+        } catch (Exception ignored) {}
+
+        // Fallback: load from xapi_sessions directory
+        if (json == null) {
+            try {
+                var path = XapiState.SESSION_DIR.resolve("ability_varcs.json");
+                if (java.nio.file.Files.exists(path)) {
+                    json = java.nio.file.Files.readString(path);
+                    log.debug("[ActionBar] Loaded ability_varcs.json from {}", path);
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (json == null) {
+            log.warn("[ActionBar] ability_varcs.json not found — ability detection in History will be limited");
+            return;
+        }
+
+        try {
+            Map<String, Object> data = XapiState.GSON.fromJson(json, Map.class);
+            Map<String, String> varcNames = (Map<String, String>) data.get("varc_to_name");
+            if (varcNames != null) {
+                Map<Integer, String> map = new java.util.HashMap<>();
+                varcNames.forEach((k, v) -> map.put(Integer.parseInt(k), v));
+                varcToAbilityName = Map.copyOf(map);
+                log.info("[ActionBar] Loaded {} ability varc mappings", varcToAbilityName.size());
+            }
+        } catch (Exception e) {
+            log.warn("[ActionBar] Failed to parse ability varcs: {}", e.getMessage());
+        }
+    }
+
+    private String resolveStructName(GameAPI api, int structId) {
+        try {
+            var struct = api.getStructType(structId);
+            if (struct != null && struct.params() != null) {
+                Object nameObj = struct.params().get("2794");
+                if (nameObj instanceof String name && !name.isEmpty()) return name;
+            }
+        } catch (Exception ignored) {}
+        return "Struct " + structId;
+    }
+
+    private void collectActionBarData(GameAPI api) {
+        if (actionBarApi == null) actionBarApi = new ActionBar(api);
+        loadAbilityVarcs();
+
+        state.actionBarOpen = api.isInterfaceOpen(1430);
+        try { state.activeBarPreset = actionBarApi.getActiveBar(); } catch (Exception ignored) {}
+
+        // Adrenaline from varp 679 (0-1200, divide by 10 for percentage with 1 decimal)
+        try {
+            state.actionBarAdrenalineRaw = api.getVarp(679);
+        } catch (Exception ignored) {}
+        // Varbit 1892: 0=unlocked, 1=locked
+        try { state.actionBarLocked = api.getVarbit(1892) == 1; } catch (Exception ignored) {}
+
+        // Variable probe — read requested varcs/varps/varbits for debug panel
+        try {
+            java.util.concurrent.ConcurrentHashMap<String, Integer> results = new java.util.concurrent.ConcurrentHashMap<>();
+            for (int id : state.probeVarcIds) {
+                try { results.put("varc:" + id, api.getVarcInt(id)); } catch (Exception ignored) {}
+            }
+            for (int id : state.probeVarpIds) {
+                try { results.put("varp:" + id, api.getVarp(id)); } catch (Exception ignored) {}
+            }
+            for (int id : state.probeVarbitIds) {
+                try { results.put("varbit:" + id, api.getVarbit(id)); } catch (Exception ignored) {}
+            }
+            state.probeResults = Map.copyOf(results);
+        } catch (Exception ignored) {}
+
+        // Handle bar switch requests from UI
+        int switchReq = state.barSwitchRequest;
+        if (switchReq != 0) {
+            state.barSwitchRequest = 0;
+            try {
+                if (switchReq > 0) actionBarApi.nextBar();
+                else actionBarApi.previousBar();
+            } catch (Exception ignored) {}
+        }
+
+        // Handle comparison snapshot request
+        if (state.comparisonBarPreset == -2) { // -2 = take snapshot now
+            state.comparisonSnapshot = List.copyOf(state.actionBarEntries);
+            state.comparisonBarPreset = state.activeBarPreset;
+        }
+
+        // Incrementally build sprite caches (one category per loop tick)
+        if (!spriteMapBuilt && !spriteMapBuilding) {
+            // Try loading from disk first
+            if (loadSpriteCache()) {
+                spriteMapBuilt = true;
+                state.spriteMapProgress = cachedSpriteNames.size() + " abilities loaded (cached)";
+            } else {
+                spriteMapBuilding = true;
+                try {
+                    var masterEnum = api.getEnumType(13199);
+                    if (masterEnum != null && masterEnum.entries() != null) {
+                        for (var e : masterEnum.entries().entrySet()) {
+                            if (e.getValue() instanceof Number n) {
+                                int typeKey = Integer.parseInt(e.getKey());
+                                pendingCategoryEnums.add(new int[]{n.intValue(), typeKey});
+                            }
+                        }
+                        spriteCategoriesTotal = pendingCategoryEnums.size();
+                        spriteCategoriesDone = 0;
+                    }
+                } catch (Exception ignored) {}
+                state.spriteMapProgress = "Loading ability data: 0/" + spriteCategoriesTotal + " categories...";
+            }
+        }
+
+        if (spriteMapBuilding && !pendingCategoryEnums.isEmpty()) {
+            int[] entry = pendingCategoryEnums.poll();
+            if (entry != null) {
+                int categoryEnumId = entry[0];
+                int typeKey = entry[1];
+                String typeName = SLOT_TYPE_NAMES.getOrDefault(typeKey, "Type " + typeKey);
+                try {
+                    var categoryEnum = api.getEnumType(categoryEnumId);
+                    if (categoryEnum != null && categoryEnum.entries() != null) {
+                        for (Object structIdObj : categoryEnum.entries().values()) {
+                            if (!(structIdObj instanceof Number structIdNum)) continue;
+                            try {
+                                var struct = api.getStructType(structIdNum.intValue());
+                                if (struct == null || struct.params() == null) continue;
+                                var params = struct.params();
+                                Object nameObj = params.get("2794");
+                                Object spriteObj = params.get("2802");
+                                Object descObj = params.get("2795");
+                                if (nameObj instanceof String name && spriteObj instanceof Number sprite) {
+                                    int spriteId = sprite.intValue();
+                                    if (!name.isEmpty() && spriteId > 0) {
+                                        cachedSpriteNames.put(spriteId, name);
+                                        cachedSpriteTypes.put(spriteId, typeName);
+                                        if (descObj instanceof String desc && !desc.isEmpty()) {
+                                            cachedSpriteDescs.put(spriteId, desc);
+                                        }
+                                        // Cache ability stats from struct params
+                                        int adrenCost = 0, adrenGain = 0, cooldownTicks = 0;
+                                        int abilityType = 0, specCost = 0;
+                                        int canCastGCD = -1, requiresTarget = -1; // -1 = absent
+                                        Object p2796 = params.get("2796");
+                                        if (p2796 instanceof Number n) cooldownTicks = n.intValue();
+                                        Object p2798 = params.get("2798");
+                                        if (p2798 instanceof Number n) adrenCost = n.intValue();
+                                        Object p2799 = params.get("2799");
+                                        if (p2799 instanceof Number n) abilityType = n.intValue();
+                                        Object p2800 = params.get("2800");
+                                        if (p2800 instanceof Number n) adrenGain = n.intValue();
+                                        Object p4332 = params.get("4332");
+                                        if (p4332 instanceof Number n) specCost = n.intValue();
+                                        Object p5550 = params.get("5550");
+                                        if (p5550 instanceof Number n) canCastGCD = n.intValue();
+                                        Object p3394 = params.get("3394");
+                                        if (p3394 instanceof Number n) requiresTarget = n.intValue();
+                                        cachedSpriteStats.put(spriteId, new int[]{
+                                                adrenCost, adrenGain, cooldownTicks, abilityType,
+                                                specCost, canCastGCD, requiresTarget});
+                                    }
+                                }
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                } catch (Exception ignored) {}
+                spriteCategoriesDone++;
+                state.spriteMapProgress = "Loading ability data: " + spriteCategoriesDone + "/" + spriteCategoriesTotal
+                        + " categories (" + cachedSpriteNames.size() + " abilities)...";
+            }
+        }
+
+        if (spriteMapBuilding && pendingCategoryEnums.isEmpty() && spriteCategoriesDone > 0) {
+            spriteMapBuilt = true;
+            spriteMapBuilding = false;
+            saveSpriteCache();
+            state.spriteMapProgress = cachedSpriteNames.size() + " abilities loaded";
+        }
+
+        // Query components from all action bar interfaces
+        int[] actionBarInterfaces = {1430, 1670, 1671, 1672, 1673};
+        List<XapiData.ActionBarEntry> entries = new java.util.ArrayList<>();
+
+        for (int ifaceId : actionBarInterfaces) {
+            if (!api.isInterfaceOpen(ifaceId)) continue;
+
+            List<Component> comps = api.queryComponents(
+                    ComponentFilter.builder().interfaceId(ifaceId).build());
+            if (comps == null) continue;
+
+            for (Component comp : comps) {
+                int itemId = comp.itemId();
+                int spriteId = comp.spriteId();
+
+                // Resolve name, description, type, stats
+                String name = "";
+                String description = "";
+                String slotType = "";
+                int adrenCost = 0, adrenGain = 0, cooldownTicks = 0;
+                int abilityType = 0, specCost = 0, canCastGCD = -1, requiresTarget = -1;
+
+                if (itemId > 0) {
+                    var type = api.getItemType(itemId);
+                    name = (type != null && type.name() != null) ? type.name() : "Item " + itemId;
+                    slotType = "Item";
+                } else if (spriteId > 0) {
+                    name = cachedSpriteNames.getOrDefault(spriteId, "");
+                    description = cachedSpriteDescs.getOrDefault(spriteId, "");
+                    slotType = cachedSpriteTypes.getOrDefault(spriteId, "");
+                    int[] stats = cachedSpriteStats.get(spriteId);
+                    if (stats != null) {
+                        adrenCost = stats[0]; adrenGain = stats[1]; cooldownTicks = stats[2];
+                        abilityType = stats[3]; specCost = stats[4];
+                        canCastGCD = stats[5]; requiresTarget = stats[6];
+                    }
+                }
+
+                // Fetch options, filter blanks
+                List<String> rawOptions = api.getComponentOptions(comp.interfaceId(), comp.componentId());
+                List<String> options = (rawOptions == null) ? List.of()
+                        : rawOptions.stream().filter(o -> o != null && !o.isBlank()).toList();
+                if (options.isEmpty()) continue;
+
+                int slot = resolveSlotNumber(ifaceId, comp.componentId());
+
+                // Change detection
+                if (slot > 0) {
+                    String key = ifaceId + ":" + slot;
+                    String prev = previousSlotNames.put(key, name);
+                    if (prev != null && !prev.equals(name)) {
+                        state.actionBarChangeLog.add(new XapiData.ActionBarChange(
+                                System.currentTimeMillis(), ifaceId, slot, prev, name));
+                        while (state.actionBarChangeLog.size() > 200) state.actionBarChangeLog.remove(0);
+                    }
+                }
+
+                entries.add(new XapiData.ActionBarEntry(
+                        ifaceId, comp.componentId(), comp.subComponentId(),
+                        itemId, spriteId, name, description, slotType, slot, options,
+                        adrenCost, adrenGain, cooldownTicks, abilityType, specCost,
+                        canCastGCD, requiresTarget));
+            }
+        }
+
+        state.actionBarEntries = List.copyOf(entries);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean loadSpriteCache() {
+        try {
+            if (!java.nio.file.Files.exists(SPRITE_CACHE_FILE)) return false;
+            String json = java.nio.file.Files.readString(SPRITE_CACHE_FILE);
+            Map<String, Object> data = XapiState.GSON.fromJson(json, Map.class);
+            if (data == null) return false;
+
+            Map<String, String> names = (Map<String, String>) data.get("names");
+            Map<String, String> descs = (Map<String, String>) data.get("descs");
+            Map<String, String> types = (Map<String, String>) data.get("types");
+            Map<String, List<Double>> stats = (Map<String, List<Double>>) data.get("stats");
+
+            if (names == null || names.isEmpty()) return false;
+            // Check if stats have the expected 7-value format — reject old caches
+            if (stats != null && !stats.isEmpty()) {
+                var firstVal = stats.values().iterator().next();
+                if (firstVal instanceof List<?> list && list.size() < 7) {
+                    log.info("[ActionBar] Stale cache format detected — will rebuild");
+                    return false;
+                }
+            }
+
+            for (var e : names.entrySet()) {
+                int id = Integer.parseInt(e.getKey());
+                cachedSpriteNames.put(id, e.getValue());
+            }
+            if (descs != null) for (var e : descs.entrySet()) {
+                cachedSpriteDescs.put(Integer.parseInt(e.getKey()), e.getValue());
+            }
+            if (types != null) for (var e : types.entrySet()) {
+                cachedSpriteTypes.put(Integer.parseInt(e.getKey()), e.getValue());
+            }
+            if (stats != null) for (var e : stats.entrySet()) {
+                List<Double> vals = e.getValue();
+                if (vals.size() < 7) continue; // Skip old format entries — will rebuild
+                cachedSpriteStats.put(Integer.parseInt(e.getKey()), new int[]{
+                        vals.get(0).intValue(), vals.get(1).intValue(), vals.get(2).intValue(),
+                        vals.get(3).intValue(), vals.get(4).intValue(), vals.get(5).intValue(),
+                        vals.get(6).intValue()
+                });
+            }
+            log.info("[ActionBar] Loaded {} abilities from cache", cachedSpriteNames.size());
+            return true;
+        } catch (Exception e) {
+            log.debug("[ActionBar] Failed to load sprite cache: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    private void saveSpriteCache() {
+        try {
+            Map<String, Object> data = new java.util.LinkedHashMap<>();
+
+            Map<String, String> names = new java.util.LinkedHashMap<>();
+            cachedSpriteNames.forEach((k, v) -> names.put(String.valueOf(k), v));
+            data.put("names", names);
+
+            Map<String, String> descs = new java.util.LinkedHashMap<>();
+            cachedSpriteDescs.forEach((k, v) -> descs.put(String.valueOf(k), v));
+            data.put("descs", descs);
+
+            Map<String, String> types = new java.util.LinkedHashMap<>();
+            cachedSpriteTypes.forEach((k, v) -> types.put(String.valueOf(k), v));
+            data.put("types", types);
+
+            Map<String, int[]> stats = new java.util.LinkedHashMap<>();
+            cachedSpriteStats.forEach((k, v) -> stats.put(String.valueOf(k), v));
+            data.put("stats", stats);
+
+            java.nio.file.Files.createDirectories(SPRITE_CACHE_FILE.getParent());
+            java.nio.file.Files.writeString(SPRITE_CACHE_FILE, XapiState.GSON.toJson(data));
+            log.info("[ActionBar] Saved {} abilities to cache", cachedSpriteNames.size());
+        } catch (Exception e) {
+            log.debug("[ActionBar] Failed to save sprite cache: {}", e.getMessage());
+        }
+    }
+
     // =================================================================
     // == UI (render thread -- NO RPC calls) ===========================
     // =================================================================
@@ -579,7 +1099,7 @@ public class XapiScript implements BotScript {
         try {
             // Evenly space tabs across the full width using custom buttons as tabs
             String[] tabNames = {"Actions", "Variables", "Chat", "Player", "Entities",
-                    "Interfaces", "Inventory", "Production", "Smithing", "Settings"};
+                    "Interfaces", "Inventory", "Production", "Smithing", "Settings", "Action Bar"};
             float availWidth = ImGui.getContentRegionAvailX();
             float tabWidth = availWidth / tabNames.length;
 
@@ -616,6 +1136,7 @@ public class XapiScript implements BotScript {
                 case 7 -> { try { productionTab.render(); } catch (Exception e) { log.error("Production tab error", e); ImGui.text("Error: " + e.getMessage()); } }
                 case 8 -> { try { smithingTab.render(); } catch (Exception e) { log.error("Smithing tab error", e); ImGui.text("Error: " + e.getMessage()); } }
                 case 9 -> { try { renderControls(); } catch (Exception e) { log.error("Settings tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 10 -> { try { actionBarTab.render(); } catch (Exception e) { log.error("Action Bar tab error", e); ImGui.text("Error: " + e.getMessage()); } }
             }
 
             // Status line below tabs

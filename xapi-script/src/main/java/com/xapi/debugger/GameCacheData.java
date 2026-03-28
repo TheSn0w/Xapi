@@ -25,10 +25,10 @@ public final class GameCacheData implements GameCache {
 
     private static final Logger log = LoggerFactory.getLogger(GameCacheData.class);
 
-    // Default cache directories
-    private static final Path DEFAULT_CACHE_DIR = Path.of("D:\\13-03-2026");
-    private static final Path DEFAULT_INTERFACES_DIR = Path.of("D:\\Claude\\rs-tools\\output\\interfaces");
-    private static final Path DEFAULT_VARBITS_DIR = Path.of("D:\\Claude\\rs-tools\\output\\configs\\varbits");
+    // Default cache directories — SnowsDecoder output
+    private static final Path DEFAULT_CACHE_DIR = Path.of("D:\\SnowsDecoder\\Decoder Dependencies\\output\\configs");
+    private static final Path DEFAULT_INTERFACES_DIR = Path.of("D:\\SnowsDecoder\\Decoder Dependencies\\output\\configs");
+    private static final Path DEFAULT_VARBITS_DIR = Path.of("D:\\SnowsDecoder\\Decoder Dependencies\\output\\configs");
 
     // ── Lookup maps ────────────────────────────────────────────────────
 
@@ -186,11 +186,20 @@ public final class GameCacheData implements GameCache {
         }
 
         try {
-            loadLocations(cacheDir.resolve("locations.json"));
+            // SnowsDecoder uses objects.json for locations
+            Path locFile = cacheDir.resolve("objects.json");
+            if (!Files.exists(locFile)) locFile = cacheDir.resolve("locations.json");
+            loadLocations(locFile);
             loadItems(cacheDir.resolve("items.json"));
             loadNpcs(cacheDir.resolve("npcs.json"));
             loadInterfaces(DEFAULT_INTERFACES_DIR);
-            loadItemVarbits(DEFAULT_VARBITS_DIR);
+            // Try single varbits.json file first, then directory of files
+            Path varbitsFile = cacheDir.resolve("varbits.json");
+            if (Files.isRegularFile(varbitsFile)) {
+                loadItemVarbitsFromFile(varbitsFile);
+            } else {
+                loadItemVarbits(DEFAULT_VARBITS_DIR);
+            }
 
             loaded = true;
             long elapsed = System.currentTimeMillis() - start;
@@ -203,18 +212,36 @@ public final class GameCacheData implements GameCache {
         }
     }
 
+    /**
+     * Reads a JSON file that is either a JSON array of objects or a JSON object keyed by ID.
+     * Returns a list of JsonObject entries either way.
+     */
+    private static Iterable<JsonObject> readJsonEntries(Path file) throws IOException {
+        try (var reader = Files.newBufferedReader(file)) {
+            JsonElement root = com.google.gson.JsonParser.parseReader(reader);
+            List<JsonObject> entries = new ArrayList<>();
+            if (root.isJsonArray()) {
+                for (JsonElement el : root.getAsJsonArray()) {
+                    if (el.isJsonObject()) entries.add(el.getAsJsonObject());
+                }
+            } else if (root.isJsonObject()) {
+                for (var entry : root.getAsJsonObject().entrySet()) {
+                    if (entry.getValue().isJsonObject()) entries.add(entry.getValue().getAsJsonObject());
+                }
+            }
+            return entries;
+        }
+    }
+
     private void loadLocations(Path file) throws IOException {
         if (!Files.exists(file)) {
-            log.warn("locations.json not found at: {}", file);
+            log.warn("locations/objects.json not found at: {}", file);
             return;
         }
         log.info("Loading locations from: {}", file);
         long start = System.currentTimeMillis();
 
-        try (JsonReader reader = new JsonReader(new BufferedReader(Files.newBufferedReader(file)))) {
-            reader.beginArray();
-            while (reader.hasNext()) {
-                JsonObject obj = com.google.gson.JsonParser.parseReader(reader).getAsJsonObject();
+        for (JsonObject obj : readJsonEntries(file)) {
                 int id = obj.get("id").getAsInt();
 
                 String name = obj.has("name") ? obj.get("name").getAsString() : null;
@@ -226,18 +253,20 @@ public final class GameCacheData implements GameCache {
                 JsonObject morphs = obj.has("morphs_1") ? obj.getAsJsonObject("morphs_1") : null;
                 if (morphs == null) morphs = obj.has("morphs_2") ? obj.getAsJsonObject("morphs_2") : null;
                 if (morphs != null) {
-                    if (morphs.has("varbit")) varbitId = morphs.get("varbit").getAsInt();
-                    if (morphs.has("varp")) varpId = morphs.get("varp").getAsInt();
-                    JsonArray ids = morphs.getAsJsonArray("ids");
+                    if (morphs.has("varbit") && !morphs.get("varbit").isJsonNull()) varbitId = morphs.get("varbit").getAsInt();
+                    if (morphs.has("varp") && !morphs.get("varp").isJsonNull()) varpId = morphs.get("varp").getAsInt();
+                    // Support both "ids" (old format) and "morphs" (SnowsDecoder format)
+                    JsonArray ids = morphs.has("ids") ? morphs.getAsJsonArray("ids")
+                            : morphs.has("morphs") ? morphs.getAsJsonArray("morphs") : null;
                     if (ids != null) {
                         transforms = new ArrayList<>(ids.size());
-                        for (JsonElement e : ids) transforms.add(e.getAsInt());
+                        for (JsonElement e : ids) {
+                            transforms.add(e.isJsonNull() ? -1 : e.getAsInt());
+                        }
                     }
                 }
 
                 locations.put(id, new CachedLocation(id, name, actions, varbitId, varpId, transforms));
-            }
-            reader.endArray();
         }
         log.info("Loaded {} locations in {}ms", locations.size(), System.currentTimeMillis() - start);
     }
@@ -250,10 +279,7 @@ public final class GameCacheData implements GameCache {
         log.info("Loading items from: {}", file);
         long start = System.currentTimeMillis();
 
-        try (JsonReader reader = new JsonReader(new BufferedReader(Files.newBufferedReader(file)))) {
-            reader.beginArray();
-            while (reader.hasNext()) {
-                JsonObject obj = com.google.gson.JsonParser.parseReader(reader).getAsJsonObject();
+        for (JsonObject obj : readJsonEntries(file)) {
                 int id = obj.get("id").getAsInt();
 
                 String name = obj.has("name") ? obj.get("name").getAsString() : null;
@@ -261,8 +287,6 @@ public final class GameCacheData implements GameCache {
                 List<String> groundActions = parseStringArray(obj.getAsJsonArray("ground_actions"));
 
                 items.put(id, new CachedItem(id, name, widgetActions, groundActions));
-            }
-            reader.endArray();
         }
         log.info("Loaded {} items in {}ms", items.size(), System.currentTimeMillis() - start);
     }
@@ -275,10 +299,7 @@ public final class GameCacheData implements GameCache {
         log.info("Loading NPCs from: {}", file);
         long start = System.currentTimeMillis();
 
-        try (JsonReader reader = new JsonReader(new BufferedReader(Files.newBufferedReader(file)))) {
-            reader.beginArray();
-            while (reader.hasNext()) {
-                JsonObject obj = com.google.gson.JsonParser.parseReader(reader).getAsJsonObject();
+        for (JsonObject obj : readJsonEntries(file)) {
                 int id = obj.get("id").getAsInt();
 
                 String name = obj.has("name") ? obj.get("name").getAsString() : null;
@@ -290,18 +311,17 @@ public final class GameCacheData implements GameCache {
                 JsonObject morphs = obj.has("morphs_1") ? obj.getAsJsonObject("morphs_1") : null;
                 if (morphs == null) morphs = obj.has("morphs_2") ? obj.getAsJsonObject("morphs_2") : null;
                 if (morphs != null) {
-                    if (morphs.has("varbit")) varbitId = morphs.get("varbit").getAsInt();
-                    if (morphs.has("varp")) varpId = morphs.get("varp").getAsInt();
-                    JsonArray ids = morphs.getAsJsonArray("ids");
+                    if (morphs.has("varbit") && !morphs.get("varbit").isJsonNull()) varbitId = morphs.get("varbit").getAsInt();
+                    if (morphs.has("varp") && !morphs.get("varp").isJsonNull()) varpId = morphs.get("varp").getAsInt();
+                    JsonArray ids = morphs.has("ids") ? morphs.getAsJsonArray("ids")
+                            : morphs.has("morphs") ? morphs.getAsJsonArray("morphs") : null;
                     if (ids != null) {
                         transforms = new ArrayList<>(ids.size());
-                        for (JsonElement e : ids) transforms.add(e.getAsInt());
+                        for (JsonElement e : ids) transforms.add(e.isJsonNull() ? -1 : e.getAsInt());
                     }
                 }
 
                 npcs.put(id, new CachedNpc(id, name, actions, varbitId, varpId, transforms));
-            }
-            reader.endArray();
         }
         log.info("Loaded {} NPCs in {}ms", npcs.size(), System.currentTimeMillis() - start);
     }
@@ -411,6 +431,42 @@ public final class GameCacheData implements GameCache {
             log.warn("Failed to list varbits directory: {}", e.getMessage());
         }
         log.info("Loaded {} item varbit definitions in {}ms", count, System.currentTimeMillis() - start);
+    }
+
+    /**
+     * Loads item varbit definitions from a single JSON object file (SnowsDecoder format).
+     */
+    private void loadItemVarbitsFromFile(Path file) {
+        long start = System.currentTimeMillis();
+        int count = 0;
+        try {
+            for (JsonObject obj : readJsonEntries(file)) {
+                long varp = obj.has("varp") ? obj.get("varp").getAsLong() : 0;
+                // Check varid_high_bits for domain (SnowsDecoder uses this field)
+                int highBits = obj.has("varid_high_bits") ? obj.get("varid_high_bits").getAsInt() : 0;
+                // Domain 5 = item vars. In SnowsDecoder format, varid_high_bits encodes the domain.
+                if (highBits != 5) {
+                    // Also check old format: domain from varp high byte
+                    int domain = (int) ((varp >> 24) & 0xFF);
+                    if (domain != 5) continue;
+                }
+
+                int varbitId = obj.has("id") ? obj.get("id").getAsInt() : -1;
+                int lowBit = obj.has("low_bit") ? obj.get("low_bit").getAsInt() : 0;
+                int highBit = obj.has("high_bit") ? obj.get("high_bit").getAsInt() : 0;
+                long varid = obj.has("varid") ? obj.get("varid").getAsLong() : varp;
+                int varIndex = (int) (varid & 0xFFFFFF);
+                int itemVarId = (varIndex - 2) / 256;
+
+                ItemVarbitDef def = new ItemVarbitDef(varbitId, itemVarId, lowBit, highBit);
+                itemVarbits.computeIfAbsent(itemVarId, k -> new ArrayList<>()).add(def);
+                itemVarbitById.put(varbitId, def);
+                count++;
+            }
+        } catch (Exception e) {
+            log.warn("Failed to load varbits file: {}", e.getMessage());
+        }
+        log.info("Loaded {} item varbit definitions from {} in {}ms", count, file.getFileName(), System.currentTimeMillis() - start);
     }
 
     private static List<String> parseStringArray(JsonArray arr) {

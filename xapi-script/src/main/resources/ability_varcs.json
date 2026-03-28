@@ -1,0 +1,1002 @@
+{
+  "struct_to_info": {
+    "14881": {
+      "varc": 2091,
+      "name": "",
+      "sprite": -1
+    },
+    "14677": {
+      "varc": 2093,
+      "name": "Slice",
+      "sprite": 14207
+    },
+    "14678": {
+      "varc": 2095,
+      "name": "Barge",
+      "sprite": 14208
+    },
+    "40935": {
+      "varc": 2095,
+      "name": "Greater Barge",
+      "sprite": 840
+    },
+    "14679": {
+      "varc": 2097,
+      "name": "Adaptive Strike",
+      "sprite": 21237
+    },
+    "52781": {
+      "varc": 8378,
+      "name": "Rend",
+      "sprite": 14211
+    },
+    "44223": {
+      "varc": 2099,
+      "name": "Havoc",
+      "sprite": 14210
+    },
+    "14681": {
+      "varc": 2101,
+      "name": "Smash",
+      "sprite": 14211
+    },
+    "14682": {
+      "varc": 2103,
+      "name": "Backhand",
+      "sprite": 14212
+    },
+    "14683": {
+      "varc": 2105,
+      "name": "Slaughter",
+      "sprite": 14213
+    },
+    "14684": {
+      "varc": 2107,
+      "name": "Flurry",
+      "sprite": 14214
+    },
+    "40936": {
+      "varc": 2107,
+      "name": "Greater Flurry",
+      "sprite": 841
+    },
+    "52782": {
+      "varc": 2107,
+      "name": "Flurry",
+      "sprite": 14214
+    },
+    "52785": {
+      "varc": 2107,
+      "name": "Greater Flurry",
+      "sprite": 841
+    },
+    "14685": {
+      "varc": 2109,
+      "name": "Hurricane",
+      "sprite": 14215
+    },
+    "52787": {
+      "varc": 2109,
+      "name": "Hurricane",
+      "sprite": 14215
+    },
+    "14686": {
+      "varc": 2111,
+      "name": "Overpower",
+      "sprite": 14216
+    },
+    "14687": {
+      "varc": 2113,
+      "name": "Massacre",
+      "sprite": 14217
+    },
+    "14688": {
+      "varc": 2115,
+      "name": "Meteor Strike",
+      "sprite": 21363
+    },
+    "19255": {
+      "varc": 2713,
+      "name": "Balanced Strike",
+      "sprite": 16548
+    },
+    "28178": {
+      "varc": 4175,
+      "name": "Blood Tendrils",
+      "sprite": 17500
+    },
+    "1488": {
+      "varc": 6037,
+      "name": "Bladed Dive",
+      "sprite": 30331
+    },
+    "47129": {
+      "varc": 6037,
+      "name": "Dive",
+      "sprite": 23714
+    },
+    "44244": {
+      "varc": 8380,
+      "name": "Dismember",
+      "sprite": 21239
+    },
+    "52788": {
+      "varc": 8382,
+      "name": "Slaughter",
+      "sprite": 21362
+    },
+    "52789": {
+      "varc": 8384,
+      "name": "Massacre",
+      "sprite": 21296
+    },
+    "14700": {
+      "varc": 2121,
+      "name": "Punish",
+      "sprite": 14257
+    },
+    "14701": {
+      "varc": 2123,
+      "name": "Fury",
+      "sprite": 14258
+    },
+    "40941": {
+      "varc": 2123,
+      "name": "Greater Fury",
+      "sprite": 842
+    },
+    "14702": {
+      "varc": 2125,
+      "name": "Decimate",
+      "sprite": 14259
+    },
+    "14703": {
+      "varc": 2127,
+      "name": "Cleave",
+      "sprite": 14260
+    },
+    "14704": {
+      "varc": 2129,
+      "name": "Assault",
+      "sprite": 14261
+    },
+    "52790": {
+      "varc": 2129,
+      "name": "Assault",
+      "sprite": 14261
+    },
+    "14705": {
+      "varc": 2131,
+      "name": "Quake",
+      "sprite": 14262
+    },
+    "14706": {
+      "varc": 2133,
+      "name": "Destroy",
+      "sprite": 14263
+    },
+    "14707": {
+      "varc": 2135,
+      "name": "Berserk",
+      "sprite": 14264
+    },
+    "14708": {
+      "varc": 2137,
+      "name": "Frenzy",
+      "sprite": 14265
+    },
+    "14709": {
+      "varc": 2139,
+      "name": "Pulverise",
+      "sprite": 14266
+    },
+    "46279": {
+      "varc": 7059,
+      "name": "Chaos Roar",
+      "sprite": 21238
+    },
+    "14710": {
+      "varc": 2141,
+      "name": "Anticipation",
+      "sprite": 14219
+    },
+    "14711": {
+      "varc": 2143,
+      "name": "Freedom",
+      "sprite": 14220
+    },
+    "14712": {
+      "varc": 2145,
+      "name": "Provoke",
+      "sprite": 14221
+    },
+    "14713": {
+      "varc": 2147,
+      "name": "Resonance",
+      "sprite": 14222
+    },
+    "14714": {
+      "varc": 2149,
+      "name": "Preparation",
+      "sprite": 14223
+    },
+    "14715": {
+      "varc": 2151,
+      "name": "Bash",
+      "sprite": 14224
+    },
+    "14716": {
+      "varc": 2153,
+      "name": "Reflect",
+      "sprite": 14225
+    },
+    "14717": {
+      "varc": 2155,
+      "name": "Debilitate",
+      "sprite": 14226
+    },
+    "14718": {
+      "varc": 2157,
+      "name": "Revenge",
+      "sprite": 14227
+    },
+    "14719": {
+      "varc": 2159,
+      "name": "Barricade",
+      "sprite": 14228
+    },
+    "1": {
+      "varc": 3735,
+      "name": "",
+      "sprite": -1
+    },
+    "14720": {
+      "varc": 2161,
+      "name": "Rejuvenate",
+      "sprite": 14229
+    },
+    "14721": {
+      "varc": 2163,
+      "name": "Immortality",
+      "sprite": 14230
+    },
+    "19252": {
+      "varc": 2715,
+      "name": "Natural Instinct",
+      "sprite": 16549
+    },
+    "25028": {
+      "varc": 3893,
+      "name": "Devotion",
+      "sprite": 21665
+    },
+    "37206": {
+      "varc": 6593,
+      "name": "Unsullied",
+      "sprite": 1525
+    },
+    "37207": {
+      "varc": 6595,
+      "name": "Aggression",
+      "sprite": 1516
+    },
+    "45045": {
+      "varc": 6866,
+      "name": "Divert",
+      "sprite": 15035
+    },
+    "45340": {
+      "varc": 6951,
+      "name": "Cease",
+      "sprite": 15036
+    },
+    "14690": {
+      "varc": 2165,
+      "name": "Regenerate",
+      "sprite": 14267
+    },
+    "19253": {
+      "varc": 2717,
+      "name": "Guthix's Blessing",
+      "sprite": 16558
+    },
+    "24188": {
+      "varc": 3895,
+      "name": "Sacrifice",
+      "sprite": 21666
+    },
+    "24189": {
+      "varc": 3897,
+      "name": "Transfigure",
+      "sprite": 26106
+    },
+    "24190": {
+      "varc": 3899,
+      "name": "Combat Monolith",
+      "sprite": 21663
+    },
+    "28179": {
+      "varc": 4177,
+      "name": "Ice Asylum",
+      "sprite": 17503
+    },
+    "31649": {
+      "varc": 7772,
+      "name": "Tuska's Wrath",
+      "sprite": 8861
+    },
+    "31982": {
+      "varc": 7774,
+      "name": "Storm Shards",
+      "sprite": 19227
+    },
+    "31983": {
+      "varc": 7776,
+      "name": "Shatter",
+      "sprite": 19228
+    },
+    "28429": {
+      "varc": 4235,
+      "name": "Siphon",
+      "sprite": 18764
+    },
+    "31984": {
+      "varc": 7778,
+      "name": "Onslaught",
+      "sprite": 19289
+    },
+    "33650": {
+      "varc": 7780,
+      "name": "Reprisal",
+      "sprite": 799
+    },
+    "37199": {
+      "varc": 6597,
+      "name": "Ingenuity of the Humans",
+      "sprite": 1521
+    },
+    "37200": {
+      "varc": 6599,
+      "name": "Demon Slayer",
+      "sprite": 1517
+    },
+    "37201": {
+      "varc": 6601,
+      "name": "Dragon Slayer",
+      "sprite": 1518
+    },
+    "37202": {
+      "varc": 6603,
+      "name": "Undead Slayer",
+      "sprite": 1524
+    },
+    "37203": {
+      "varc": 6605,
+      "name": "Limitless",
+      "sprite": 1522
+    },
+    "37204": {
+      "varc": 6607,
+      "name": "Slayer's Insight",
+      "sprite": 1523
+    },
+    "37205": {
+      "varc": 6609,
+      "name": "Kuradal's Favour",
+      "sprite": 1519
+    },
+    "14663": {
+      "varc": 2167,
+      "name": "Piercing Shot",
+      "sprite": 23727
+    },
+    "14664": {
+      "varc": 2169,
+      "name": "Binding Shot",
+      "sprite": 14244
+    },
+    "14665": {
+      "varc": 2171,
+      "name": "Escape",
+      "sprite": 14245
+    },
+    "14666": {
+      "varc": 2173,
+      "name": "Snipe",
+      "sprite": 23729
+    },
+    "14667": {
+      "varc": 2175,
+      "name": "Fragmentation Shot",
+      "sprite": 14247
+    },
+    "31986": {
+      "varc": 4978,
+      "name": "Corruption Shot",
+      "sprite": 17255
+    },
+    "14668": {
+      "varc": 2177,
+      "name": "Ricochet",
+      "sprite": 23868
+    },
+    "45048": {
+      "varc": 2177,
+      "name": "Greater Ricochet",
+      "sprite": 15039
+    },
+    "14669": {
+      "varc": 2179,
+      "name": "Snap Shot",
+      "sprite": 23728
+    },
+    "14670": {
+      "varc": 2181,
+      "name": "Rapid Fire",
+      "sprite": 14250
+    },
+    "14671": {
+      "varc": 2183,
+      "name": "Bombardment",
+      "sprite": 14251
+    },
+    "14672": {
+      "varc": 2185,
+      "name": "Incendiary Shot",
+      "sprite": 14252
+    },
+    "14673": {
+      "varc": 2187,
+      "name": "Unload",
+      "sprite": 14253
+    },
+    "14674": {
+      "varc": 2189,
+      "name": "Deadshot",
+      "sprite": 23730
+    },
+    "52799": {
+      "varc": 8390,
+      "name": "Galeshot",
+      "sprite": 23731
+    },
+    "19251": {
+      "varc": 2719,
+      "name": "Death's Swiftness",
+      "sprite": 20185
+    },
+    "46276": {
+      "varc": 2719,
+      "name": "Greater Death's Swiftness",
+      "sprite": 20186
+    },
+    "28177": {
+      "varc": 4179,
+      "name": "Shadow Tendrils",
+      "sprite": 20914
+    },
+    "1491": {
+      "varc": 6035,
+      "name": "Salt the Wound",
+      "sprite": 30334
+    },
+    "39532": {
+      "varc": 6384,
+      "name": "Demoralise",
+      "sprite": 33085
+    },
+    "39533": {
+      "varc": 6386,
+      "name": "Rout",
+      "sprite": 33086
+    },
+    "52796": {
+      "varc": 8392,
+      "name": "Imbue: Shadows",
+      "sprite": 23761
+    },
+    "14725": {
+      "varc": 2191,
+      "name": "Runic Charge",
+      "sprite": 23725
+    },
+    "44900": {
+      "varc": 2191,
+      "name": "Sanguine Charge",
+      "sprite": 13308
+    },
+    "14726": {
+      "varc": 2193,
+      "name": "Surge",
+      "sprite": 14233
+    },
+    "14727": {
+      "varc": 2195,
+      "name": "Impact",
+      "sprite": 14234
+    },
+    "28431": {
+      "varc": 4239,
+      "name": "Deep Impact",
+      "sprite": 22755
+    },
+    "14728": {
+      "varc": 2197,
+      "name": "Chain",
+      "sprite": 15037
+    },
+    "45046": {
+      "varc": 2197,
+      "name": "Greater Chain",
+      "sprite": 15038
+    },
+    "14729": {
+      "varc": 2199,
+      "name": "Combust",
+      "sprite": 23401
+    },
+    "31985": {
+      "varc": 4980,
+      "name": "Corruption Blast",
+      "sprite": 19226
+    },
+    "14730": {
+      "varc": 2201,
+      "name": "Dragon Breath",
+      "sprite": 14236
+    },
+    "14731": {
+      "varc": 2203,
+      "name": "Asphyxiate",
+      "sprite": 14237
+    },
+    "14732": {
+      "varc": 2205,
+      "name": "Detonate",
+      "sprite": 14238
+    },
+    "14733": {
+      "varc": 2207,
+      "name": "Wild Magic",
+      "sprite": 14239
+    },
+    "14734": {
+      "varc": 2209,
+      "name": "Metamorphosis",
+      "sprite": 14241
+    },
+    "14735": {
+      "varc": 2211,
+      "name": "Tsunami",
+      "sprite": 14240
+    },
+    "14736": {
+      "varc": 2213,
+      "name": "Omnipower",
+      "sprite": 14242
+    },
+    "19342": {
+      "varc": 2727,
+      "name": "Sonic Wave",
+      "sprite": 27430
+    },
+    "47221": {
+      "varc": 2727,
+      "name": "Greater Sonic Wave",
+      "sprite": 27432
+    },
+    "19343": {
+      "varc": 2729,
+      "name": "Concentrated Blast",
+      "sprite": 13309
+    },
+    "45450": {
+      "varc": 2729,
+      "name": "Greater Concentrated Blast",
+      "sprite": 13310
+    },
+    "19254": {
+      "varc": 2721,
+      "name": "Sunshine",
+      "sprite": 20183
+    },
+    "46275": {
+      "varc": 2721,
+      "name": "Greater Sunshine",
+      "sprite": 20184
+    },
+    "28180": {
+      "varc": 4181,
+      "name": "Smoke Tendrils",
+      "sprite": 17501
+    },
+    "39530": {
+      "varc": 6388,
+      "name": "Shock",
+      "sprite": 33083
+    },
+    "39531": {
+      "varc": 6390,
+      "name": "Horror",
+      "sprite": 33084
+    },
+    "14869": {
+      "varc": 4992,
+      "name": "Vengeance Other",
+      "sprite": 14420
+    },
+    "14870": {
+      "varc": 4992,
+      "name": "Vengeance",
+      "sprite": 14423
+    },
+    "14871": {
+      "varc": 4992,
+      "name": "Vengeance Group",
+      "sprite": 14451
+    },
+    "14865": {
+      "varc": 4994,
+      "name": "Disruption Shield",
+      "sprite": 14450
+    },
+    "37220": {
+      "varc": 6611,
+      "name": "Golden Touch",
+      "sprite": 1520
+    },
+    "28927": {
+      "varc": 6991,
+      "name": "Magma Tempest",
+      "sprite": 4378
+    },
+    "45800": {
+      "varc": 6991,
+      "name": "Magma Tempest (Targeted)",
+      "sprite": 15033
+    },
+    "51271": {
+      "varc": 8292,
+      "name": "Temporal Anomaly",
+      "sprite": 10367
+    },
+    "14739": {
+      "varc": 8397,
+      "name": "Confuse",
+      "sprite": 14389
+    },
+    "14745": {
+      "varc": 8397,
+      "name": "Weaken",
+      "sprite": 14390
+    },
+    "14749": {
+      "varc": 8397,
+      "name": "Curse",
+      "sprite": 14391
+    },
+    "14750": {
+      "varc": 8397,
+      "name": "Bind",
+      "sprite": 14392
+    },
+    "14766": {
+      "varc": 8397,
+      "name": "Snare",
+      "sprite": 14393
+    },
+    "14784": {
+      "varc": 8397,
+      "name": "Vulnerability",
+      "sprite": 14395
+    },
+    "14787": {
+      "varc": 8397,
+      "name": "Enfeeble",
+      "sprite": 14371
+    },
+    "14791": {
+      "varc": 8397,
+      "name": "Entangle",
+      "sprite": 14394
+    },
+    "14792": {
+      "varc": 8397,
+      "name": "Stagger",
+      "sprite": 14377
+    },
+    "14795": {
+      "varc": 8397,
+      "name": "Teleport Block",
+      "sprite": 14344
+    },
+    "44912": {
+      "varc": 8397,
+      "name": "Smoke Cloud",
+      "sprite": 14771
+    },
+    "48296": {
+      "varc": 7225,
+      "name": "Touch of Death",
+      "sprite": 30076
+    },
+    "48298": {
+      "varc": 7244,
+      "name": "Soul Sap",
+      "sprite": 30080
+    },
+    "48302": {
+      "varc": 7227,
+      "name": "Conjure Skeleton Warrior",
+      "sprite": 34169
+    },
+    "48303": {
+      "varc": 7229,
+      "name": "Command Skeleton Warrior",
+      "sprite": 34165
+    },
+    "48297": {
+      "varc": 7242,
+      "name": "Finger of Death",
+      "sprite": 30077
+    },
+    "48299": {
+      "varc": 7247,
+      "name": "Soul Strike",
+      "sprite": 30082
+    },
+    "48301": {
+      "varc": 7249,
+      "name": "Volley of Souls",
+      "sprite": 30088
+    },
+    "48308": {
+      "varc": 7251,
+      "name": "Bloat",
+      "sprite": 30016
+    },
+    "48309": {
+      "varc": 7253,
+      "name": "Blood Siphon",
+      "sprite": 30017
+    },
+    "48311": {
+      "varc": 7255,
+      "name": "Spectral Scythe",
+      "sprite": 30084
+    },
+    "48312": {
+      "varc": 7257,
+      "name": "Spectral Scythe",
+      "sprite": 30086
+    },
+    "48313": {
+      "varc": 7259,
+      "name": "Spectral Scythe",
+      "sprite": 30087
+    },
+    "48314": {
+      "varc": 7261,
+      "name": "Death Skulls",
+      "sprite": 30074
+    },
+    "48324": {
+      "varc": 7263,
+      "name": "Living Death",
+      "sprite": 30078
+    },
+    "48304": {
+      "varc": 7232,
+      "name": "Conjure Putrid Zombie",
+      "sprite": 34173
+    },
+    "48305": {
+      "varc": 7234,
+      "name": "Command Putrid Zombie",
+      "sprite": 34167
+    },
+    "48306": {
+      "varc": 7237,
+      "name": "Conjure Vengeful Ghost",
+      "sprite": 34171
+    },
+    "48307": {
+      "varc": 7239,
+      "name": "Command Vengeful Ghost",
+      "sprite": 34166
+    },
+    "48328": {
+      "varc": 7266,
+      "name": "Life Transfer",
+      "sprite": 30704
+    },
+    "48326": {
+      "varc": 7268,
+      "name": "Lesser Bone Shield",
+      "sprite": 30697
+    },
+    "48327": {
+      "varc": 7270,
+      "name": "Greater Bone Shield",
+      "sprite": 30628
+    },
+    "48329": {
+      "varc": 7272,
+      "name": "Threads of Fate",
+      "sprite": 30734
+    },
+    "48330": {
+      "varc": 7275,
+      "name": "Invoke Death",
+      "sprite": 30702
+    },
+    "48331": {
+      "varc": 7278,
+      "name": "Darkness",
+      "sprite": 30700
+    },
+    "48332": {
+      "varc": 7281,
+      "name": "Split Soul",
+      "sprite": 30706
+    },
+    "49072": {
+      "varc": 7347,
+      "name": "Invoke Lord of Bones",
+      "sprite": 33147
+    },
+    "31820": {
+      "varc": 7791,
+      "name": "Conjure Phantom Guardian",
+      "sprite": 34175
+    },
+    "32342": {
+      "varc": 7793,
+      "name": "Command Phantom Guardian",
+      "sprite": 34168
+    }
+  },
+  "varc_to_name": {
+    "2093": "Slice",
+    "2095": "Barge",
+    "2097": "Adaptive Strike",
+    "8378": "Rend",
+    "2099": "Havoc",
+    "2101": "Smash",
+    "2103": "Backhand",
+    "2105": "Slaughter",
+    "2107": "Flurry",
+    "2109": "Hurricane",
+    "2111": "Overpower",
+    "2113": "Massacre",
+    "2115": "Meteor Strike",
+    "2713": "Balanced Strike",
+    "4175": "Blood Tendrils",
+    "6037": "Bladed Dive",
+    "8380": "Dismember",
+    "8382": "Slaughter",
+    "8384": "Massacre",
+    "2121": "Punish",
+    "2123": "Fury",
+    "2125": "Decimate",
+    "2127": "Cleave",
+    "2129": "Assault",
+    "2131": "Quake",
+    "2133": "Destroy",
+    "2135": "Berserk",
+    "2137": "Frenzy",
+    "2139": "Pulverise",
+    "7059": "Chaos Roar",
+    "2141": "Anticipation",
+    "2143": "Freedom",
+    "2145": "Provoke",
+    "2147": "Resonance",
+    "2149": "Preparation",
+    "2151": "Bash",
+    "2153": "Reflect",
+    "2155": "Debilitate",
+    "2157": "Revenge",
+    "2159": "Barricade",
+    "2161": "Rejuvenate",
+    "2163": "Immortality",
+    "2715": "Natural Instinct",
+    "3893": "Devotion",
+    "6593": "Unsullied",
+    "6595": "Aggression",
+    "6866": "Divert",
+    "6951": "Cease",
+    "2165": "Regenerate",
+    "2717": "Guthix's Blessing",
+    "3895": "Sacrifice",
+    "3897": "Transfigure",
+    "3899": "Combat Monolith",
+    "4177": "Ice Asylum",
+    "7772": "Tuska's Wrath",
+    "7774": "Storm Shards",
+    "7776": "Shatter",
+    "4235": "Siphon",
+    "7778": "Onslaught",
+    "7780": "Reprisal",
+    "6597": "Ingenuity of the Humans",
+    "6599": "Demon Slayer",
+    "6601": "Dragon Slayer",
+    "6603": "Undead Slayer",
+    "6605": "Limitless",
+    "6607": "Slayer's Insight",
+    "6609": "Kuradal's Favour",
+    "2167": "Piercing Shot",
+    "2169": "Binding Shot",
+    "2171": "Escape",
+    "2173": "Snipe",
+    "2175": "Fragmentation Shot",
+    "4978": "Corruption Shot",
+    "2177": "Ricochet",
+    "2179": "Snap Shot",
+    "2181": "Rapid Fire",
+    "2183": "Bombardment",
+    "2185": "Incendiary Shot",
+    "2187": "Unload",
+    "2189": "Deadshot",
+    "8390": "Galeshot",
+    "2719": "Death's Swiftness",
+    "4179": "Shadow Tendrils",
+    "6035": "Salt the Wound",
+    "6384": "Demoralise",
+    "6386": "Rout",
+    "8392": "Imbue: Shadows",
+    "2191": "Runic Charge",
+    "2193": "Surge",
+    "2195": "Impact",
+    "4239": "Deep Impact",
+    "2197": "Chain",
+    "2199": "Combust",
+    "4980": "Corruption Blast",
+    "2201": "Dragon Breath",
+    "2203": "Asphyxiate",
+    "2205": "Detonate",
+    "2207": "Wild Magic",
+    "2209": "Metamorphosis",
+    "2211": "Tsunami",
+    "2213": "Omnipower",
+    "2727": "Sonic Wave",
+    "2729": "Concentrated Blast",
+    "2721": "Sunshine",
+    "4181": "Smoke Tendrils",
+    "6388": "Shock",
+    "6390": "Horror",
+    "4992": "Vengeance Other",
+    "4994": "Disruption Shield",
+    "6611": "Golden Touch",
+    "6991": "Magma Tempest",
+    "8292": "Temporal Anomaly",
+    "8397": "Confuse",
+    "7225": "Touch of Death",
+    "7244": "Soul Sap",
+    "7227": "Conjure Skeleton Warrior",
+    "7229": "Command Skeleton Warrior",
+    "7242": "Finger of Death",
+    "7247": "Soul Strike",
+    "7249": "Volley of Souls",
+    "7251": "Bloat",
+    "7253": "Blood Siphon",
+    "7255": "Spectral Scythe",
+    "7257": "Spectral Scythe",
+    "7259": "Spectral Scythe",
+    "7261": "Death Skulls",
+    "7263": "Living Death",
+    "7232": "Conjure Putrid Zombie",
+    "7234": "Command Putrid Zombie",
+    "7237": "Conjure Vengeful Ghost",
+    "7239": "Command Vengeful Ghost",
+    "7266": "Life Transfer",
+    "7268": "Lesser Bone Shield",
+    "7270": "Greater Bone Shield",
+    "7272": "Threads of Fate",
+    "7275": "Invoke Death",
+    "7278": "Darkness",
+    "7281": "Split Soul",
+    "7347": "Invoke Lord of Bones",
+    "7791": "Conjure Phantom Guardian",
+    "7793": "Command Phantom Guardian"
+  }
+}

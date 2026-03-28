@@ -53,7 +53,28 @@ final class SessionManager {
                     state.replaySpeedArr[0],
                     state.entityDistanceFilter,
                     Arrays.copyOf(state.columnVisible, state.columnVisible.length),
-                    state.autoScroll
+                    state.autoScroll,
+                    null // actionBar — populated below
+            );
+            // Action bar settings
+            XapiData.ActionBarSettings abSettings = new XapiData.ActionBarSettings(
+                    new HashMap<>(state.abCollapsed),
+                    state.abExpandedInterface,
+                    state.abShowChangeLog, state.abShowHistory, state.abShowComparison, state.abShowDebug,
+                    state.actionBarFilter.get(),
+                    state.abProbeVarcs.get(), state.abProbeVarps.get(), state.abProbeVarbits.get()
+            );
+            settings = new XapiData.XapiSettings(
+                    settings.recording(), settings.blocking(), settings.selectiveBlocking(),
+                    settings.trackVars(), settings.trackChat(), settings.trackItemVarbits(),
+                    settings.categoryFilters(), settings.selectiveBlockCategories(),
+                    settings.showVarbits(), settings.showVarps(), settings.showVarcs(), settings.showVarcStrs(), settings.showItemVarbits(),
+                    settings.varFilterText(), settings.varcWatchIds(),
+                    settings.pinnedVars(), settings.varAnnotations(),
+                    settings.useNamesForGeneration(), settings.scriptClassName(),
+                    settings.replaySpeed(), settings.entityDistanceFilter(),
+                    settings.columnVisibility(), settings.autoScroll(),
+                    abSettings
             );
             Files.writeString(XapiState.SETTINGS_FILE, XapiState.GSON.toJson(settings));
             log.debug("Settings saved to {}", XapiState.SETTINGS_FILE);
@@ -99,6 +120,24 @@ final class SessionManager {
                         Math.min(s.columnVisibility().length, state.columnVisible.length));
             }
             state.autoScroll = s.autoScroll();
+
+            // Action bar settings
+            if (s.actionBar() != null) {
+                var ab = s.actionBar();
+                if (ab.collapsedInterfaces() != null) {
+                    state.abCollapsed.clear();
+                    state.abCollapsed.putAll(ab.collapsedInterfaces());
+                }
+                state.abExpandedInterface = ab.expandedInterface();
+                state.abShowChangeLog = ab.showChangeLog();
+                state.abShowHistory = ab.showHistory();
+                state.abShowComparison = ab.showComparison();
+                state.abShowDebug = ab.showDebug();
+                if (ab.filterText() != null) state.actionBarFilter.set(ab.filterText());
+                if (ab.probeVarcs() != null) state.abProbeVarcs.set(ab.probeVarcs());
+                if (ab.probeVarps() != null) state.abProbeVarps.set(ab.probeVarps());
+                if (ab.probeVarbits() != null) state.abProbeVarbits.set(ab.probeVarbits());
+            }
 
             log.info("Settings loaded from {}", XapiState.SETTINGS_FILE);
         } catch (Exception e) {

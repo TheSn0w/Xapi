@@ -36,6 +36,33 @@ public final class XapiData {
 
     public record MenuSnapshot(long timestamp, int gameTick, List<MiniMenuEntry> entries) {}
 
+    /**
+     * @param adrenCost     adrenaline cost (param 2798, raw /10 for %)
+     * @param adrenGain     adrenaline gain (param 2800, raw /10 for %, 0=none)
+     * @param cooldownTicks cooldown in game ticks (param 2796, 0=GCD only)
+     * @param abilityType   0=auto, 1=basic, 2=threshold, 4=ultimate, 7=special (param 2799)
+     * @param specCost      weapon special adrenaline cost (param 4332)
+     * @param canCastGCD    can cast during GCD (param 5550, -1=absent)
+     * @param requiresTarget requires active target (param 3394, 0=false, -1=absent means yes)
+     */
+    public record ActionBarEntry(int interfaceId, int componentId, int subComponentId,
+                                 int itemId, int spriteId, String name, String description,
+                                 String slotType, int slot, List<String> options,
+                                 int adrenCost, int adrenGain, int cooldownTicks,
+                                 int abilityType, int specCost,
+                                 int canCastGCD, int requiresTarget) {}
+
+    /** Tracks a change detected on an action bar slot. */
+    public record ActionBarChange(long timestamp, int interfaceId, int slot,
+                                  String oldName, String newName) {}
+
+    /** Tracks an ability activation from the action bar. */
+    public record ActionBarActivation(long timestamp, int gameTick, int interfaceId,
+                                      int componentId, int slot, String name, String option) {}
+
+    /** Tracks a VarC value change detected by tick polling. */
+    public record VarcChange(long timestamp, int gameTick, int varcId, int oldValue, int newValue) {}
+
     public record InventoryChange(int itemId, String itemName, int oldQty, int newQty,
                                   long timestamp, int gameTick) {}
 
@@ -71,6 +98,14 @@ public final class XapiData {
                               long exportTime, String description,
                               long lastSeenActionTimestamp) {}
 
+    public record ActionBarSettings(
+            Map<Integer, Boolean> collapsedInterfaces,
+            int expandedInterface,
+            boolean showChangeLog, boolean showHistory, boolean showComparison, boolean showDebug,
+            String filterText,
+            String probeVarcs, String probeVarps, String probeVarbits
+    ) {}
+
     public record XapiSettings(
             boolean recording, boolean blocking, boolean selectiveBlocking,
             boolean trackVars, boolean trackChat, boolean trackItemVarbits,
@@ -82,7 +117,8 @@ public final class XapiData {
             float replaySpeed,
             int entityDistanceFilter,
             boolean[] columnVisibility,
-            boolean autoScroll
+            boolean autoScroll,
+            ActionBarSettings actionBar
     ) {}
 
 }

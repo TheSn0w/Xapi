@@ -105,6 +105,47 @@ final class XapiState {
     volatile int lastInventorySlotCount = 0;
     final List<InventoryChange> inventoryLog = new CopyOnWriteArrayList<>();
 
+    // ── Action bar state ────────────────────────────────────────────────
+    volatile boolean actionBarOpen;
+    volatile int activeBarPreset;
+    volatile int actionBarAdrenaline; // legacy component text reading
+    volatile int actionBarAdrenalineRaw; // varp 679, 0-1200
+    volatile boolean actionBarLocked;
+    volatile List<ActionBarEntry> actionBarEntries = List.of();
+    volatile String spriteMapProgress = "";
+    final List<ActionBarChange> actionBarChangeLog = new CopyOnWriteArrayList<>();
+    final imgui.type.ImString actionBarFilter = new imgui.type.ImString(256);
+    // Action bar tab UI state (persisted)
+    final java.util.concurrent.ConcurrentHashMap<Integer, Boolean> abCollapsed = new java.util.concurrent.ConcurrentHashMap<>();
+    volatile int abExpandedInterface = -1;
+    volatile boolean abShowChangeLog;
+    volatile boolean abShowHistory;
+    volatile boolean abShowComparison;
+    volatile boolean abShowDebug;
+    final imgui.type.ImString abProbeVarcs = new imgui.type.ImString("2092", 256);
+    final imgui.type.ImString abProbeVarps = new imgui.type.ImString("", 256);
+    final imgui.type.ImString abProbeVarbits = new imgui.type.ImString("", 256);
+    // Action history — abilities activated from action bar
+    final List<ActionBarActivation> actionBarHistory = new CopyOnWriteArrayList<>();
+    // Bar switcher requests (set by render thread, consumed by onLoop)
+    volatile int barSwitchRequest; // +1 = next, -1 = previous, 0 = none
+    // GCD tracking
+    volatile long lastAbilityActivationTime; // System.currentTimeMillis() of last ability use
+    volatile int lastAbilityActivationTick;  // game tick of last ability use
+    volatile int lastPolledAdrenaline;       // last varp 679 value for delta detection
+    // Variable probe — debug tool for discovering varcs/varps/varbits
+    volatile int[] probeVarcIds = new int[0];
+    volatile int[] probeVarpIds = new int[0];
+    volatile int[] probeVarbitIds = new int[0];
+    volatile Map<String, Integer> probeResults = Map.of();
+    volatile boolean probeActive; // true = fast poll mode (50ms) for variable discovery
+    // VarC tick-based polling for change detection (varcs have no events)
+    final java.util.concurrent.ConcurrentHashMap<String, Integer> tickProbeVarcValues = new java.util.concurrent.ConcurrentHashMap<>();
+    final List<VarcChange> varcChangeLog = new CopyOnWriteArrayList<>();
+    // Bar comparison snapshot
+    volatile List<ActionBarEntry> comparisonSnapshot = List.of();
+    volatile int comparisonBarPreset = -1;
+
     // ── Interaction snapshot state ───────────────────────────────────────
     volatile BackpackSnapshot cachedBackpack;
     final List<ActionSnapshot> snapshotLog = new CopyOnWriteArrayList<>();
