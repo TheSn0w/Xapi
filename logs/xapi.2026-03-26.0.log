@@ -1,0 +1,59 @@
+2026-03-26 22:45:01.490 INFO  [autostart-scan] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-26 22:45:01.515 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-26 22:45:01.578 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-26 22:45:01.583 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-26 22:45:01.583 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-26 22:45:01.584 ERROR [autostart-scan] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-26 22:45:03.654 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-26 22:45:03.656 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-26 22:45:03.657 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, logType=Willow logs, pathfinder=active
+2026-03-26 22:45:26.092 INFO  [main] [system] c.b.b.s.w.WoodcuttingScript - [Woodcutting] DEBUG: forced state CHOPPING -> FILLING_WOODBOX
+2026-03-26 22:45:27.907 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Filling wood box with Willow logs
+2026-03-26 22:45:27.921 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-26 22:45:28.126 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Wood box fill complete - resuming chopping
+2026-03-26 22:46:16.788 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=2, fills=1, trips=0
+2026-03-26 22:53:07.675 INFO  [autostart-scan] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-26 22:53:07.702 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-26 22:53:07.712 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-26 22:53:07.716 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-26 22:53:07.716 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-26 22:53:07.716 ERROR [autostart-scan] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-26 22:53:11.053 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-26 22:53:11.054 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-26 22:53:11.055 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, logType=Willow logs, pathfinder=active
+2026-03-26 22:54:55.812 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Filling wood box with Willow logs
+2026-03-26 22:54:55.824 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-26 22:54:56.357 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Wood box fill complete - resuming chopping
+2026-03-26 22:57:05.481 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=5, fills=1, trips=0
+2026-03-26 22:57:06.391 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-26 22:57:06.413 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-26 22:57:06.429 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 1 actions, 116 vars, 42 chat
+2026-03-26 22:57:06.430 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\13-03-2026
+2026-03-26 22:57:06.430 WARN  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Cache directory not found: D:\13-03-2026
+2026-03-26 22:57:06.432 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-26 22:57:06.444 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-26 22:57:06.473 INFO  [script-Xapi] [Xapi] com.xapi.debugger.NameResolver - resolveObject: typeId=38616 optionSlot=1
+2026-03-26 22:57:06.476 INFO  [script-Xapi] [Xapi] com.xapi.debugger.NameResolver - resolveObject (RPC): name='Willow' option='Chop down'
+2026-03-26 22:57:22.878 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Clear Actions executed and saved
+2026-03-26 22:58:27.751 INFO  [virtual-341] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=2015 optionSlot=2
+2026-03-26 22:58:27.754 INFO  [virtual-341] [system] com.xapi.debugger.NameResolver - resolveObject (RPC): name='Counter' option='Bank'
+2026-03-26 22:59:29.592 INFO  [autostart-scan] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-26 22:59:29.606 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-26 22:59:29.613 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-26 22:59:29.617 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-26 22:59:29.618 INFO  [autostart-scan] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-26 22:59:29.618 ERROR [autostart-scan] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-26 22:59:32.192 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-26 22:59:32.193 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-26 22:59:32.194 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, logType=Willow logs, pathfinder=active
+2026-03-26 23:01:49.857 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Filling wood box with Willow logs
+2026-03-26 23:01:49.921 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-26 23:01:50.468 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Wood box fill complete - resuming chopping
+2026-03-26 23:04:00.397 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Filling wood box with Willow logs
+2026-03-26 23:04:00.492 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-26 23:04:03.758 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Backpack still has logs after fill - wood box full, going to bank
+2026-03-26 23:04:11.936 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Emptying wood box (54 items stored)
+2026-03-26 23:04:12.109 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Emptying Acadia wood box (slot 0)
+2026-03-26 23:04:13.478 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Depositing all items except wood box (keeping 10 IDs)
+2026-03-26 23:04:13.556 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Banking complete - closing bank
+2026-03-26 23:04:14.346 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Arrived at tree area - resuming chopping

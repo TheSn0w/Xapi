@@ -217,6 +217,9 @@ public class WoodcuttingScript implements BotScript {
             return (int) pace.delay("react");
         }
 
+        int storedBefore = woodBox.getTotalStored();
+        int logsBefore = backpack.count(tree.logType.itemId);
+
         log.info("[Woodcutting] Filling wood box with {}", tree.logType.name);
         logAction("Filling wood box");
         boolean filled = woodBox.fill();
@@ -227,24 +230,50 @@ public class WoodcuttingScript implements BotScript {
         }
 
         woodboxFills++;
-        Conditions.waitUntil(() -> !backpack.contains(tree.logType.name), 3000);
+        Conditions.waitUntil(() -> {
+            int storedNow = woodBox.getTotalStored();
+            int logsNow = backpack.count(tree.logType.itemId);
+            return storedNow > storedBefore || logsNow < logsBefore;
+        }, 3000);
 
-        if (backpack.contains(tree.logType.name)) {
-            log.info("[Woodcutting] Backpack still has logs after fill - wood box full, going to bank");
+        int storedAfter = woodBox.getTotalStored();
+        int logsAfter = backpack.count(tree.logType.itemId);
+        int capacity = woodBox.getCapacity();
+        boolean storageIncreased = storedAfter > storedBefore;
+        boolean backpackLogsDropped = logsAfter < logsBefore;
+
+        if (!storageIncreased && !backpackLogsDropped) {
+            log.warn("[Woodcutting] Fill action did not move any logs (stored {}/{}, backpack logs still {})",
+                    storedAfter, capacity, logsAfter);
+            logAction("Wood box fill made no progress -> walking to bank");
+            state = WoodcuttingState.BANKING;
+            return (int) pace.delay("gather");
+        }
+
+        if (logsAfter > 0 && storedAfter >= capacity) {
+            log.info("[Woodcutting] Wood box reached capacity after fill ({}/{}), backpack still has {} logs",
+                    storedAfter, capacity, logsAfter);
             logAction("Wood box full after fill -> walking to bank");
             state = WoodcuttingState.BANKING;
             return (int) pace.delay("gather");
         }
 
-        log.info("[Woodcutting] Wood box fill complete - resuming chopping");
-        logAction("Wood box filled -> resuming chopping");
+        if (logsAfter > 0) {
+            log.info("[Woodcutting] Fill stored more logs ({}/{}), backpack still reports {} logs; resuming chopping",
+                    storedAfter, capacity, logsAfter);
+            logAction("Wood box fill progressed (" + storedAfter + "/" + capacity + ") -> resuming chopping");
+        } else {
+            log.info("[Woodcutting] Wood box fill complete - resuming chopping");
+            logAction("Wood box filled -> resuming chopping");
+        }
+
         state = WoodcuttingState.CHOPPING;
         return (int) pace.delay("gather");
     }
 
     private int handleBanking() {
         if (!bank.isOpen()) {
-            SceneObject counter = objects.query().named("Counter").nearest();
+            SceneObject counter = objects.query().withId(2012).nearest();
             if (counter == null) {
                 log.warn("[Woodcutting] No bank Counter found nearby");
                 logAction("No Counter found - retrying");
@@ -253,7 +282,7 @@ public class WoodcuttingScript implements BotScript {
 
             logAction("Bank at Counter (" + counter.tileX() + ", " + counter.tileY() + ")");
             counter.interact("Bank");
-            Conditions.waitUntil(bank::isOpen, 5000);
+            Conditions.waitUntil(bank::isOpen, 30000);
             return (int) pace.delay("bank");
         }
 

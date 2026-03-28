@@ -24,7 +24,7 @@
     false
   ],
   "showVarbits": false,
-  "showVarps": false,
+  "showVarps": true,
   "showVarcs": false,
   "showVarcStrs": false,
   "showItemVarbits": false,
@@ -43,7 +43,7 @@
   "useNamesForGeneration": true,
   "scriptClassName": "GeneratedScript",
   "replaySpeed": 1.0,
-  "entityDistanceFilter": 25,
+  "entityDistanceFilter": 5,
   "columnVisibility": [
     true,
     false,
@@ -51,11 +51,29 @@
     true,
     true,
     true,
-    false,
+    true,
     false,
     false,
     false,
     true
   ],
-  "autoScroll": true
+  "autoScroll": true,
+  "actionBar": {
+    "collapsedInterfaces": {
+      "1672": true,
+      "1673": true,
+      "1430": false,
+      "1670": true,
+      "1671": true
+    },
+    "expandedInterface": -1,
+    "showChangeLog": false,
+    "showHistory": false,
+    "showComparison": false,
+    "showDebug": false,
+    "filterText": "",
+    "probeVarcs": "2092",
+    "probeVarps": "",
+    "probeVarbits": ""
+  }
 }
