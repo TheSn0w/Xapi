@@ -5936,3 +5936,599 @@ java.lang.NoSuchMethodError: 'java.util.Map com.botwithus.bot.api.inventory.Acti
 2026-03-28 18:04:02.007 INFO  [virtual-13454] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
 2026-03-28 18:04:02.010 INFO  [virtual-13454] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=115427 optionSlot=2
 2026-03-28 18:04:02.010 INFO  [virtual-13454] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
+2026-03-28 19:48:37.299 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 19:48:39.559 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 19:48:39.565 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 19:48:39.568 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 19:48:39.569 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 19:48:39.569 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 19:48:40.960 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 19:48:40.986 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 19:48:40.992 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 0 actions, 18 vars, 0 chat
+2026-03-28 19:48:40.992 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 19:48:40.993 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 19:48:40.994 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 19:48:41.008 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 19:48:41.348 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 354ms
+2026-03-28 19:48:41.348 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 19:48:41.549 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 201ms
+2026-03-28 19:48:41.550 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 19:48:41.650 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 100ms
+2026-03-28 19:48:41.650 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 19:48:41.652 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 2ms
+2026-03-28 19:48:41.707 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 55ms
+2026-03-28 19:48:41.708 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 716ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 19:48:52.282 INFO  [virtual-91] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=2015 optionSlot=2
+2026-03-28 19:48:52.283 INFO  [virtual-91] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Counter' option='Bank'
+2026-03-28 19:49:14.038 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - [ActionBar] Loaded 141 ability varc mappings
+2026-03-28 19:49:14.049 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - [ActionBar] Loaded 370 abilities from cache
+2026-03-28 19:49:20.302 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 19:49:20.305 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 19:49:20.308 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 19:49:20.308 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 19:49:20.308 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 19:49:20.309 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 19:49:20.914 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi stopped — 1 actions, 34 var changes, 2 chat messages logged
+2026-03-28 19:49:20.922 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 19:49:20.922 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 19:49:20.927 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 19:49:20.929 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 19:49:20.933 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 19:49:20.935 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 19:49:20.935 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 19:49:20.935 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 19:49:20.935 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 19:49:20.935 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 19:49:21.412 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 19:49:21.413 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 19:49:21.413 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 19:56:14.004 ERROR [script-Woodcutting] [Woodcutting] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in Woodcutting: RPC call failed: get_local_player
+2026-03-28 19:56:14.004 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=4, fills=0, trips=2
+2026-03-28 19:56:17.012 INFO  [virtual-1216] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=2019 optionSlot=2
+2026-03-28 19:56:17.012 INFO  [virtual-1216] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Counter' option='Bank'
+2026-03-28 19:56:18.032 INFO  [virtual-1219] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=2019 optionSlot=2
+2026-03-28 19:56:18.032 INFO  [virtual-1219] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Counter' option='Bank'
+2026-03-28 19:56:33.485 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 19:56:33.487 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 19:56:33.491 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 19:56:33.491 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 19:56:33.491 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 19:56:33.492 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 19:56:33.492 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 19:56:33.492 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 19:56:38.202 INFO  [virtual-1269] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=38616 optionSlot=1
+2026-03-28 19:56:38.202 INFO  [virtual-1269] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Willow' option='Chop down'
+2026-03-28 19:57:02.616 INFO  [virtual-1325] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=38627 optionSlot=1
+2026-03-28 19:57:02.616 INFO  [virtual-1325] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Willow' option='Chop down'
+2026-03-28 20:07:45.335 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:07:46.919 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:07:46.926 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:07:46.930 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:07:46.931 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:07:46.931 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:07:48.160 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:07:48.161 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:07:50.069 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:09:11.105 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:09:12.858 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:09:12.865 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:09:12.870 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:09:12.871 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:09:12.872 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:09:13.935 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:09:13.937 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:09:14.187 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:09:46.322 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:11:02.402 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:11:03.745 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:11:03.752 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:11:03.757 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:11:03.758 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:11:03.759 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:11:04.775 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:11:04.777 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:11:05.021 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:11:54.940 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=0, fills=0, trips=0
+2026-03-28 20:22:03.454 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:22:04.862 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:22:04.869 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:22:04.874 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:22:04.874 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:22:04.875 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:22:05.920 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:22:05.921 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:22:06.172 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:24:31.212 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=25, fills=0, trips=0
+2026-03-28 20:27:31.061 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:27:31.065 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:27:31.070 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:27:31.071 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:27:31.071 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:27:31.071 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:27:31.071 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:27:31.071 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:27:32.246 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:28:58.256 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:31:29.716 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:33:44.384 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:35:25.012 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:35:25.014 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:35:25.017 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:35:25.018 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:35:25.018 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:35:25.019 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=90, fills=3, trips=0
+2026-03-28 20:35:25.022 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:35:25.022 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:35:25.022 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:48:41.938 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:48:43.293 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:48:43.299 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:48:43.303 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:48:43.304 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:48:43.304 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:48:44.976 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:48:44.978 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:48:45.314 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:49:01.205 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:51:47.422 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:52:35.519 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Emptying Acadia wood box (slot 0)
+2026-03-28 20:52:37.745 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:52:55.627 ERROR [script-Woodcutting] [Woodcutting] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in Woodcutting: RPC call failed: get_local_player
+2026-03-28 20:52:55.627 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=36, fills=3, trips=0
+2026-03-28 20:52:56.945 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:52:56.948 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:52:56.951 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:52:56.952 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:52:56.952 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:52:56.952 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:52:56.952 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:52:56.952 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:52:58.193 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:53:02.100 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=1, fills=0, trips=0
+2026-03-28 20:53:02.719 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:53:02.721 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:53:02.724 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:53:02.725 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:53:02.725 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:53:02.725 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:53:02.725 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:53:02.725 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:53:03.867 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:54:32.942 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:54:32.944 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:54:32.947 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:54:32.947 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:54:32.947 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:54:32.948 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=20, fills=0, trips=0
+2026-03-28 20:54:32.950 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:54:32.950 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:54:32.950 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:54:42.774 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:54:42.775 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:54:42.778 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:54:42.779 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:54:42.779 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:54:42.779 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:54:42.779 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:54:42.779 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:54:46.414 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:54:59.794 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=1, fills=0, trips=0
+2026-03-28 20:55:00.899 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:55:00.901 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:55:00.904 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:55:00.905 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:55:00.905 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:55:00.905 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 20:55:00.905 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 20:55:00.905 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 20:55:33.375 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 20:55:34.929 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 20:55:34.938 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 20:55:34.943 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 20:55:34.944 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 20:55:34.944 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 20:55:35.797 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 20:55:35.799 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 20:55:36.057 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 20:55:53.210 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 20:58:32.638 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:00:05.984 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=45, fills=2, trips=0
+2026-03-28 21:00:07.347 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 21:00:07.374 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 21:00:07.385 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 1 actions, 34 vars, 2 chat
+2026-03-28 21:00:07.385 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 21:00:07.385 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 21:00:07.388 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 21:00:07.400 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 21:00:07.925 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 540ms
+2026-03-28 21:00:07.926 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 21:00:08.199 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 273ms
+2026-03-28 21:00:08.199 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 21:00:08.334 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 135ms
+2026-03-28 21:00:08.334 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 21:00:08.337 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 3ms
+2026-03-28 21:00:08.409 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 71ms
+2026-03-28 21:00:08.409 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 1024ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 21:00:24.352 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Clear Actions executed and saved
+2026-03-28 21:01:26.317 INFO  [virtual-728] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=38627 optionSlot=6
+2026-03-28 21:01:26.318 INFO  [virtual-728] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Willow' option='null'
+2026-03-28 21:10:21.594 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 21:10:23.224 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:10:23.233 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:10:23.237 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:10:23.237 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:10:23.238 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:10:24.205 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=30% (at 20), notNearest=30%, idleStare=12%, earlyBank=0slots, fidget=3%
+2026-03-28 21:10:24.236 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 21:10:24.238 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 21:10:24.494 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:11:01.606 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=7, fills=0, trips=0
+2026-03-28 21:11:02.399 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:11:02.402 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:11:02.405 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:11:02.406 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:11:02.406 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:11:02.406 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:11:02.407 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:11:02.407 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:11:02.770 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:11:02.772 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:11:02.775 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:11:02.775 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:11:02.775 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:11:02.775 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:11:02.775 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:11:02.775 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:11:03.086 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:11:03.088 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:11:03.092 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:11:03.093 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:11:03.093 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:11:03.093 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:11:03.094 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:11:03.094 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:11:34.838 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 21:11:36.303 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:11:36.312 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:11:36.319 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:11:36.320 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:11:36.320 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:11:37.123 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=2% (at 18), notNearest=19%, idleStare=3%, earlyBank=3slots, fidget=4%
+2026-03-28 21:11:37.155 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 21:11:37.156 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 21:11:37.467 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:12:51.442 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:14:18.718 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:15:55.400 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 21:15:56.915 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:15:56.924 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:15:56.928 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:15:56.929 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:15:56.929 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:15:57.699 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=15% (at 13), notNearest=14%, idleStare=9%, earlyBank=0slots, fidget=7%
+2026-03-28 21:15:57.734 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Loaded transitions: 1603 local, 0 teleports, 255 regions
+2026-03-28 21:15:57.736 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.nav.WorldPathfinder - [WorldPathfinder] Initialized with navdata from navdata
+2026-03-28 21:15:58.005 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:16:24.370 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:16:46.780 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=5, fills=1, trips=0
+2026-03-28 21:16:49.358 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:16:49.361 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:16:49.365 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:16:49.366 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:16:49.366 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:16:49.366 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:16:49.366 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:16:49.366 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:16:50.354 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=9% (at 18), notNearest=19%, idleStare=10%, earlyBank=2slots, fidget=1%
+2026-03-28 21:16:50.358 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:19:24.092 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:20:56.602 ERROR [script-Woodcutting] [Woodcutting] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in Woodcutting: RPC call failed: get_local_player
+2026-03-28 21:20:56.604 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=30, fills=1, trips=0
+2026-03-28 21:27:20.856 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:27:20.859 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:27:20.862 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:27:20.863 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:27:20.863 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:27:20.863 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:27:20.863 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:27:20.863 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:27:21.311 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:27:21.313 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:27:21.316 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:27:21.316 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:27:21.317 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:27:21.317 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:27:21.317 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:27:21.317 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:27:22.367 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=53% (at 10), notNearest=3%, idleStare=14%, earlyBank=2slots, fidget=1%
+2026-03-28 21:27:22.371 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:27:22.493 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:28:53.262 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:29:48.114 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:30:29.227 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=30, fills=3, trips=0
+2026-03-28 21:31:35.846 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:31:35.849 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:31:35.852 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:31:35.853 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:31:35.853 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:31:35.854 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:31:35.854 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:31:35.854 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:31:36.827 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=59% (at 18), notNearest=4%, idleStare=4%, earlyBank=2slots, fidget=2%
+2026-03-28 21:31:36.830 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:32:36.605 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:33:18.947 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Stopped - logs=16, fills=1, trips=0
+2026-03-28 21:33:58.510 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 21:33:58.513 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 21:33:58.515 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 21:33:58.516 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 21:33:58.516 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 21:33:58.516 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 21:33:58.516 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 21:33:58.516 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 21:33:59.371 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.scripts.woodcutting.Quirks - [Quirks] Session personality: earlyFill=36% (at 15), notNearest=7%, idleStare=7%, earlyBank=0slots, fidget=1%
+2026-03-28 21:33:59.373 INFO  [script-Woodcutting] [Woodcutting] c.b.b.s.w.WoodcuttingScript - [Woodcutting] Started - tree=Willow, pathfinder=active
+2026-03-28 21:34:05.896 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:35:26.791 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:37:17.277 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:39:43.803 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:42:09.547 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Emptying Acadia wood box (slot 0)
+2026-03-28 21:42:11.076 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:43:20.556 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:44:39.625 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:46:23.054 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:47:24.279 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:49:23.966 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:51:30.839 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:52:47.117 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:54:40.774 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 21:55:43.608 INFO  [script-Woodcutting] [Woodcutting] c.b.bot.api.inventory.WoodBox - [WoodBox] Filling Acadia wood box
+2026-03-28 22:07:00.857 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:07:02.368 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:07:02.378 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:07:02.383 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:07:02.384 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:07:02.385 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:07:02.386 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:13:00.637 ERROR [script-WoodBox Verifier] [WoodBox Verifier] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in WoodBox Verifier: RPC call failed: query_inventory_items
+2026-03-28 22:14:03.506 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:14:03.508 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:14:03.512 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:14:03.513 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:14:03.514 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:14:03.514 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:14:03.514 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:14:03.514 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:14:03.514 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:14:03.514 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:14:28.534 ERROR [script-WoodBox Verifier] [WoodBox Verifier] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in WoodBox Verifier: RPC call failed: query_inventory_items
+2026-03-28 22:14:41.288 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:14:43.122 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:14:43.132 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:14:43.137 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:14:43.138 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:14:43.139 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:14:43.140 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:17:52.234 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:17:54.271 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:17:54.280 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:17:54.284 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:17:54.285 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:17:54.286 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:17:54.287 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:20:34.076 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 22:20:34.110 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 22:20:34.124 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 2 actions, 99 vars, 11 chat
+2026-03-28 22:20:34.125 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:20:34.125 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 22:20:34.128 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 22:20:34.141 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 22:20:34.567 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 442ms
+2026-03-28 22:20:34.567 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 22:20:34.841 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 274ms
+2026-03-28 22:20:34.841 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 22:20:34.981 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 139ms
+2026-03-28 22:20:34.981 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:20:34.983 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 2ms
+2026-03-28 22:20:35.086 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 103ms
+2026-03-28 22:20:35.087 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 961ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 22:20:36.211 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 22:20:36.215 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 22:20:36.217 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 4 actions, 198 vars, 44 chat
+2026-03-28 22:20:36.217 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:20:36.218 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 22:20:36.222 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 22:20:36.222 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 22:20:36.656 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 438ms
+2026-03-28 22:20:36.656 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 22:20:36.906 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 250ms
+2026-03-28 22:20:36.906 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 22:20:37.070 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 164ms
+2026-03-28 22:20:37.071 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:20:37.071 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 0ms
+2026-03-28 22:20:37.142 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 71ms
+2026-03-28 22:20:37.143 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 926ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 886 item varbits
+2026-03-28 22:21:05.001 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Clear Actions executed and saved
+2026-03-28 22:22:25.405 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:22:26.933 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:22:26.942 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:22:26.948 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:22:26.949 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:22:26.950 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:22:26.951 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:28:27.000 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:28:27.003 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:28:27.007 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:28:27.008 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:28:27.009 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:28:27.009 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:28:27.010 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:28:27.010 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:28:27.010 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:28:27.010 ERROR [script-WoodBox Verifier] [WoodBox Verifier] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in WoodBox Verifier: RPC call failed: query_inventory_items
+2026-03-28 22:28:27.012 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:28:27.428 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:28:27.431 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:28:27.435 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:28:27.435 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:28:27.436 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:28:27.436 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:28:27.437 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:28:27.437 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:28:27.437 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:28:27.437 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:31:00.044 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:31:00.047 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:31:00.050 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:31:00.050 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:31:00.051 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:31:00.051 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:31:00.051 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:31:00.051 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:31:00.051 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:31:00.051 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:31:00.332 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:31:00.334 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:31:00.337 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:31:00.338 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:31:00.338 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:31:08.594 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:31:08.596 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:31:08.600 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:31:08.600 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:31:08.601 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:31:08.601 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:31:08.601 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:31:08.601 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:31:08.601 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:31:08.601 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:38:21.347 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:38:21.349 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:38:21.353 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:38:21.354 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:38:21.355 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:38:21.355 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:38:21.355 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:38:21.355 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:38:21.355 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:38:21.355 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:42:15.266 ERROR [script-WoodBox Verifier] [WoodBox Verifier] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in WoodBox Verifier: RPC call failed: get_varp
+2026-03-28 22:42:15.876 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:42:15.878 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:42:15.881 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:42:15.881 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:42:15.882 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:42:15.882 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:42:15.882 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 22:42:15.882 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 22:42:15.883 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 22:42:15.883 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 22:42:39.986 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:42:41.965 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:42:41.972 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:42:41.976 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:42:41.977 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:42:41.977 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:42:41.977 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:49:15.805 ERROR [script-WoodBox Verifier] [WoodBox Verifier] c.b.b.c.runtime.AbstractScriptRunner - onLoop error in WoodBox Verifier: RPC call failed: query_inventory_items
+2026-03-28 22:49:16.932 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 22:49:16.961 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 22:49:16.971 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 0 actions, 216 vars, 66 chat
+2026-03-28 22:49:16.971 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:49:16.971 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 22:49:16.974 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 22:49:16.986 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 22:49:17.359 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 388ms
+2026-03-28 22:49:17.359 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 22:49:17.569 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 210ms
+2026-03-28 22:49:17.569 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 22:49:17.721 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 152ms
+2026-03-28 22:49:17.721 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:49:17.722 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 1ms
+2026-03-28 22:49:17.785 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 62ms
+2026-03-28 22:49:17.785 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 814ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 22:54:57.840 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 22:54:59.342 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 22:54:59.349 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 22:54:59.354 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 22:54:59.355 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 22:54:59.355 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 22:54:59.356 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 22:55:04.602 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 22:55:04.629 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 22:55:04.644 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 3 actions, 252 vars, 88 chat
+2026-03-28 22:55:04.644 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:55:04.645 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 22:55:04.647 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 22:55:04.656 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 22:55:05.024 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 379ms
+2026-03-28 22:55:05.024 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 22:55:05.251 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 227ms
+2026-03-28 22:55:05.252 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 22:55:05.369 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 117ms
+2026-03-28 22:55:05.369 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 22:55:05.371 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 2ms
+2026-03-28 22:55:05.428 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 57ms
+2026-03-28 22:55:05.429 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 785ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 22:57:10.085 INFO  [virtual-323] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=92255 optionSlot=1
+2026-03-28 22:57:10.085 INFO  [virtual-323] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Tower entrance' option='Enter'
+2026-03-28 22:57:27.582 INFO  [virtual-405] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=3
+2026-03-28 22:57:27.584 INFO  [virtual-405] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Withdraw-all (from metal bank)'
+2026-03-28 22:57:29.187 INFO  [virtual-409] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=1
+2026-03-28 22:57:29.189 INFO  [virtual-409] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Smelt'
+2026-03-28 22:57:31.856 INFO  [virtual-415] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=3
+2026-03-28 22:57:31.859 INFO  [virtual-415] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Withdraw-all (from metal bank)'
+2026-03-28 22:57:40.355 INFO  [virtual-433] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=2
+2026-03-28 22:57:40.357 INFO  [virtual-433] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Deposit-all (into metal bank)'
+2026-03-28 22:57:41.987 INFO  [virtual-437] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=1
+2026-03-28 22:57:41.990 INFO  [virtual-437] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Smelt'
+2026-03-28 22:57:51.288 INFO  [virtual-468] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125239 optionSlot=2
+2026-03-28 22:57:51.290 INFO  [virtual-468] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
+2026-03-28 23:03:22.898 INFO  [virtual-1157] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=1
+2026-03-28 23:03:22.901 INFO  [virtual-1157] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Smelt'
+2026-03-28 23:03:31.237 INFO  [virtual-1174] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125239 optionSlot=2
+2026-03-28 23:03:31.240 INFO  [virtual-1174] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
+2026-03-28 23:04:14.098 INFO  [virtual-1269] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125239 optionSlot=2
+2026-03-28 23:04:14.100 INFO  [virtual-1269] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
+2026-03-28 23:04:47.003 INFO  [virtual-1374] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=1
+2026-03-28 23:04:47.005 INFO  [virtual-1374] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Smelt'
+2026-03-28 23:05:03.558 INFO  [virtual-1417] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125239 optionSlot=2
+2026-03-28 23:05:03.560 INFO  [virtual-1417] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Bank chest' option='Use'
+2026-03-28 23:06:44.141 INFO  [virtual-1682] [system] com.xapi.debugger.NameResolver - resolveObject: typeId=125048 optionSlot=1
+2026-03-28 23:06:44.143 INFO  [virtual-1682] [system] com.xapi.debugger.NameResolver - resolveObject (cache): name='Furnace' option='Smelt'
+2026-03-28 23:19:36.555 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 23:19:40.840 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Woodcutting
+2026-03-28 23:19:40.840 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi stopped — 166 actions, 29 var changes, 141 chat messages logged
+2026-03-28 23:19:40.844 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Xapi
+2026-03-28 23:19:40.844 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: Backpack Test
+2026-03-28 23:19:40.844 INFO  [bwu-cmd] [system] c.b.bot.core.runtime.ScriptRuntime - Stopped script: WoodBox Verifier
+2026-03-28 23:19:41.680 INFO  [bwu-cmd] [system] c.b.bot.api.nav.LocalPathfinder - [LocalPathfinder] Initialized with regions from navdata\regions
+2026-03-28 23:19:43.251 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Found 2 JAR(s) in E:\Desktop\Projects\V2 Xapi\scripts
+2026-03-28 23:19:43.254 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.botwithus.bot.scripts.woodcutting.WoodcuttingScript
+2026-03-28 23:19:43.257 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.XapiScript
+2026-03-28 23:19:43.257 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.TestScript
+2026-03-28 23:19:43.258 INFO  [bwu-cmd] [system] c.b.b.core.runtime.LocalScriptLoader - Loaded: com.xapi.debugger.WoodBoxTestScript
+2026-03-28 23:19:43.258 ERROR [bwu-cmd] [system] c.b.bot.core.runtime.SDNScriptLoader - lockdown0() failed: Failed to call lockdown0()
+2026-03-28 23:19:44.790 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Xapi action debugger v2.1 started
+2026-03-28 23:19:44.793 WARN  [script-Xapi] [Xapi] com.xapi.debugger.InterfacesTab - [Interfaces] Failed to load interface_names.json: ZipFile invalid LOC header (bad signature)
+2026-03-28 23:19:44.797 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Settings loaded from xapi_settings.json
+2026-03-28 23:19:44.806 INFO  [script-Xapi] [Xapi] com.xapi.debugger.SessionManager - Auto-save restored: 166 actions, 29 vars, 141 chat
+2026-03-28 23:19:44.807 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading game cache from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 23:19:44.807 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading locations from: D:\SnowsDecoder\Decoder Dependencies\output\configs\objects.json
+2026-03-28 23:19:44.809 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Initial blocking state synced to client: false
+2026-03-28 23:19:44.819 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - onStart completed successfully
+2026-03-28 23:19:45.105 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 137057 locations in 298ms
+2026-03-28 23:19:45.106 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading items from: D:\SnowsDecoder\Decoder Dependencies\output\configs\items.json
+2026-03-28 23:19:45.326 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 60520 items in 220ms
+2026-03-28 23:19:45.327 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading NPCs from: D:\SnowsDecoder\Decoder Dependencies\output\configs\npcs.json
+2026-03-28 23:19:45.429 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 32760 NPCs in 102ms
+2026-03-28 23:19:45.429 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loading interfaces from: D:\SnowsDecoder\Decoder Dependencies\output\configs
+2026-03-28 23:19:45.430 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 0 interfaces (0 widgets) in 1ms
+2026-03-28 23:19:45.486 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Loaded 443 item varbit definitions from varbits.json in 56ms
+2026-03-28 23:19:45.486 INFO  [xapi-cache-loader] [system] com.xapi.debugger.GameCacheData - Game cache loaded in 679ms: 137057 locations, 60520 items, 32760 NPCs, 0 interfaces (0 widgets), 443 item varbits
+2026-03-28 23:20:01.368 INFO  [script-Xapi] [Xapi] com.xapi.debugger.XapiScript - Clear Actions executed and saved

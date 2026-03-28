@@ -23,8 +23,8 @@
     false,
     false
   ],
-  "showVarbits": false,
-  "showVarps": true,
+  "showVarbits": true,
+  "showVarps": false,
   "showVarcs": false,
   "showVarcStrs": false,
   "showItemVarbits": false,

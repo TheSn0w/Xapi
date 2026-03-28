@@ -3,152 +3,1066 @@
   "vars": [
     {
       "type": "varp",
-      "varId": 11489,
-      "oldValue": 29578603,
-      "newValue": 29578604,
-      "timestamp": 1774716235985,
-      "gameTick": 20498
+      "varId": 12285,
+      "oldValue": 34,
+      "newValue": 33,
+      "timestamp": 1774740045178,
+      "gameTick": 125
+    },
+    {
+      "type": "varbit",
+      "varId": 58272,
+      "oldValue": 34,
+      "newValue": 33,
+      "timestamp": 1774740045183,
+      "gameTick": 125
     },
     {
       "type": "varp",
-      "varId": 3915,
-      "oldValue": 872423168,
-      "newValue": 872422912,
-      "timestamp": 1774716250386,
-      "gameTick": 20522
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 402661813,
-      "newValue": 402661812,
-      "timestamp": 1774716250386,
-      "gameTick": 20522
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 113115341,
-      "newValue": 121471182,
-      "timestamp": 1774716250386,
-      "gameTick": 20522
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 437,
-      "newValue": 436,
-      "timestamp": 1774716250387,
-      "gameTick": 20522
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 13,
-      "newValue": 14,
-      "timestamp": 1774716250387,
-      "gameTick": 20522
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 13,
-      "newValue": 14,
-      "timestamp": 1774716250387,
-      "gameTick": 20522
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 31,
-      "newValue": 30,
-      "timestamp": 1774716250387,
-      "gameTick": 20522
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 124,
-      "newValue": 123,
-      "timestamp": 1774716250387,
-      "gameTick": 20522
+      "varId": 12285,
+      "oldValue": 33,
+      "newValue": 32,
+      "timestamp": 1774740060194,
+      "gameTick": 150
     },
     {
       "type": "varp",
       "varId": 11489,
-      "oldValue": 29578604,
-      "newValue": 29578605,
-      "timestamp": 1774716295967,
-      "gameTick": 20598
+      "oldValue": 29579000,
+      "newValue": 29579001,
+      "timestamp": 1774740060194,
+      "gameTick": 150
+    },
+    {
+      "type": "varbit",
+      "varId": 58272,
+      "oldValue": 33,
+      "newValue": 32,
+      "timestamp": 1774740060201,
+      "gameTick": 150
     },
     {
       "type": "varp",
-      "varId": 3914,
-      "oldValue": 121471182,
-      "newValue": 129827023,
-      "timestamp": 1774716310385,
-      "gameTick": 20622
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 402661812,
-      "newValue": 402661811,
-      "timestamp": 1774716310385,
-      "gameTick": 20622
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 872422912,
-      "newValue": 872422656,
-      "timestamp": 1774716310385,
-      "gameTick": 20622
+      "varId": 12285,
+      "oldValue": 32,
+      "newValue": 31,
+      "timestamp": 1774740075194,
+      "gameTick": 175
     },
     {
       "type": "varbit",
-      "varId": 20736,
-      "oldValue": 436,
-      "newValue": 435,
-      "timestamp": 1774716310387,
-      "gameTick": 20622
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 14,
-      "newValue": 15,
-      "timestamp": 1774716310387,
-      "gameTick": 20622
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 123,
-      "newValue": 122,
-      "timestamp": 1774716310387,
-      "gameTick": 20622
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 30,
-      "newValue": 29,
-      "timestamp": 1774716310387,
-      "gameTick": 20622
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 14,
-      "newValue": 15,
-      "timestamp": 1774716310387,
-      "gameTick": 20622
+      "varId": 58272,
+      "oldValue": 32,
+      "newValue": 31,
+      "timestamp": 1774740075201,
+      "gameTick": 175
     }
   ],
-  "chat": [],
+  "chat": [
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774727321057,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774727321057,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774731607500,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: TwIsTy Alice has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 102,
+      "text": "is requesting your assistance.",
+      "playerName": "Laser Stream",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774731607502,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: RSO Ben has achieved 200 million XP in Construction!",
+      "playerName": "",
+      "timestamp": 1774731607503,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: IronDanDy has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774731607503,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "Your wood box is too full to deposit all items from your backpack.",
+      "playerName": "",
+      "timestamp": 1774731607504,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Ltmooning1 has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774731607504,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774736434194,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774736434194,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774736434194,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: TwIsTy Alice has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774736434194,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774736434194,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Defence!",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "You\u0027ve just advanced a Woodcutting level! You have reached level 66.",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 102,
+      "text": "is requesting your assistance.",
+      "playerName": "Laser Stream",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your wood box contains:",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "73/190 Willow logs",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: RSO Ben has achieved 200 million XP in Construction!",
+      "playerName": "",
+      "timestamp": 1774736434195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: IronDanDy has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774736434196,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774736434196,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Makaeliaaa has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774736434196,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Avarice67 has achieved 200 million XP in Constitution!",
+      "playerName": "",
+      "timestamp": 1774736434197,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: RUHTRA has achieved 200 million XP in Fishing!",
+      "playerName": "",
+      "timestamp": 1774736434197,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Raineee has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774736434197,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lenny 716 has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774736434197,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774727321057,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774727321057,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774731607500,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: TwIsTy Alice has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 102,
+      "text": "is requesting your assistance.",
+      "playerName": "Laser Stream",
+      "timestamp": 1774731607501,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774731607502,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: RSO Ben has achieved 200 million XP in Construction!",
+      "playerName": "",
+      "timestamp": 1774731607503,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: IronDanDy has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774731607503,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "Your wood box is too full to deposit all items from your backpack.",
+      "playerName": "",
+      "timestamp": 1774731607504,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Ltmooning1 has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774731607504,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: TwIsTy Alice has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Defence!",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 0,
+      "text": "You\u0027ve just advanced a Woodcutting level! You have reached level 66.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 102,
+      "text": "is requesting your assistance.",
+      "playerName": "Laser Stream",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 0,
+      "text": "Your wood box contains:",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 0,
+      "text": "73/190 Willow logs",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: RSO Ben has achieved 200 million XP in Construction!",
+      "playerName": "",
+      "timestamp": 1774736436284,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: IronDanDy has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: Makaeliaaa has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: Avarice67 has achieved 200 million XP in Constitution!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: RUHTRA has achieved 200 million XP in Fishing!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: Raineee has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 137,
+      "text": "News: Lenny 716 has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774736436285,
+      "gameTick": 15333
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 102,
+      "text": "is requesting your assistance.",
+      "playerName": "Laser Stream",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: IronDanDy has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Based Tom has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Ltmooning1 has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Aine Paine has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Valten has achieved 200 million XP in Farming!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Forktastic has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: naeyaert06 has achieved 200 million XP in Constitution!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Bahaar has achieved 200 million XP in Smithing!",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your wood box contains:",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "175/190 Willow logs",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your backpack is too full to hold anything more.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774738157053,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774738157054,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Defence!",
+      "playerName": "",
+      "timestamp": 1774738157054,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: 3245 has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774738157054,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: TwIsTy Alice has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774738157054,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "73/190 Willow logs",
+      "playerName": "",
+      "timestamp": 1774738157055,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774738504702,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your crystal tree currently has 30 Crystal Blossoms and will not grow any more until some are harvested.",
+      "playerName": "",
+      "timestamp": 1774738504702,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You are fully rested. Head to your Fort to claim your bonus XP.",
+      "playerName": "",
+      "timestamp": 1774738504702,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "You have correctly entered your PIN.",
+      "playerName": "",
+      "timestamp": 1774738504702,
+      "gameTick": 0
+    },
+    {
+      "messageType": 138,
+      "text": "News: emsyli has achieved 99 Defence!",
+      "playerName": "",
+      "timestamp": 1774738528075,
+      "gameTick": 214
+    },
+    {
+      "messageType": 0,
+      "text": "You are not able to deposit anything in your backpack into your ore box.",
+      "playerName": "",
+      "timestamp": 1774738657281,
+      "gameTick": 429
+    },
+    {
+      "messageType": 109,
+      "text": "You don\u0027t have enough inventory space to withdraw that many.",
+      "playerName": "",
+      "timestamp": 1774738676293,
+      "gameTick": 461
+    },
+    {
+      "messageType": 0,
+      "text": "You add one type of resource to your ore box.",
+      "playerName": "",
+      "timestamp": 1774738678159,
+      "gameTick": 464
+    },
+    {
+      "messageType": 137,
+      "text": "News: lLaz has achieved 200 million XP in Magic!",
+      "playerName": "",
+      "timestamp": 1774738792763,
+      "gameTick": 655
+    },
+    {
+      "messageType": 138,
+      "text": "News: Marminator has received a Savage spear shaft drop!",
+      "playerName": "",
+      "timestamp": 1774738880901,
+      "gameTick": 802
+    },
+    {
+      "messageType": 138,
+      "text": "News: WC Blaster38 has received a Jal-Tok-Yt drop!",
+      "playerName": "",
+      "timestamp": 1774739005646,
+      "gameTick": 1010
+    },
+    {
+      "messageType": 0,
+      "text": "You can only empty your ore box into your bank or metal bank.",
+      "playerName": "",
+      "timestamp": 1774739053114,
+      "gameTick": 1089
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Drakolith.",
+      "playerName": "",
+      "timestamp": 1774739134552,
+      "gameTick": 1224
+    },
+    {
+      "messageType": 137,
+      "text": "News: Amphixa has achieved 200 million XP in Defence!",
+      "playerName": "",
+      "timestamp": 1774739139570,
+      "gameTick": 1233
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Orichalcite ore.",
+      "playerName": "",
+      "timestamp": 1774739147717,
+      "gameTick": 1246
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Necrite ore.",
+      "playerName": "",
+      "timestamp": 1774739160855,
+      "gameTick": 1268
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Phasmatite.",
+      "playerName": "",
+      "timestamp": 1774739172080,
+      "gameTick": 1287
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Banite ore.",
+      "playerName": "",
+      "timestamp": 1774739180786,
+      "gameTick": 1302
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Light animica.",
+      "playerName": "",
+      "timestamp": 1774739189455,
+      "gameTick": 1316
+    },
+    {
+      "messageType": 138,
+      "text": "News: HayzeySlayzz has received a Pernix cowl drop!",
+      "playerName": "",
+      "timestamp": 1774739229135,
+      "gameTick": 1382
+    },
+    {
+      "messageType": 109,
+      "text": "15,450 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739232850,
+      "gameTick": 1388
+    },
+    {
+      "messageType": 109,
+      "text": "14,000 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739240267,
+      "gameTick": 1401
+    },
+    {
+      "messageType": 109,
+      "text": "15,402 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739248911,
+      "gameTick": 1415
+    },
+    {
+      "messageType": 109,
+      "text": "14,950 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739256318,
+      "gameTick": 1427
+    },
+    {
+      "messageType": 109,
+      "text": "14,650 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739262501,
+      "gameTick": 1438
+    },
+    {
+      "messageType": 109,
+      "text": "13,888 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739268686,
+      "gameTick": 1448
+    },
+    {
+      "messageType": 109,
+      "text": "15,180 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739275489,
+      "gameTick": 1459
+    },
+    {
+      "messageType": 109,
+      "text": "14,757 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739281683,
+      "gameTick": 1470
+    },
+    {
+      "messageType": 109,
+      "text": "3,831 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739283539,
+      "gameTick": 1472
+    },
+    {
+      "messageType": 109,
+      "text": "1,335 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739283539,
+      "gameTick": 1472
+    },
+    {
+      "messageType": 109,
+      "text": "2,164 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739283539,
+      "gameTick": 1472
+    },
+    {
+      "messageType": 109,
+      "text": "2,950 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739284192,
+      "gameTick": 1474
+    },
+    {
+      "messageType": 109,
+      "text": "2,058 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739284192,
+      "gameTick": 1474
+    },
+    {
+      "messageType": 109,
+      "text": "1,355 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739284192,
+      "gameTick": 1474
+    },
+    {
+      "messageType": 109,
+      "text": "3,614 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739284192,
+      "gameTick": 1474
+    },
+    {
+      "messageType": 109,
+      "text": "3,513 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739284192,
+      "gameTick": 1474
+    },
+    {
+      "messageType": 109,
+      "text": "14,317 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739290547,
+      "gameTick": 1485
+    },
+    {
+      "messageType": 109,
+      "text": "14,903 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739297549,
+      "gameTick": 1496
+    },
+    {
+      "messageType": 109,
+      "text": "3,421 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739299480,
+      "gameTick": 1499
+    },
+    {
+      "messageType": 109,
+      "text": "3,548 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739299480,
+      "gameTick": 1499
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Novite ore.",
+      "playerName": "",
+      "timestamp": 1774739307840,
+      "gameTick": 1513
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Bathus ore.",
+      "playerName": "",
+      "timestamp": 1774739320570,
+      "gameTick": 1534
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Marmaros ore.",
+      "playerName": "",
+      "timestamp": 1774739330708,
+      "gameTick": 1551
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Kratonium ore.",
+      "playerName": "",
+      "timestamp": 1774739342087,
+      "gameTick": 1570
+    },
+    {
+      "messageType": 137,
+      "text": "News: Tsunraku has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774739345865,
+      "gameTick": 1577
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Fractite ore.",
+      "playerName": "",
+      "timestamp": 1774739355940,
+      "gameTick": 1593
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Zephyrium ore.",
+      "playerName": "",
+      "timestamp": 1774739369753,
+      "gameTick": 1616
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Argonite ore.",
+      "playerName": "",
+      "timestamp": 1774739377880,
+      "gameTick": 1630
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Katagon ore.",
+      "playerName": "",
+      "timestamp": 1774739387224,
+      "gameTick": 1646
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Gorgonite ore.",
+      "playerName": "",
+      "timestamp": 1774739395916,
+      "gameTick": 1660
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Promethium ore.",
+      "playerName": "",
+      "timestamp": 1774739404582,
+      "gameTick": 1675
+    },
+    {
+      "messageType": 109,
+      "text": "10,185 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774739534109,
+      "gameTick": 1890
+    },
+    {
+      "messageType": 0,
+      "text": "You add to your ore box: 1 Platinum ore.",
+      "playerName": "",
+      "timestamp": 1774739552065,
+      "gameTick": 1920
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774739984855,
+      "gameTick": 0
+    },
+    {
+      "messageType": 123,
+      "text": "News: A sinkhole is going to spawn in 10 minutes! Talk to Talsar at Daemonheim for more information.",
+      "playerName": "",
+      "timestamp": 1774740017432,
+      "gameTick": 78
+    }
+  ],
   "snapshots": [],
-  "exportTime": 1774716312206,
+  "exportTime": 1774740075416,
   "description": "autosave",
   "lastSeenActionTimestamp": 82878546
 }

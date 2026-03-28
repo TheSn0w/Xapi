@@ -45,15 +45,24 @@ import java.util.function.BooleanSupplier;
 public final class Pace {
 
     // ── Default profiles ──────────────────────────────────
+    //
+    // Research-based ex-Gaussian profiles for human-like delays.
+    // mu = Gaussian mean (attentive response), sigma = Gaussian SD (jitter),
+    // tau = exponential tail (attentional lapses — larger = more long delays).
+    //
+    // A bored player clicking the next tree is a semi-attended repetitive task
+    // with median RT ~1200-2500ms and a fat right tail, NOT a competitive
+    // reaction time test. Based on: Warm et al. (2008) vigilance meta-analysis,
+    // Luce (1986) RT distributions, Unsworth & Robison (2016) mind-wandering.
 
     private static final Map<String, PaceProfile> DEFAULTS = Map.of(
-            "react",  new PaceProfile(280, 50, 100),
-            "gather", new PaceProfile(400, 80, 150),
-            "bank",   new PaceProfile(350, 70, 120),
-            "walk",   new PaceProfile(800, 200, 250),
-            "idle",   new PaceProfile(2000, 500, 1000),
-            "combat", new PaceProfile(350, 60, 130),
-            "menu",   new PaceProfile(300, 60, 100)
+            "react",  new PaceProfile(900, 120, 400),
+            "gather", new PaceProfile(1200, 200, 600),
+            "bank",   new PaceProfile(800, 150, 350),
+            "walk",   new PaceProfile(1200, 250, 500),
+            "idle",   new PaceProfile(3000, 800, 2000),
+            "combat", new PaceProfile(600, 100, 250),
+            "menu",   new PaceProfile(700, 120, 300)
     );
 
     private static final PaceProfile FALLBACK = DEFAULTS.get("gather");
@@ -207,6 +216,11 @@ public final class Pace {
     /** Returns remaining break time in milliseconds, or 0. */
     public long breakRemainingMs() {
         return breaks.getBreakRemainingMs();
+    }
+
+    /** Returns the current attention state (Focused / Drifting / Distracted). */
+    public Breaks.AttentionState attentionState() {
+        return breaks.getAttentionState();
     }
 
     // =========================================================

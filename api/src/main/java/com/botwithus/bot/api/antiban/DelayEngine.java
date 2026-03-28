@@ -13,10 +13,10 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class DelayEngine {
 
-    /** Minimum output delay in milliseconds. */
-    public static final long MIN_DELAY_MS = 130;
+    /** Minimum output delay in milliseconds. No human reacts in under 400ms to a boring task. */
+    public static final long MIN_DELAY_MS = 400;
     /** Maximum output delay in milliseconds (for normal delays, not breaks). */
-    public static final long MAX_DELAY_MS = 15_000;
+    public static final long MAX_DELAY_MS = 25_000;
 
     private final PaceSeed seed;
     private volatile double tempoScale = 1.0;
