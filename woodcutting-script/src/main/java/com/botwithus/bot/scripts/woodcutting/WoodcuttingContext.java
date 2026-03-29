@@ -9,6 +9,7 @@ import com.botwithus.bot.api.inventory.banking.Bank;
 import com.botwithus.bot.api.inventory.WoodBox;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
+import com.botwithus.bot.api.model.GameWindowRect;
 import com.botwithus.bot.api.model.LocalPlayer;
 import com.botwithus.bot.api.util.LocalPlayerHelper;
 
@@ -64,6 +65,12 @@ public final class WoodcuttingContext {
     volatile boolean playerMoving = false;
     volatile String attentionState = "Focused";
     volatile String lastQuirk = "None";
+
+    // ── Game window position (updated every tick for overlay tracking) ─
+    volatile int gameWindowX = 0;
+    volatile int gameWindowY = 0;
+    volatile int gameWindowWidth = 0;
+    volatile int gameWindowHeight = 0;
 
     // ── Tick-based log tracking ─────────────────────────────────
     private int previousLogCount = -1;
@@ -124,6 +131,15 @@ public final class WoodcuttingContext {
         this.breakLabel = pace.breakLabel();
         this.breakRemainingMs = pace.breakRemainingMs();
         this.delayContext = pace.currentContext();
+
+        // Track game window position for overlay anchoring
+        try {
+            GameWindowRect rect = api.getGameWindowRect();
+            this.gameWindowX = rect.x();
+            this.gameWindowY = rect.y();
+            this.gameWindowWidth = rect.width();
+            this.gameWindowHeight = rect.height();
+        } catch (Exception ignored) { }
 
         // Diff backpack log count to detect actual gains
         int logItemId = config.getTreeType().logType.itemId;

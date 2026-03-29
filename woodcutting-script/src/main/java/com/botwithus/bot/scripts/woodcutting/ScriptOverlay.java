@@ -52,6 +52,11 @@ public final class ScriptOverlay {
     private Stage stage;
     private Timeline timeline;
 
+    // Offset of overlay relative to game window top-left
+    private double offsetX = Double.NaN;
+    private double offsetY = Double.NaN;
+    private volatile boolean dragging = false;
+
     // Tree items we update in-place
     private TreeItem<NodeData> rootItem;
     private TreeItem<NodeData> taskItem;
@@ -89,7 +94,7 @@ public final class ScriptOverlay {
         Platform.runLater(() -> {
             if (timeline != null) { timeline.stop(); timeline = null; }
             if (stage != null) {
-                savePosition(stage.getX(), stage.getY());
+                savePosition(offsetX, offsetY);
                 stage.close();
                 stage = null;
             }
@@ -180,13 +185,24 @@ public final class ScriptOverlay {
 
         final double[] dragOffset = new double[2];
         titleBar.setOnMousePressed(e -> {
+            dragging = true;
             dragOffset[0] = e.getScreenX() - stage.getX();
             dragOffset[1] = e.getScreenY() - stage.getY();
         });
         titleBar.setOnMouseDragged(e -> {
-            stage.setX(e.getScreenX() - dragOffset[0]);
-            stage.setY(e.getScreenY() - dragOffset[1]);
-            savePosition(stage.getX(), stage.getY());
+            double newX = e.getScreenX() - dragOffset[0];
+            double newY = e.getScreenY() - dragOffset[1];
+            stage.setX(newX);
+            stage.setY(newY);
+        });
+        titleBar.setOnMouseReleased(e -> {
+            // Recalculate offset relative to game window
+            int gwX = wctx.gameWindowX;
+            int gwY = wctx.gameWindowY;
+            offsetX = stage.getX() - gwX;
+            offsetY = stage.getY() - gwY;
+            savePosition(offsetX, offsetY);
+            dragging = false;
         });
 
         // ── Root container ───────────────────────────────────────
@@ -205,16 +221,16 @@ public final class ScriptOverlay {
         stage.setScene(scene);
         stage.show();
 
-        // Restore saved position or default to top-right
-        double[] pos = loadPosition();
-        if (pos != null) {
-            stage.setX(pos[0]);
-            stage.setY(pos[1]);
-        } else {
-            var screen = javafx.stage.Screen.getPrimary().getVisualBounds();
-            stage.setX(screen.getMaxX() - WIDTH - 20);
-            stage.setY(40);
+        // Restore saved offset — actual positioning deferred to update() once game window is known
+        double[] savedOffset = loadPosition();
+        if (savedOffset != null) {
+            offsetX = savedOffset[0];
+            offsetY = savedOffset[1];
         }
+        // Place at screen top-right initially; update() will snap to game window
+        var screen = javafx.stage.Screen.getPrimary().getVisualBounds();
+        stage.setX(screen.getMaxX() - WIDTH - 20);
+        stage.setY(40);
 
         // Update loop
         timeline = new Timeline(new KeyFrame(Duration.millis(250), e -> update()));
@@ -226,6 +242,26 @@ public final class ScriptOverlay {
 
     private void update() {
         if (wctx == null) return;
+
+        // ── Track game window position ─────────────────────────
+        int gwX = wctx.gameWindowX;
+        int gwY = wctx.gameWindowY;
+        int gwW = wctx.gameWindowWidth;
+        boolean hasGameWindow = gwW > 0;
+
+
+        if (hasGameWindow && !dragging) {
+            // Initialize default offset if none saved/set yet
+            if (Double.isNaN(offsetX)) {
+                // Default: top-right corner inside the game window
+                offsetX = gwW - WIDTH - 10;
+                offsetY = 40;
+                savePosition(offsetX, offsetY);
+            }
+            // Always position relative to game window
+            stage.setX(gwX + offsetX);
+            stage.setY(gwY + offsetY);
+        }
 
         String task = wctx.currentTaskName;
         boolean breaking = wctx.onBreak;
@@ -364,6 +400,7 @@ public final class ScriptOverlay {
     private TreeView<NodeData> treeView() {
         return (TreeView<NodeData>) ((VBox) stage.getScene().getRoot()).getChildren().get(1);
     }
+
 
     private static void setActive(TreeItem<NodeData> item, boolean active) {
         item.getValue().active = active;
