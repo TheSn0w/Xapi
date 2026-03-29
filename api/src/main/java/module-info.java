@@ -9,6 +9,7 @@ module com.botwithus.bot.api {
     exports com.botwithus.bot.api.query;
     exports com.botwithus.bot.api.inventory;
     exports com.botwithus.bot.api.inventory.archaeology;
+    exports com.botwithus.bot.api.inventory.porters;
     exports com.botwithus.bot.api.entities;
     exports com.botwithus.bot.api.isc;
     exports com.botwithus.bot.api.blueprint;
