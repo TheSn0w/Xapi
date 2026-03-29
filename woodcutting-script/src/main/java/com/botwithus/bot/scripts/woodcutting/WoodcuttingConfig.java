@@ -1,65 +1,49 @@
 package com.botwithus.bot.scripts.woodcutting;
 
-import com.botwithus.bot.api.inventory.WoodBox;
+import java.util.List;
 
-/**
- * Configuration for the woodcutting script: tree type selection and location coordinates.
- */
 public final class WoodcuttingConfig {
 
-    /**
-     * Tree types supported by the script, mapped to their WoodBox log type.
-     */
-    public enum TreeType {
-        NORMAL  ("Tree",        "Chop down", WoodBox.LogType.LOGS),
-        OAK     ("Oak",         "Chop down", WoodBox.LogType.OAK),
-        WILLOW  ("Willow",      "Chop down", WoodBox.LogType.WILLOW),
-        TEAK    ("Teak",        "Chop down", WoodBox.LogType.TEAK),
-        MAPLE   ("Maple tree",  "Chop down", WoodBox.LogType.MAPLE),
-        YEW     ("Yew",         "Chop down", WoodBox.LogType.YEW),
-        MAGIC   ("Magic tree",  "Chop down", WoodBox.LogType.MAGIC),
-        ELDER   ("Elder tree",  "Chop down", WoodBox.LogType.ELDER);
+    private final List<TreeProfile> profiles = WoodcuttingProfiles.all();
+    private volatile String selectedTreeId = "willow";
+    private volatile String selectedHotspotId = "willow_draynor";
 
-        /** The in-game object name to query for. */
-        public final String objectName;
-        /** The interaction option on the tree. */
-        public final String interactOption;
-        /** The corresponding WoodBox log type for fill/store checks. */
-        public final WoodBox.LogType logType;
-
-        TreeType(String objectName, String interactOption, WoodBox.LogType logType) {
-            this.objectName = objectName;
-            this.interactOption = interactOption;
-            this.logType = logType;
-        }
-
-        /** Display name for the UI combo box. */
-        public String displayName() {
-            return objectName + " (" + logType.name + ")";
-        }
+    public List<TreeProfile> profiles() {
+        return profiles;
     }
 
-    // ── Selected tree type ───────────────────────────────────────
-    private volatile TreeType treeType = TreeType.WILLOW;
+    public TreeProfile selectedTree() {
+        return profiles.stream()
+                .filter(profile -> profile.id().equals(selectedTreeId))
+                .findFirst()
+                .orElse(profiles.getFirst());
+    }
 
-    // ── Location coordinates (Draynor defaults) ──────────────────
-    private volatile int treeAreaX = 3088;
-    private volatile int treeAreaY = 3234;
-    private volatile int bankAreaX = 3091;
-    private volatile int bankAreaY = 3244;
-    private volatile int walkRadius = 15;
+    public HotspotProfile selectedHotspot() {
+        TreeProfile profile = selectedTree();
+        return profile.hotspotById(selectedHotspotId);
+    }
 
-    public TreeType getTreeType() { return treeType; }
-    public void setTreeType(TreeType treeType) { this.treeType = treeType; }
+    public void selectTree(String treeId) {
+        TreeProfile profile = profiles.stream()
+                .filter(candidate -> candidate.id().equals(treeId))
+                .findFirst()
+                .orElse(profiles.getFirst());
+        this.selectedTreeId = profile.id();
+        HotspotProfile defaultHotspot = profile.defaultHotspot();
+        this.selectedHotspotId = defaultHotspot != null ? defaultHotspot.id() : "";
+    }
 
-    public int getTreeAreaX() { return treeAreaX; }
-    public int getTreeAreaY() { return treeAreaY; }
-    public void setTreeArea(int x, int y) { this.treeAreaX = x; this.treeAreaY = y; }
+    public void selectHotspot(String hotspotId) {
+        HotspotProfile hotspot = selectedTree().hotspotById(hotspotId);
+        this.selectedHotspotId = hotspot != null ? hotspot.id() : "";
+    }
 
-    public int getBankAreaX() { return bankAreaX; }
-    public int getBankAreaY() { return bankAreaY; }
-    public void setBankArea(int x, int y) { this.bankAreaX = x; this.bankAreaY = y; }
+    public String selectedTreeId() {
+        return selectedTreeId;
+    }
 
-    public int getWalkRadius() { return walkRadius; }
-    public void setWalkRadius(int radius) { this.walkRadius = radius; }
+    public String selectedHotspotId() {
+        return selectedHotspotId;
+    }
 }

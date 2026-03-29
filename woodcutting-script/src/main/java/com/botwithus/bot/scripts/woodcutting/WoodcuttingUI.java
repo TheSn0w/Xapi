@@ -5,23 +5,30 @@ import com.botwithus.bot.api.nav.LocalPathfinder;
 import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.script.Task;
 import com.botwithus.bot.api.ui.ScriptUI;
-
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImInt;
 
-/**
- * ImGui UI for the woodcutting script.
- * Four tabs: Config, Diagnostics, Debug, Log.
- * <p>
- * Thread safety: all data is read from volatile fields populated by
- * {@link WoodcuttingContext#collectUIState()} in onLoop. No RPC calls on the render thread.
- */
+import java.util.List;
+
 final class WoodcuttingUI implements ScriptUI {
 
+    private static final float[] BG = {0.08f, 0.07f, 0.05f, 1.0f};
+    private static final float[] PANEL = {0.14f, 0.11f, 0.08f, 0.96f};
+    private static final float[] PANEL_ALT = {0.10f, 0.16f, 0.17f, 0.90f};
+    private static final float[] TEXT = {0.95f, 0.93f, 0.88f, 1.0f};
+    private static final float[] MUTED = {0.67f, 0.64f, 0.58f, 1.0f};
+    private static final float[] GOLD = {0.94f, 0.76f, 0.32f, 1.0f};
+    private static final float[] GREEN = {0.48f, 0.87f, 0.57f, 1.0f};
+    private static final float[] CYAN = {0.39f, 0.81f, 0.90f, 1.0f};
+    private static final float[] ORANGE = {0.93f, 0.54f, 0.24f, 1.0f};
+    private static final float[] RED = {0.93f, 0.39f, 0.33f, 1.0f};
+
     private final WoodcuttingScript script;
-    private final ImInt selectedTree = new ImInt(2); // Default: WILLOW (index 2)
+    private final ImInt selectedTree = new ImInt(0);
+    private final ImInt selectedHotspot = new ImInt(0);
+    private String pathfindResult = "Select a pathing or targeting probe.";
 
     WoodcuttingUI(WoodcuttingScript script) {
         this.script = script;
@@ -39,338 +46,424 @@ final class WoodcuttingUI implements ScriptUI {
             return;
         }
 
-        if (ImGui.beginTabBar("##wc_tabs")) {
-            if (ImGui.beginTabItem("Config")) {
-                renderConfigTab();
-                ImGui.endTabItem();
+        pushPalette();
+        try {
+            ImGui.textColored(GOLD[0], GOLD[1], GOLD[2], GOLD[3], "Woodcutting Atlas");
+            ImGui.sameLine();
+            ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], "profile-driven routing, pacing, and diagnostics");
+            ImGui.separator();
+
+            if (ImGui.beginTabBar("##woodcutting_tabs")) {
+                if (ImGui.beginTabItem("Config")) {
+                    renderConfigTab();
+                    ImGui.endTabItem();
+                }
+                if (ImGui.beginTabItem("Diagnostics")) {
+                    renderDiagnosticsTab();
+                    ImGui.endTabItem();
+                }
+                if (ImGui.beginTabItem("Log")) {
+                    renderLogTab();
+                    ImGui.endTabItem();
+                }
+                if (ImGui.beginTabItem("Debug")) {
+                    renderDebugTab();
+                    ImGui.endTabItem();
+                }
+                ImGui.endTabBar();
             }
-            if (ImGui.beginTabItem("Diagnostics")) {
-                renderDiagnosticsTab();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Log")) {
-                renderLogTab();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Debug")) {
-                renderDebugTab();
-                ImGui.endTabItem();
-            }
-            ImGui.endTabBar();
+        } finally {
+            ImGui.popStyleColor(9);
         }
     }
-
-    // ── Config Tab ───────────────────────────────────────────────
 
     private void renderConfigTab() {
         WoodcuttingContext wctx = ctx();
-        ImGui.text("Tree Type");
-        ImGui.separator();
+        TreeProfile profile = wctx.config.selectedTree();
+        HotspotProfile hotspot = wctx.config.selectedHotspot();
+        List<TreeProfile> profiles = wctx.config.profiles();
 
-        WoodcuttingConfig.TreeType[] types = WoodcuttingConfig.TreeType.values();
-        String[] names = new String[types.length];
-        for (int i = 0; i < types.length; i++) {
-            names[i] = types[i].displayName();
+        String[] treeNames = profiles.stream().map(TreeProfile::displayName).toArray(String[]::new);
+        selectedTree.set(indexOfProfile(profiles, profile.id()));
+
+        pushPanel(PANEL);
+        if (ImGui.beginChild("##config_controls", 0, 108, true, 0)) {
+            ImGui.textColored(GOLD[0], GOLD[1], GOLD[2], GOLD[3], "Control Panel");
+            ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], "Pick the tree, then refine the active hotspot.");
+            ImGui.separator();
+
+            ImGui.textColored(CYAN[0], CYAN[1], CYAN[2], CYAN[3], "Tree");
+            ImGui.setNextItemWidth(-1);
+            if (ImGui.combo("##tree_profile", selectedTree, treeNames)) {
+                TreeProfile chosen = profiles.get(selectedTree.get());
+                wctx.config.selectTree(chosen.id());
+                wctx.syncSelectionState();
+            }
+
+            List<HotspotProfile> hotspots = wctx.config.selectedTree().hotspots();
+            String[] hotspotNames = hotspots.stream().map(HotspotProfile::label).toArray(String[]::new);
+            selectedHotspot.set(indexOfHotspot(hotspots, hotspot.id()));
+
+            ImGui.textColored(CYAN[0], CYAN[1], CYAN[2], CYAN[3], "Hotspot");
+            ImGui.setNextItemWidth(-1);
+            if (ImGui.combo("##hotspot_profile", selectedHotspot, hotspotNames)) {
+                HotspotProfile chosen = hotspots.get(selectedHotspot.get());
+                wctx.config.selectHotspot(chosen.id());
+                wctx.syncSelectionState();
+            }
+        }
+        ImGui.endChild();
+        popPanel();
+
+        int flags = ImGuiTableFlags.SizingStretchProp;
+        if (ImGui.beginTable("##config_cards", 2, flags)) {
+            ImGui.tableNextColumn();
+            renderCard("##profile_card", "Current Profile", 186, () -> {
+                valueRow("Tree", profile.displayName(), TEXT);
+                valueRow("Action", profile.primaryAction(), CYAN);
+                valueRow("Mode", profile.mode().displayName(), TEXT);
+                valueRow("Inventory", hotspot.inventoryMode().displayName(), TEXT);
+                valueRow("Tracked product", profile.productName().isBlank() ? "None" : profile.productName(), MUTED);
+                valueRow("Wood box", profile.supportsWoodBox() ? profile.woodBoxLogType().name : "Not used", MUTED);
+            });
+
+            ImGui.tableNextColumn();
+            renderCard("##requirements_card", "Requirements", 186, () -> {
+                valueRow("Required level", String.valueOf(profile.requiredLevel()), TEXT);
+                valueRow("Current level", String.valueOf(wctx.woodcuttingLevel), wctx.requirementsMet ? GREEN : RED);
+                ImGui.spacing();
+                renderStatusPill(wctx.requirementStatus, wctx.requirementsMet, wctx.manualRequirementOnly);
+                ImGui.spacing();
+                ImGui.pushTextWrapPos();
+                ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], wctx.requirementDetail);
+                ImGui.popTextWrapPos();
+            });
+            ImGui.endTable();
         }
 
-        WoodcuttingConfig.TreeType current = wctx.config.getTreeType();
-        selectedTree.set(current.ordinal());
+        renderCard("##location_card", "Location + Runtime", 170, () -> {
+            valueRow("Hotspot", hotspot.label() + " (" + hotspot.hotspotType() + ")", TEXT);
+            valueRow("Tree anchor", hotspot.treeAnchor().displayText(), CYAN);
+            TileAnchor storage = wctx.currentBankingAnchor();
+            valueRow("Storage anchor", storage == null ? "None" : storage.displayText(), storage == null ? MUTED : CYAN);
+            valueRow("Search radius", hotspot.radius() + " tiles", TEXT);
+            valueRow("Route step", wctx.currentRouteLabel, hotspot.hasRoute() ? ORANGE : MUTED);
+            ImGui.spacing();
+            ImGui.pushTextWrapPos();
+            ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], hotspot.note());
+            ImGui.popTextWrapPos();
+        });
 
-        if (ImGui.combo("##tree_type", selectedTree, names)) {
-            WoodcuttingConfig.TreeType chosen = types[selectedTree.get()];
-            wctx.config.setTreeType(chosen);
-            wctx.logAction("Tree type changed to " + chosen.objectName);
+        pushPanel(PANEL_ALT);
+        if (ImGui.beginChild("##behaviour_strip", 0, 78, true, 0)) {
+            ImGui.textColored(GOLD[0], GOLD[1], GOLD[2], GOLD[3], "Behaviour Summary");
+            ImGui.pushTextWrapPos();
+            ImGui.textColored(TEXT[0], TEXT[1], TEXT[2], TEXT[3], wctx.profileSummary);
+            ImGui.popTextWrapPos();
+            ImGui.spacing();
+            renderPill(profile.mode().displayName(), GOLD);
+            ImGui.sameLine();
+            renderPill(hotspot.hotspotType(), CYAN);
+            ImGui.sameLine();
+            renderPill(hotspot.inventoryMode().displayName(), hotspot.inventoryMode().isBankLike() ? GREEN : ORANGE);
         }
-
-        ImGui.spacing();
-        ImGui.text("Current: " + current.objectName);
-        ImGui.text("Log type: " + current.logType.name);
-        ImGui.text("Interaction: " + current.interactOption);
-
-        ImGui.spacing();
-        ImGui.separator();
-        ImGui.text("Locations (Draynor defaults)");
-        ImGui.text(String.format("Trees: (%d, %d)  Bank: (%d, %d)",
-                wctx.config.getTreeAreaX(), wctx.config.getTreeAreaY(),
-                wctx.config.getBankAreaX(), wctx.config.getBankAreaY()));
+        ImGui.endChild();
+        popPanel();
     }
-
-    // ── Diagnostics Tab ──────────────────────────────────────────
 
     private void renderDiagnosticsTab() {
         WoodcuttingContext wctx = ctx();
-        int flags = ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
-        if (ImGui.beginTable("##wc_diag", 2, flags)) {
-            ImGui.tableSetupColumn("Property");
-            ImGui.tableSetupColumn("Value");
-            ImGui.tableHeadersRow();
 
-            diagRow("Task", wctx.currentTaskName);
-
-            long elapsed = System.currentTimeMillis() - wctx.startTime;
-            long minutes = elapsed / 60000;
-            long seconds = (elapsed / 1000) % 60;
-            diagRow("Session Time", String.format("%dm %ds", minutes, seconds));
-
-            diagRow("Phase", wctx.pacePhase);
-            diagRow("Fatigue", String.format("%.1f%%", wctx.fatigue * 100));
-
-            ImGui.tableNextRow();
+        if (ImGui.beginTable("##diag_cards", 2, ImGuiTableFlags.SizingStretchProp)) {
             ImGui.tableNextColumn();
-            ImGui.separator();
+            renderCard("##diag_session", "Session State", 190, () -> {
+                valueRow("Task", wctx.currentTaskName, TEXT);
+                valueRow("Phase", wctx.pacePhase, phaseColor(wctx.pacePhase));
+                valueRow("Attention", wctx.attentionState, attentionColor(wctx.attentionState));
+                valueRow("Fatigue", String.format("%.1f%%", wctx.fatigue * 100.0), fatigueColor(wctx.fatigue));
+                valueRow("Session", formatSession(), TEXT);
+                valueRow("Delay", wctx.delayContext.isBlank() ? "None" : wctx.delayContext, CYAN);
+                valueRow("Break", wctx.onBreak ? (wctx.breakLabel == null ? "Active" : wctx.breakLabel) : "None", wctx.onBreak ? ORANGE : MUTED);
+            });
+
             ImGui.tableNextColumn();
-            ImGui.separator();
-
-            diagRow("Logs Chopped", String.valueOf(wctx.logsChopped));
-            diagRow("Woodbox Fills", String.valueOf(wctx.woodboxFills));
-            diagRow("Bank Trips", String.valueOf(wctx.bankTrips));
-
-            ImGui.tableNextRow();
-            ImGui.tableNextColumn();
-            ImGui.separator();
-            ImGui.tableNextColumn();
-            ImGui.separator();
-
-            diagRow("Free Slots", String.valueOf(wctx.freeSlots));
-            diagRow("Has Wood Box", wctx.hasWoodBox ? "Yes" : "No");
-            diagRow("Woodbox Stored", wctx.woodboxStored + " / " + wctx.woodboxCapacity);
-
-            diagRow("Animation", wctx.animationId == -1 ? "Idle" : String.valueOf(wctx.animationId));
-            diagRow("Bank Open", wctx.bankOpen ? "Yes" : "No");
-
+            renderCard("##diag_resources", "Resources + Inventory", 190, () -> {
+                valueRow("Collected", String.valueOf(wctx.logsChopped), GREEN);
+                valueRow("Wood box fills", String.valueOf(wctx.woodboxFills), TEXT);
+                valueRow("Bank trips", String.valueOf(wctx.bankTrips), TEXT);
+                valueRow("Free slots", String.valueOf(wctx.freeSlots), wctx.freeSlots <= 3 ? ORANGE : TEXT);
+                valueRow("Wood box", wctx.hasWoodBox ? (wctx.woodboxStored + " / " + wctx.woodboxCapacity) : "None", wctx.hasWoodBox ? GREEN : MUTED);
+                valueRow("Bank open", wctx.bankOpen ? "Yes" : "No", wctx.bankOpen ? CYAN : MUTED);
+                valueRow("Deposit box", wctx.depositOpen ? "Yes" : "No", wctx.depositOpen ? CYAN : MUTED);
+            });
             ImGui.endTable();
         }
+
+        renderCard("##diag_targeting", "Targeting + Profile", 180, () -> {
+            valueRow("Tree", wctx.selectedTreeName, TEXT);
+            valueRow("Hotspot", wctx.selectedHotspotName, CYAN);
+            valueRow("Mode", wctx.modeLabel, GOLD);
+            valueRow("Inventory mode", wctx.inventoryModeLabel, hotspotColor(wctx.inventoryModeLabel));
+            valueRow("Target", wctx.currentTargetName, TEXT);
+            valueRow("Target ID", wctx.currentTargetId < 0 ? "-" : String.valueOf(wctx.currentTargetId), MUTED);
+            valueRow("Target tile", wctx.currentTargetTile, MUTED);
+            valueRow("Animation", wctx.animationId == -1 ? "Idle" : String.valueOf(wctx.animationId), wctx.animationId == -1 ? MUTED : GREEN);
+            valueRow("Movement", wctx.playerMoving ? "Moving" : "Stationary", wctx.playerMoving ? CYAN : MUTED);
+            ImGui.spacing();
+            ImGui.pushTextWrapPos();
+            ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], wctx.hotspotNote);
+            ImGui.popTextWrapPos();
+        });
     }
 
-    // ── Debug Tab ─────────────────────────────────────────────────
+    private void renderLogTab() {
+        WoodcuttingContext wctx = ctx();
 
-    private String pathfindResult = "Click a button to test";
+        pushPanel(PANEL);
+        if (ImGui.beginChild("##log_shell", 0, 0, true, 0)) {
+            ImGui.textColored(GOLD[0], GOLD[1], GOLD[2], GOLD[3], "Action Feed");
+            ImGui.sameLine();
+            ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], "(" + wctx.actionLog.size() + " entries)");
+            ImGui.sameLine();
+            if (ImGui.smallButton("Copy All")) {
+                StringBuilder sb = new StringBuilder();
+                for (String entry : wctx.actionLog) {
+                    sb.append(entry).append('\n');
+                }
+                ImGui.setClipboardText(sb.toString());
+            }
+            ImGui.sameLine();
+            if (ImGui.smallButton("Clear")) {
+                wctx.actionLog.clear();
+            }
+            ImGui.separator();
+
+            if (ImGui.beginChild("##log_entries", 0, 0, false, 0)) {
+                for (String entry : wctx.actionLog) {
+                    float[] color = logColor(entry);
+                    ImGui.textColored(color[0], color[1], color[2], color[3], entry);
+                }
+            }
+            ImGui.endChild();
+        }
+        ImGui.endChild();
+        popPanel();
+    }
 
     private void renderDebugTab() {
         WoodcuttingContext wctx = ctx();
-        ImGui.text("Force Task");
-        ImGui.separator();
 
-        for (Task task : script.getTasks()) {
-            if (ImGui.button("-> " + task.name())) {
-                wctx.forceTask(task.name());
-            }
-            ImGui.sameLine();
-        }
-        ImGui.newLine();
+        if (ImGui.beginTable("##debug_cards", 2, ImGuiTableFlags.SizingStretchProp)) {
+            ImGui.tableNextColumn();
+            renderCard("##debug_force", "Task Forcing", 150, () -> {
+                for (Task task : script.getTasks()) {
+                    if (ImGui.button("Run " + task.name(), -1, 0)) {
+                        wctx.forceTask(task.name());
+                    }
+                }
+            });
 
-        ImGui.spacing();
-        ImGui.spacing();
-        ImGui.text("Pathfinding Test");
-        ImGui.separator();
-
-        if (ImGui.button("Test: Distance to Bank")) {
-            pathfindResult = testPathDistance(
-                    wctx.config.getBankAreaX(),
-                    wctx.config.getBankAreaY(),
-                    "Bank");
-        }
-        ImGui.sameLine();
-        if (ImGui.button("Test: Distance to Trees")) {
-            pathfindResult = testPathDistance(
-                    wctx.config.getTreeAreaX(),
-                    wctx.config.getTreeAreaY(),
-                    "Trees");
+            ImGui.tableNextColumn();
+            renderCard("##debug_pathing", "Pathing Probes", 150, () -> {
+                if (ImGui.button("Distance to Trees", -1, 0)) {
+                    TileAnchor anchor = wctx.currentTravelAnchor();
+                    pathfindResult = testPathDistance(anchor.x(), anchor.y(), anchor.label());
+                }
+                if (ImGui.button("Distance to Storage", -1, 0)) {
+                    TileAnchor anchor = wctx.currentBankingAnchor();
+                    pathfindResult = anchor == null ? "No storage anchor configured." : testPathDistance(anchor.x(), anchor.y(), anchor.label());
+                }
+                if (ImGui.button("Nearest Storage Object", -1, 0)) {
+                    pathfindResult = testNearestStorage();
+                }
+            });
+            ImGui.endTable();
         }
 
-        if (ImGui.button("Test: Nearest Counter (A*)")) {
-            pathfindResult = testNearestCounter();
-        }
-
-        if (ImGui.button("Test: All Counter Distances")) {
-            pathfindResult = testAllCounterDistances();
-        }
-
-        if (ImGui.button("Dump Bank Wall Flags")) {
-            pathfindResult = dumpBankWallFlags();
-        }
-
-        ImGui.spacing();
-        if (!pathfindResult.isEmpty()) {
+        renderCard("##debug_result", "Probe Output", 220, () -> {
             if (ImGui.smallButton("Copy Result")) {
                 ImGui.setClipboardText(pathfindResult);
             }
-            ImGui.sameLine();
-        }
-        ImGui.textWrapped(pathfindResult);
+            ImGui.separator();
+            ImGui.pushTextWrapPos();
+            ImGui.textColored(TEXT[0], TEXT[1], TEXT[2], TEXT[3], pathfindResult);
+            ImGui.popTextWrapPos();
+        });
     }
 
     private String testPathDistance(int destX, int destY, String label) {
         WoodcuttingContext wctx = ctx();
-        if (wctx.api == null) return "API not ready";
-
         LocalPlayer player = wctx.api.getLocalPlayer();
-        int px = player.tileX(), py = player.tileY(), plane = player.plane();
+        int px = player.tileX();
+        int py = player.tileY();
+        int plane = player.plane();
 
         int chebyshev = Math.max(Math.abs(px - destX), Math.abs(py - destY));
-
         WorldPathfinder wpf = WorldPathfinder.getInstance();
-        if (wpf == null) return label + ": Chebyshev=" + chebyshev + " | WPF=N/A (not initialized)";
-
-        int wpfDist = wpf.walkDistance(px, py, destX, destY, plane);
-        String wpfInfo = wpfDist >= 0 ? "steps=" + wpfDist : "NO PATH FOUND";
-
-        String msg = String.format("%s: from (%d,%d) to (%d,%d)\n  Chebyshev: %d tiles\n  WPF: %s",
-                label, px, py, destX, destY, chebyshev, wpfInfo);
-        wctx.logAction("PATHFIND TEST " + label + ": Chebyshev=" + chebyshev + " WPF=" + wpfInfo);
-        return msg;
-    }
-
-    private String testNearestCounter() {
-        WoodcuttingContext wctx = ctx();
-        if (wctx.api == null) return "API not ready";
-
-        var objects = new com.botwithus.bot.api.entities.SceneObjects(wctx.api);
-        var counter = objects.query().named("Counter").nearest();
-        if (counter == null) return "No Counter found nearby";
-
-        LocalPlayer player = wctx.api.getLocalPlayer();
-        int px = player.tileX(), py = player.tileY(), plane = player.plane();
-        int chebyshev = Math.max(Math.abs(px - counter.tileX()),
-                Math.abs(py - counter.tileY()));
-
-        WorldPathfinder wpf = WorldPathfinder.getInstance();
-        String wpfInfo = "N/A";
+        String wpfInfo = "not initialised";
         if (wpf != null) {
-            int dist = wpf.walkDistance(px, py, counter.tileX(), counter.tileY(), plane);
+            int dist = wpf.walkDistance(px, py, destX, destY, plane);
             wpfInfo = dist >= 0 ? "steps=" + dist : "NO PATH";
         }
 
-        String msg = String.format("Nearest Counter at (%d, %d)\n  Chebyshev: %d tiles\n  WPF: %s",
-                counter.tileX(), counter.tileY(), chebyshev, wpfInfo);
-        wctx.logAction("NEAREST COUNTER: (" + counter.tileX() + "," + counter.tileY() + ") Cheby=" + chebyshev + " WPF=" + wpfInfo);
+        String msg = String.format("%s from (%d,%d,%d) to (%d,%d,%d)%nChebyshev: %d%nWorldPathfinder: %s",
+                label, px, py, plane, destX, destY, plane, chebyshev, wpfInfo);
+        wctx.logAction("DEBUG: " + msg.replace('\n', ' '));
         return msg;
     }
 
-    private String testAllCounterDistances() {
+    private String testNearestStorage() {
         WoodcuttingContext wctx = ctx();
-        if (wctx.api == null) return "API not ready";
-
-        var objects = new com.botwithus.bot.api.entities.SceneObjects(wctx.api);
-        var counters = objects.query().named("Counter").all();
-        if (counters.isEmpty()) return "No Counters found nearby";
-
-        LocalPlayer player = wctx.api.getLocalPlayer();
-        int px = player.tileX(), py = player.tileY(), plane = player.plane();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Player at (%d,%d) — %d Counters found:\n", px, py, counters.size()));
-
-        WorldPathfinder wpf = WorldPathfinder.getInstance();
-        int bestDist = Integer.MAX_VALUE;
-        String bestTile = "";
-
-        for (var counter : counters) {
-            int cx = counter.tileX(), cy = counter.tileY();
-            int chebyshev = Math.max(Math.abs(px - cx), Math.abs(py - cy));
-
-            var localPath = wctx.api.findPath(px, py, cx, cy);
-            String localStr = localPath.found() ? String.valueOf(localPath.pathLength()) : "NO PATH";
-
-            int wpfDist = wpf != null ? wpf.walkDistance(px, py, cx, cy, plane) : -1;
-            String wpfStr = wpfDist >= 0 ? String.valueOf(wpfDist) : "NO PATH";
-
-            String line = String.format("  (%d,%d) Cheby=%d Local=%s WPF=%s", cx, cy, chebyshev, localStr, wpfStr);
-            sb.append(line).append("\n");
-            wctx.logAction(String.format("COUNTER (%d,%d) Cheby=%d Local=%s WPF=%s", cx, cy, chebyshev, localStr, wpfStr));
-
-            if (wpfDist >= 0 && wpfDist < bestDist) {
-                bestDist = wpfDist;
-                bestTile = "(" + cx + "," + cy + ")";
-            }
+        HotspotProfile hotspot = wctx.hotspot();
+        TileAnchor anchor = wctx.currentBankingAnchor();
+        if (anchor == null) {
+            return "No storage anchor configured for this hotspot.";
         }
 
-        sb.append("Nearest by WorldPathfinder: ").append(bestTile).append(" dist=").append(bestDist);
-        wctx.logAction("NEAREST BY WPF: " + bestTile + " dist=" + bestDist);
-        return sb.toString();
+        String[] names = hotspot.inventoryMode() == InventoryMode.DEPOSIT_BOX
+                ? hotspot.depositObjectNames().toArray(String[]::new)
+                : hotspot.bankObjectNames().toArray(String[]::new);
+
+        for (String name : names) {
+            var object = wctx.objects.query().named(name).within(anchor.x(), anchor.y(), 16).visible().nearest();
+            if (object != null) {
+                return "Nearest storage object: " + object.name() + " @ (" + object.tileX() + ", " + object.tileY() + ", " + object.plane() + ")";
+            }
+        }
+        return "No nearby storage object found around " + anchor.displayText();
     }
 
-    private String dumpBankWallFlags() {
-        LocalPathfinder pf = LocalPathfinder.getInstance();
-        if (pf == null) return "Pathfinder not initialized";
-
-        WoodcuttingContext wctx = ctx();
-        var objects = new com.botwithus.bot.api.entities.SceneObjects(wctx.api);
-        var counters = objects.query().named("Counter").all();
-        if (counters.isEmpty()) return "No Counters found";
-
-        int cx = counters.getFirst().tileX();
-        int cy = counters.getFirst().tileY();
-        var cmap = pf.getCollisionMap();
-        int plane = wctx.api.getLocalPlayer().plane();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Flags around (%d,%d) plane=%d:\n", cx, cy, plane));
-        sb.append("Format: (x,y) W=walkable N/E/S/W=can move\n\n");
-
-        for (int dy = 3; dy >= -3; dy--) {
-            for (int dx = -3; dx <= 3; dx++) {
-                int wx = cx + dx, wy = cy + dy;
-                boolean walk = cmap.isWalkable(wx, wy, plane);
-                boolean n = cmap.canMove(wx, wy, plane, 2);
-                boolean e = cmap.canMove(wx, wy, plane, 4);
-                boolean s = cmap.canMove(wx, wy, plane, 8);
-                boolean w = cmap.canMove(wx, wy, plane, 16);
-                String dirs = (n?"N":".")+(e?"E":".")+(s?"S":".")+(w?"W":".");
-                sb.append(String.format("(%d,%d)%s%s ", wx, wy, walk?"W":"X", dirs));
+    private int indexOfProfile(List<TreeProfile> profiles, String id) {
+        for (int i = 0; i < profiles.size(); i++) {
+            if (profiles.get(i).id().equals(id)) {
+                return i;
             }
-            sb.append("\n");
         }
-        return sb.toString();
+        return 0;
     }
 
-    private static void diagRow(String label, String value) {
-        ImGui.tableNextRow();
-        ImGui.tableNextColumn();
-        ImGui.text(label);
-        ImGui.tableNextColumn();
-        ImGui.text(value);
+    private int indexOfHotspot(List<HotspotProfile> hotspots, String id) {
+        for (int i = 0; i < hotspots.size(); i++) {
+            if (hotspots.get(i).id().equals(id)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
-    // ── Log Tab ──────────────────────────────────────────────────
-
-    private void renderLogTab() {
-        WoodcuttingContext wctx = ctx();
-        ImGui.text("Action Log (" + wctx.actionLog.size() + " entries)");
-        ImGui.sameLine();
-        if (ImGui.smallButton("Copy All")) {
-            StringBuilder sb = new StringBuilder();
-            for (String entry : wctx.actionLog) {
-                sb.append(entry).append('\n');
-            }
-            ImGui.setClipboardText(sb.toString());
-        }
-        ImGui.sameLine();
-        if (ImGui.smallButton("Clear")) {
-            wctx.actionLog.clear();
-        }
-        ImGui.separator();
-
-        float height = ImGui.getContentRegionAvailY();
-        if (ImGui.beginChild("##wc_log", 0, height, false, 0)) {
-            for (String entry : wctx.actionLog) {
-                if (entry.contains("FAILED") || entry.contains("Error") || entry.contains("failed") || entry.contains("No ")) {
-                    ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 0.4f, 0.4f, 1.0f);
-                    ImGui.textWrapped(entry);
-                    ImGui.popStyleColor();
-                } else if (entry.contains("OK") || entry.contains("complete") || entry.contains("Arrived") || entry.contains("Started")) {
-                    ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 1.0f, 0.4f, 1.0f);
-                    ImGui.textWrapped(entry);
-                    ImGui.popStyleColor();
-                } else if (entry.contains("Walking") || entry.contains("Opening")) {
-                    ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.7f, 1.0f, 1.0f);
-                    ImGui.textWrapped(entry);
-                    ImGui.popStyleColor();
-                } else {
-                    ImGui.textWrapped(entry);
-                }
-            }
+    private void renderCard(String id, String title, float height, Runnable body) {
+        pushPanel(PANEL);
+        if (ImGui.beginChild(id, 0, height, true, 0)) {
+            ImGui.textColored(GOLD[0], GOLD[1], GOLD[2], GOLD[3], title);
+            ImGui.separator();
+            body.run();
         }
         ImGui.endChild();
+        popPanel();
+    }
+
+    private void valueRow(String label, String value, float[] valueColor) {
+        ImGui.textColored(MUTED[0], MUTED[1], MUTED[2], MUTED[3], label);
+        ImGui.sameLine(150);
+        ImGui.textColored(valueColor[0], valueColor[1], valueColor[2], valueColor[3], value);
+    }
+
+    private void renderStatusPill(String text, boolean ready, boolean manualGate) {
+        if (!ready) {
+            renderPill(text, RED);
+            return;
+        }
+        renderPill(text, manualGate ? ORANGE : GREEN);
+    }
+
+    private void renderPill(String text, float[] color) {
+        ImGui.pushStyleColor(ImGuiCol.Button, color[0], color[1], color[2], 0.25f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, color[0], color[1], color[2], 0.35f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, color[0], color[1], color[2], 0.45f);
+        ImGui.button(text);
+        ImGui.popStyleColor(3);
+    }
+
+    private void pushPalette() {
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, PANEL[0], PANEL[1], PANEL[2], PANEL[3]);
+        ImGui.pushStyleColor(ImGuiCol.FrameBg, 0.18f, 0.14f, 0.11f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.FrameBgHovered, 0.24f, 0.19f, 0.14f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.Button, 0.20f, 0.15f, 0.11f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.27f, 0.20f, 0.13f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.33f, 0.24f, 0.16f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.Tab, 0.13f, 0.10f, 0.08f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.TabHovered, 0.23f, 0.18f, 0.12f, 1.0f);
+        ImGui.pushStyleColor(ImGuiCol.TabActive, 0.28f, 0.21f, 0.14f, 1.0f);
+    }
+
+    private void pushPanel(float[] color) {
+        ImGui.pushStyleColor(ImGuiCol.ChildBg, color[0], color[1], color[2], color[3]);
+    }
+
+    private void popPanel() {
+        ImGui.popStyleColor();
+    }
+
+    private float[] phaseColor(String phase) {
+        return switch (phase) {
+            case "active" -> GREEN;
+            case "warmup" -> CYAN;
+            case "recovering" -> ORANGE;
+            case "fatigued" -> RED;
+            default -> MUTED;
+        };
+    }
+
+    private float[] attentionColor(String attention) {
+        return switch (attention) {
+            case "Focused" -> GREEN;
+            case "Drifting" -> ORANGE;
+            case "Distracted" -> RED;
+            default -> MUTED;
+        };
+    }
+
+    private float[] fatigueColor(double fatigue) {
+        if (fatigue > 1.25) {
+            return RED;
+        }
+        if (fatigue > 1.1) {
+            return ORANGE;
+        }
+        return GREEN;
+    }
+
+    private float[] hotspotColor(String inventoryMode) {
+        return switch (inventoryMode) {
+            case "Bank", "Deposit box" -> GREEN;
+            case "Drop", "Special" -> ORANGE;
+            default -> MUTED;
+        };
+    }
+
+    private float[] logColor(String entry) {
+        if (entry.contains("WARN:")) {
+            return RED;
+        }
+        if (entry.contains("OK:")) {
+            return GREEN;
+        }
+        if (entry.contains("MOVE:")) {
+            return CYAN;
+        }
+        if (entry.contains("QUIRK:")) {
+            return ORANGE;
+        }
+        if (entry.contains("TASK:")) {
+            return GOLD;
+        }
+        return TEXT;
+    }
+
+    private String formatSession() {
+        long elapsed = System.currentTimeMillis() - ctx().startTime;
+        long minutes = elapsed / 60000;
+        long seconds = (elapsed / 1000) % 60;
+        return minutes + "m " + seconds + "s";
     }
 }

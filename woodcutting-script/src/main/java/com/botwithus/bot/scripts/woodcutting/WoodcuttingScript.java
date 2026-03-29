@@ -1,6 +1,9 @@
 package com.botwithus.bot.scripts.woodcutting;
 
-import com.botwithus.bot.api.*;
+import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.ScriptCategory;
+import com.botwithus.bot.api.ScriptContext;
+import com.botwithus.bot.api.ScriptManifest;
 import com.botwithus.bot.api.antiban.Pace;
 import com.botwithus.bot.api.event.TickEvent;
 import com.botwithus.bot.api.log.BotLogger;
@@ -10,19 +13,18 @@ import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.script.Task;
 import com.botwithus.bot.api.script.TaskScript;
 import com.botwithus.bot.api.ui.ScriptUI;
-import com.botwithus.bot.scripts.woodcutting.task.*;
+import com.botwithus.bot.scripts.woodcutting.task.BankTask;
+import com.botwithus.bot.scripts.woodcutting.task.ChoppingTask;
+import com.botwithus.bot.scripts.woodcutting.task.FillWoodBoxTask;
+import com.botwithus.bot.scripts.woodcutting.task.WalkToTreesTask;
 
 import java.nio.file.Path;
 
-/**
- * Woodcutting script with wood box support and collision-aware banking.
- * Uses the TaskScript/Task SPI for clean state management.
- */
 @ScriptManifest(
         name = "Woodcutting",
-        version = "1.0",
+        version = "2.0",
         author = "Xapi",
-        description = "Chops trees with wood box support and collision-aware pathing",
+        description = "Profile-driven woodcutting with colourful controls, quirks, and overlay diagnostics",
         category = ScriptCategory.WOODCUTTING
 )
 public class WoodcuttingScript extends TaskScript {
@@ -39,38 +41,41 @@ public class WoodcuttingScript extends TaskScript {
         Pace pace = ctx.getPace();
         pace.seed(ctx.getConnectionName());
 
+        int idleTimeoutTicks = api.getVarbit(54077);
+        if (idleTimeoutTicks > 0) {
+            pace.idleTimeout(idleTimeoutTicks * 600L);
+            log.info("[Woodcutting] Idle timeout from varbit 54077: {}s", idleTimeoutTicks * 600L / 1000);
+        }
+
         this.wctx = new WoodcuttingContext(api, pace, new WoodcuttingConfig());
         this.ui = new WoodcuttingUI(this);
 
-        super.onStart(ctx); // calls setupTasks() — wctx must be initialized above
+        super.onStart(ctx);
 
-        // Subscribe to tick events for accurate log counting
         ctx.getEventBus().subscribe(TickEvent.class, wctx::onTick);
 
         if (WorldPathfinder.getInstance() == null) {
             WorldPathfinder.init(Path.of("navdata"));
-            wctx.logAction("WorldPathfinder initialized from script");
+            wctx.logAction("INFO: WorldPathfinder initialized");
         }
         if (LocalPathfinder.getInstance() == null) {
             LocalPathfinder.init(Path.of("navdata/regions"));
         }
 
-        // Launch overlay
         this.overlay = new ScriptOverlay(wctx);
         overlay.show();
 
-        wctx.logAction("Script started - tree: " + wctx.config.getTreeType().objectName);
-        log.info("[Woodcutting] Started - tree={}, pathfinder={}",
-                wctx.config.getTreeType().objectName,
-                WorldPathfinder.getInstance() != null ? "active" : "null");
+        wctx.collectUIState();
+        wctx.logAction("INFO: Started -> " + wctx.selectedTreeName + " / " + wctx.selectedHotspotName);
+        log.info("[Woodcutting] Started - tree={}, hotspot={}", wctx.selectedTreeName, wctx.selectedHotspotName);
     }
 
     @Override
     protected void setupTasks() {
-        addTask(new FillWoodBoxTask(wctx));   // priority 30
-        addTask(new BankTask(wctx));          // priority 20
-        addTask(new WalkToTreesTask(wctx));   // priority 10
-        addTask(new ChoppingTask(wctx));      // priority 0
+        addTask(new FillWoodBoxTask(wctx));
+        addTask(new BankTask(wctx));
+        addTask(new WalkToTreesTask(wctx));
+        addTask(new ChoppingTask(wctx));
     }
 
     @Override
@@ -82,7 +87,6 @@ public class WoodcuttingScript extends TaskScript {
             return (int) wctx.pace.delay("walk");
         }
 
-        // Handle debug force-task
         String forced = wctx.forceTaskName;
         if (forced != null) {
             wctx.forceTaskName = null;
@@ -94,7 +98,6 @@ public class WoodcuttingScript extends TaskScript {
             }
         }
 
-        // Run highest-priority validating task
         for (Task task : getTasks()) {
             if (task.validate()) {
                 wctx.currentTaskName = task.name();
@@ -102,6 +105,7 @@ public class WoodcuttingScript extends TaskScript {
             }
         }
 
+        wctx.currentTaskName = "Idle";
         return 600;
     }
 
@@ -110,9 +114,10 @@ public class WoodcuttingScript extends TaskScript {
         if (overlay != null) {
             overlay.close();
         }
-        wctx.logAction("Script stopped - chopped " + wctx.logsChopped + " logs, " + wctx.bankTrips + " bank trips");
-        log.info("[Woodcutting] Stopped - logs={}, fills={}, trips={}",
-                wctx.logsChopped, wctx.woodboxFills, wctx.bankTrips);
+        if (wctx != null) {
+            wctx.logAction("INFO: Stopped -> " + wctx.logsChopped + " resources, " + wctx.bankTrips + " trips");
+            log.info("[Woodcutting] Stopped - logs={}, fills={}, trips={}", wctx.logsChopped, wctx.woodboxFills, wctx.bankTrips);
+        }
     }
 
     @Override
@@ -121,7 +126,7 @@ public class WoodcuttingScript extends TaskScript {
     }
 
     @Override
-    public java.util.List<com.botwithus.bot.api.script.Task> getTasks() {
+    public java.util.List<Task> getTasks() {
         return super.getTasks();
     }
 

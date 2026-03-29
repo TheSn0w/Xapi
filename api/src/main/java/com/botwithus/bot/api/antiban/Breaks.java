@@ -107,6 +107,10 @@ public final class Breaks {
     private volatile long minutesSinceLastLongBreak = 0;
     private volatile long lastLongBreakMs;
 
+    /** Server idle timeout cap — break durations are clamped to this minus a safety margin. */
+    private volatile long idleTimeoutMs = 0;
+    private static final long IDLE_TIMEOUT_SAFETY_MARGIN_MS = 30_000; // 30s safety buffer
+
     // Break overlay state — readable from UI thread
     private volatile String breakLabel;
     private volatile long breakStartMs;
@@ -180,6 +184,28 @@ public final class Breaks {
         long end = breakEndMs;
         if (end == 0) return 0;
         return Math.max(0, end - System.currentTimeMillis());
+    }
+
+    /**
+     * Sets the server idle timeout (from varbit 54077).
+     * All break durations will be capped to this value minus a safety margin
+     * to prevent auto-logoff during breaks.
+     *
+     * @param timeoutMs idle timeout in milliseconds, or 0 to disable capping
+     */
+    public void setIdleTimeout(long timeoutMs) {
+        this.idleTimeoutMs = timeoutMs;
+        if (timeoutMs > 0) {
+            log.debug("[Antiban] Idle timeout set to {}s (cap={}s)",
+                    timeoutMs / 1000, getEffectiveMaxBreakMs() / 1000);
+        }
+    }
+
+    /** Returns the effective max break duration considering idle timeout. */
+    private long getEffectiveMaxBreakMs() {
+        long timeout = idleTimeoutMs;
+        if (timeout <= 0) return Long.MAX_VALUE;
+        return Math.max(IDLE_TIMEOUT_SAFETY_MARGIN_MS, timeout - IDLE_TIMEOUT_SAFETY_MARGIN_MS);
     }
 
     /** Returns total break duration in milliseconds, or 0. */
@@ -298,10 +324,14 @@ public final class Breaks {
     private void takeBreak(String label, double mu, double sigma, double tau,
                            long minMs, long maxMs, double recoveryFraction,
                            BooleanSupplier interrupt) {
+        // Cap max duration to idle timeout so we never get logged off during a break
+        long effectiveMax = Math.min(maxMs, getEffectiveMaxBreakMs());
+        long effectiveMin = Math.min(minMs, effectiveMax);
+
         double raw = DelayEngine.exGaussianSample(mu, sigma, tau);
         long durationMs = raw > 0
-                ? Math.max(minMs, Math.min(maxMs, Math.round(raw)))
-                : minMs;
+                ? Math.max(effectiveMin, Math.min(effectiveMax, Math.round(raw)))
+                : effectiveMin;
 
         log.debug("[Antiban] {} ({}s, attention={})", label, durationMs / 1000, attention);
 

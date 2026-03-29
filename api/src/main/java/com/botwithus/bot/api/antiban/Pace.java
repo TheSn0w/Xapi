@@ -80,6 +80,9 @@ public final class Pace {
     // Last context for queries
     private volatile String currentContext = "gather";
 
+    // Idle timeout cap for breaks (persists across seed rebuilds)
+    private volatile long idleTimeoutMs = 0;
+
     /**
      * Creates a Pace instance with the given components.
      * Prefer {@link PaceConfig#build()} or {@code ScriptContext.getPace()}.
@@ -264,7 +267,11 @@ public final class Pace {
         newEngine.setFatigueSupplier(rhythm);
         this.seed = newSeed;
         this.engine = newEngine;
-        this.breaks = new Breaks(newSeed, rhythm);
+        Breaks newBreaks = new Breaks(newSeed, rhythm);
+        if (idleTimeoutMs > 0) {
+            newBreaks.setIdleTimeout(idleTimeoutMs);
+        }
+        this.breaks = newBreaks;
         return this;
     }
 
@@ -279,6 +286,20 @@ public final class Pace {
      */
     public Pace tune(String context, double mu, double sigma, double tau) {
         overrides.put(context, new PaceProfile(mu, sigma, tau));
+        return this;
+    }
+
+    /**
+     * Sets the server idle timeout (from varbit 54077).
+     * All break durations will be capped to this value minus a safety margin
+     * to prevent auto-logoff during breaks.
+     *
+     * @param timeoutMs idle timeout in milliseconds, or 0 to disable capping
+     * @return this Pace instance for chaining
+     */
+    public Pace idleTimeout(long timeoutMs) {
+        this.idleTimeoutMs = timeoutMs;
+        breaks.setIdleTimeout(timeoutMs);
         return this;
     }
 

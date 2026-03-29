@@ -2,83 +2,17 @@
   "actions": [
     {
       "actionId": 57,
-      "param1": 5,
-      "param2": 2,
-      "param3": 95944719,
-      "timestamp": 1774748343483,
-      "gameTick": 2115,
+      "param1": 1,
+      "param2": 27,
+      "param3": 23920653,
+      "timestamp": 1774797333640,
+      "gameTick": 14400,
       "wasBlocked": false,
       "source": "client",
-      "entityName": "Grace of the elves",
-      "optionName": "Charge porter",
-      "playerX": 3186,
-      "playerY": 2744,
-      "playerPlane": 0,
-      "playerAnim": -1,
-      "playerMoving": false
-    },
-    {
-      "actionId": 1007,
-      "param1": 6,
-      "param2": 2,
-      "param3": 95944719,
-      "timestamp": 1774748370203,
-      "gameTick": 2160,
-      "wasBlocked": false,
-      "source": "client",
-      "entityName": "Grace of the elves",
-      "optionName": "Charge all porters",
-      "playerX": 3186,
-      "playerY": 2744,
-      "playerPlane": 0,
-      "playerAnim": -1,
-      "playerMoving": false
-    },
-    {
-      "actionId": 1007,
-      "param1": 7,
-      "param2": 2,
-      "param3": 95944719,
-      "timestamp": 1774748381383,
-      "gameTick": 2178,
-      "wasBlocked": false,
-      "source": "client",
-      "entityName": "Grace of the elves",
-      "optionName": "Toggle porter",
-      "playerX": 3186,
-      "playerY": 2744,
-      "playerPlane": 0,
-      "playerAnim": -1,
-      "playerMoving": false
-    },
-    {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3182,
-      "param3": 2744,
-      "timestamp": 1774748513173,
-      "gameTick": 2398,
-      "wasBlocked": false,
-      "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3186,
-      "playerY": 2744,
-      "playerPlane": 0,
-      "playerAnim": -1,
-      "playerMoving": false
-    },
-    {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3182,
-      "param3": 2742,
-      "timestamp": 1774748820430,
-      "gameTick": 2910,
-      "wasBlocked": false,
-      "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3182,
-      "playerY": 2744,
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
@@ -86,1311 +20,1239 @@
     {
       "actionId": 57,
       "param1": 1,
-      "param2": -1,
-      "param3": 109641809,
-      "timestamp": 1774748920740,
-      "gameTick": 3077,
+      "param2": 29,
+      "param3": 23920653,
+      "timestamp": 1774797335251,
+      "gameTick": 14403,
       "wasBlocked": false,
       "source": "client",
-      "entityName": "Interface 1673",
-      "optionName": "Cast",
-      "playerX": 3182,
-      "playerY": 2742,
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3293,
-      "param3": 10129,
-      "timestamp": 1774748953475,
-      "gameTick": 3132,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 7,
+      "param3": 23920653,
+      "timestamp": 1774797343828,
+      "gameTick": 14417,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3294,
-      "playerY": 10127,
+      "entityName": "Cannonball",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 3,
-      "param1": 114751,
-      "param2": 3298,
-      "param3": 10126,
-      "timestamp": 1774749065725,
-      "gameTick": 3319,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 6,
+      "param3": 23920653,
+      "timestamp": 1774797346046,
+      "gameTick": 14421,
       "wasBlocked": false,
       "source": "client",
-      "entityName": "Campfire",
-      "optionName": "Warm hands",
-      "playerX": 3293,
-      "playerY": 10129,
+      "entityName": "Cannonball",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3298,
-      "param3": 10129,
-      "timestamp": 1774749072564,
-      "gameTick": 3330,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 38,
+      "param3": 23920653,
+      "timestamp": 1774797347408,
+      "gameTick": 14423,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3297,
-      "playerY": 10126,
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3296,
-      "param3": 10128,
-      "timestamp": 1774749132203,
-      "gameTick": 3429,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 53,
+      "param3": 23920653,
+      "timestamp": 1774797349102,
+      "gameTick": 14426,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3298,
-      "playerY": 10129,
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 11,
-      "param1": 25095,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 54,
+      "param3": 23920653,
+      "timestamp": 1774797349848,
+      "gameTick": 14427,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 7,
+      "param3": 23920653,
+      "timestamp": 1774797352429,
+      "gameTick": 14431,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Cannonball",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 1,
+      "param3": 23920653,
+      "timestamp": 1774797355187,
+      "gameTick": 14436,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Cannonball",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 24,
+      "param3": 23920653,
+      "timestamp": 1774797357584,
+      "gameTick": 14440,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 20,
+      "param3": 23920653,
+      "timestamp": 1774797361808,
+      "gameTick": 14447,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 365",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 17,
+      "param3": 23920653,
+      "timestamp": 1774797370384,
+      "gameTick": 14461,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Cannonball",
+      "optionName": "Select",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 1,
+      "param3": 96797389,
+      "timestamp": 1774797374046,
+      "gameTick": 14468,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 1477",
+      "optionName": "Close Window",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
       "param2": 0,
-      "param3": 0,
-      "timestamp": 1774749133667,
-      "gameTick": 3432,
+      "param3": 93913094,
+      "timestamp": 1774797384025,
+      "gameTick": 14484,
       "wasBlocked": false,
       "source": "client",
-      "entityName": "War",
-      "optionName": "Shop",
-      "playerX": 3296,
-      "playerY": 10128,
+      "entityName": "Interface 1433",
+      "optionName": "Open",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3297,
-      "param3": 10129,
-      "timestamp": 1774749478868,
-      "gameTick": 4007,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 5,
+      "param3": 93913094,
+      "timestamp": 1774797388385,
+      "gameTick": 14491,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3291,
-      "playerY": 10129,
+      "entityName": "Interface 1433",
+      "optionName": "Open",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
       "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3298,
-      "param3": 10129,
-      "timestamp": 1774749479934,
-      "gameTick": 4009,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 19,
+      "param3": 96797386,
+      "timestamp": 1774797390483,
+      "gameTick": 14495,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3293,
-      "playerY": 10129,
+      "entityName": "Interface 1477",
+      "optionName": "Benefits",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
-      "playerMoving": true
+      "playerMoving": false
     },
     {
-      "actionId": 23,
-      "param1": 0,
-      "param2": 3299,
-      "param3": 10131,
-      "timestamp": 1774749481024,
-      "gameTick": 4011,
+      "actionId": 57,
+      "param1": 1,
+      "param2": 5889,
+      "param3": 59506692,
+      "timestamp": 1774797393465,
+      "gameTick": 14500,
       "wasBlocked": false,
       "source": "client",
-      "optionName": "Walk here",
-      "playerX": 3297,
-      "playerY": 10129,
+      "entityName": "Interface 908",
+      "optionName": "Maximise",
+      "playerX": 3087,
+      "playerY": 3243,
       "playerPlane": 0,
       "playerAnim": -1,
-      "playerMoving": true
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 5889,
+      "param3": 59506692,
+      "timestamp": 1774797394481,
+      "gameTick": 14502,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 908",
+      "optionName": "Minimise",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 7681,
+      "param3": 59506692,
+      "timestamp": 1774797394925,
+      "gameTick": 14502,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 908",
+      "optionName": "Maximise",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": 1,
+      "param3": 96797389,
+      "timestamp": 1774797496738,
+      "gameTick": 14672,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 1477",
+      "optionName": "Close Window",
+      "playerX": 3087,
+      "playerY": 3243,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
     }
   ],
   "vars": [
     {
       "type": "varp",
-      "varId": 3914,
-      "oldValue": 169613460,
-      "newValue": 177968789,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442930,
-      "newValue": 268442929,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805324042,
-      "newValue": 805323785,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1330,
-      "newValue": 1329,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 20,
-      "newValue": 21,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 12,
-      "newValue": 11,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 20,
-      "newValue": 21,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 10,
-      "newValue": 9,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 69,
-      "newValue": 68,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 56,
-      "newValue": 55,
-      "timestamp": 1774749114233,
-      "gameTick": 3400
-    },
-    {
-      "type": "varp",
       "varId": 11489,
-      "oldValue": 29579151,
-      "newValue": 29579152,
-      "timestamp": 1774749120236,
-      "gameTick": 3410
-    },
-    {
-      "type": "varp",
-      "varId": 5147,
-      "oldValue": 0,
-      "newValue": 1,
-      "timestamp": 1774749135264,
-      "gameTick": 3435
-    },
-    {
-      "type": "varp",
-      "varId": 5148,
-      "oldValue": -1,
-      "newValue": 11621,
-      "timestamp": 1774749135264,
-      "gameTick": 3435
-    },
-    {
-      "type": "varp",
-      "varId": 5149,
-      "oldValue": 0,
-      "newValue": -1,
-      "timestamp": 1774749135264,
-      "gameTick": 3435
-    },
-    {
-      "type": "varp",
-      "varId": 6437,
-      "oldValue": 0,
-      "newValue": -1,
-      "timestamp": 1774749135264,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 27175,
-      "oldValue": 0,
-      "newValue": 1,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30587,
-      "oldValue": 4095,
-      "newValue": 3429,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30589,
-      "oldValue": 127,
-      "newValue": 0,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30590,
-      "oldValue": 1,
-      "newValue": 0,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30588,
-      "oldValue": 4095,
-      "newValue": 2,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30591,
-      "oldValue": 0,
-      "newValue": 4095,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30592,
-      "oldValue": 0,
-      "newValue": 4095,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 30593,
-      "oldValue": 0,
-      "newValue": 127,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 32839,
-      "oldValue": 0,
-      "newValue": 1,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 40726,
-      "oldValue": 0,
-      "newValue": 31,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 40727,
-      "oldValue": 0,
-      "newValue": 15,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 40728,
-      "oldValue": 0,
-      "newValue": 1023,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varbit",
-      "varId": 40729,
-      "oldValue": 0,
-      "newValue": 8191,
-      "timestamp": 1774749135271,
-      "gameTick": 3435
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 177968789,
-      "newValue": 186324118,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442929,
-      "newValue": 268442928,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805323785,
-      "newValue": 805323528,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 21,
-      "newValue": 22,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 11,
-      "newValue": 10,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 21,
-      "newValue": 22,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 9,
-      "newValue": 8,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 68,
-      "newValue": 67,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1329,
-      "newValue": 1328,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 55,
-      "newValue": 54,
-      "timestamp": 1774749174253,
-      "gameTick": 3500
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579152,
-      "newValue": 29579153,
-      "timestamp": 1774749180254,
-      "gameTick": 3510
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 186324118,
-      "newValue": 194679447,
-      "timestamp": 1774749234231,
-      "gameTick": 3600
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442928,
-      "newValue": 268442927,
-      "timestamp": 1774749234231,
-      "gameTick": 3600
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805323528,
-      "newValue": 805323271,
-      "timestamp": 1774749234231,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1328,
-      "newValue": 1327,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 22,
-      "newValue": 23,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 10,
-      "newValue": 9,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 22,
-      "newValue": 23,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 8,
-      "newValue": 7,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 54,
-      "newValue": 53,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 67,
-      "newValue": 66,
-      "timestamp": 1774749234238,
-      "gameTick": 3600
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579153,
-      "newValue": 29579154,
-      "timestamp": 1774749240271,
-      "gameTick": 3610
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 194679447,
-      "newValue": 203034776,
-      "timestamp": 1774749294237,
-      "gameTick": 3700
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442927,
-      "newValue": 268442926,
-      "timestamp": 1774749294237,
-      "gameTick": 3700
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805323271,
-      "newValue": 805323014,
-      "timestamp": 1774749294237,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1327,
-      "newValue": 1326,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 9,
-      "newValue": 8,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 23,
-      "newValue": 24,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 53,
-      "newValue": 52,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 7,
-      "newValue": 6,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 66,
-      "newValue": 65,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 23,
-      "newValue": 24,
-      "timestamp": 1774749294243,
-      "gameTick": 3700
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579154,
-      "newValue": 29579155,
-      "timestamp": 1774749300252,
-      "gameTick": 3710
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442926,
-      "newValue": 268442925,
-      "timestamp": 1774749354255,
-      "gameTick": 3800
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 203034776,
-      "newValue": 211390105,
-      "timestamp": 1774749354255,
-      "gameTick": 3800
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805323014,
-      "newValue": 805322757,
-      "timestamp": 1774749354255,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1326,
-      "newValue": 1325,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 24,
-      "newValue": 25,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 8,
-      "newValue": 7,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 52,
-      "newValue": 51,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 65,
-      "newValue": 64,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 24,
-      "newValue": 25,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 6,
-      "newValue": 5,
-      "timestamp": 1774749354260,
-      "gameTick": 3800
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579155,
-      "newValue": 29579156,
-      "timestamp": 1774749360477,
-      "gameTick": 3810
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442925,
-      "newValue": 268442924,
-      "timestamp": 1774749414254,
-      "gameTick": 3900
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 211390105,
-      "newValue": 219745434,
-      "timestamp": 1774749414254,
-      "gameTick": 3900
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805322757,
-      "newValue": 805322500,
-      "timestamp": 1774749414254,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1325,
-      "newValue": 1324,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 25,
-      "newValue": 26,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 7,
-      "newValue": 6,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 51,
-      "newValue": 50,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 25,
-      "newValue": 26,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 5,
-      "newValue": 4,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 64,
-      "newValue": 63,
-      "timestamp": 1774749414260,
-      "gameTick": 3900
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579156,
-      "newValue": 29579157,
-      "timestamp": 1774749420255,
-      "gameTick": 3910
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442924,
-      "newValue": 268442923,
-      "timestamp": 1774749474261,
-      "gameTick": 4000
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 219745434,
-      "newValue": 228100763,
-      "timestamp": 1774749474261,
-      "gameTick": 4000
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805322500,
-      "newValue": 805322243,
-      "timestamp": 1774749474261,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1324,
-      "newValue": 1323,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 26,
-      "newValue": 27,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 6,
-      "newValue": 5,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 50,
-      "newValue": 49,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 26,
-      "newValue": 27,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 4,
-      "newValue": 3,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 63,
-      "newValue": 62,
-      "timestamp": 1774749474267,
-      "gameTick": 4000
-    },
-    {
-      "type": "varp",
-      "varId": 6,
-      "oldValue": 10551296,
-      "newValue": 655360,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
+      "oldValue": 29579956,
+      "newValue": 29579957,
+      "timestamp": 1774797419036,
+      "gameTick": 14542
     },
     {
       "type": "varp",
       "varId": 20,
-      "oldValue": -1258291200,
-      "newValue": -1224736768,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
+      "oldValue": 1442840576,
+      "newValue": 1459617792,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
-      "type": "varbit",
-      "varId": 156,
-      "oldValue": 161,
-      "newValue": 10,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402659852,
+      "newValue": 402659851,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
-      "type": "varbit",
-      "varId": 854,
-      "oldValue": 5,
-      "newValue": 0,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 389316782,
+      "newValue": 397672623,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
-      "type": "varbit",
-      "varId": 853,
-      "oldValue": 4,
-      "newValue": 40,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872430080,
+      "newValue": 872429824,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
       "type": "varbit",
       "varId": 94,
-      "oldValue": 181,
-      "newValue": 183,
-      "timestamp": 1774749479051,
-      "gameTick": 4007
-    },
-    {
-      "type": "varbit",
-      "varId": 8820,
-      "oldValue": 724,
-      "newValue": 732,
-      "timestamp": 1774749479058,
-      "gameTick": 4007
-    },
-    {
-      "type": "varbit",
-      "varId": 22074,
-      "oldValue": 80,
-      "newValue": 5,
-      "timestamp": 1774749479058,
-      "gameTick": 4007
-    },
-    {
-      "type": "varbit",
-      "varId": 22038,
-      "oldValue": 1,
-      "newValue": 0,
-      "timestamp": 1774749479058,
-      "gameTick": 4007
+      "oldValue": 86,
+      "newValue": 87,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
       "type": "varbit",
       "varId": 853,
-      "oldValue": 40,
+      "oldValue": 0,
       "newValue": 4,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
-    },
-    {
-      "type": "varbit",
-      "varId": 156,
-      "oldValue": 10,
-      "newValue": 161,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
       "type": "varbit",
       "varId": 854,
       "oldValue": 0,
       "newValue": 5,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
-    },
-    {
-      "type": "varp",
-      "varId": 6,
-      "oldValue": 655360,
-      "newValue": 10551296,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
+      "timestamp": 1774797422054,
+      "gameTick": 14547
     },
     {
       "type": "varbit",
-      "varId": 22074,
-      "oldValue": 5,
-      "newValue": 80,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
+      "varId": 156,
+      "oldValue": 0,
+      "newValue": 161,
+      "timestamp": 1774797422054,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 8820,
+      "oldValue": 344,
+      "newValue": 348,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 524,
+      "newValue": 523,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 46,
+      "newValue": 47,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 105,
+      "newValue": 104,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 58,
+      "newValue": 57,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 46,
+      "newValue": 47,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
     },
     {
       "type": "varbit",
       "varId": 22038,
       "oldValue": 0,
       "newValue": 1,
-      "timestamp": 1774749479082,
-      "gameTick": 4008
+      "timestamp": 1774797422057,
+      "gameTick": 14547
+    },
+    {
+      "type": "varbit",
+      "varId": 22074,
+      "oldValue": 0,
+      "newValue": 80,
+      "timestamp": 1774797422057,
+      "gameTick": 14547
     },
     {
       "type": "varp",
       "varId": 11489,
-      "oldValue": 29579157,
-      "newValue": 29579158,
-      "timestamp": 1774749480257,
-      "gameTick": 4010
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442923,
-      "newValue": 268442922,
-      "timestamp": 1774749534251,
-      "gameTick": 4100
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 228100763,
-      "newValue": 236456092,
-      "timestamp": 1774749534251,
-      "gameTick": 4100
+      "oldValue": 29579957,
+      "newValue": 29579958,
+      "timestamp": 1774797479052,
+      "gameTick": 14642
     },
     {
       "type": "varp",
       "varId": 3915,
-      "oldValue": 805322243,
-      "newValue": 805321986,
-      "timestamp": 1774749534251,
-      "gameTick": 4100
+      "oldValue": 872429824,
+      "newValue": 872429568,
+      "timestamp": 1774797482034,
+      "gameTick": 14647
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 402659851,
+      "newValue": 402659850,
+      "timestamp": 1774797482034,
+      "gameTick": 14647
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 397672623,
+      "newValue": 406028464,
+      "timestamp": 1774797482034,
+      "gameTick": 14647
     },
     {
       "type": "varbit",
       "varId": 20736,
-      "oldValue": 1323,
-      "newValue": 1322,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 27,
-      "newValue": 28,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 5,
-      "newValue": 4,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
+      "oldValue": 523,
+      "newValue": 522,
+      "timestamp": 1774797482038,
+      "gameTick": 14648
     },
     {
       "type": "varbit",
       "varId": 20746,
+      "oldValue": 104,
+      "newValue": 103,
+      "timestamp": 1774797482038,
+      "gameTick": 14648
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 47,
+      "newValue": 48,
+      "timestamp": 1774797482038,
+      "gameTick": 14648
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 47,
+      "newValue": 48,
+      "timestamp": 1774797482038,
+      "gameTick": 14648
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 57,
+      "newValue": 56,
+      "timestamp": 1774797482038,
+      "gameTick": 14648
+    },
+    {
+      "type": "varp",
+      "varId": 12588,
+      "oldValue": 3,
+      "newValue": 0,
+      "timestamp": 1774797497060,
+      "gameTick": 14672
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756434,
+      "newValue": 756454,
+      "timestamp": 1774797765278,
+      "gameTick": 15119
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045975040,
+      "newValue": 1045977088,
+      "timestamp": 1774797765278,
+      "gameTick": 15119
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19210,
+      "newValue": 19211,
+      "timestamp": 1774797765285,
+      "gameTick": 15119
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756454,
+      "newValue": 756458,
+      "timestamp": 1774797767674,
+      "gameTick": 15123
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045977088,
+      "newValue": 1045979136,
+      "timestamp": 1774797767674,
+      "gameTick": 15123
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19211,
+      "newValue": 19212,
+      "timestamp": 1774797767683,
+      "gameTick": 15123
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045979136,
+      "newValue": 1045981184,
+      "timestamp": 1774797774873,
+      "gameTick": 15135
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756458,
+      "newValue": 756470,
+      "timestamp": 1774797774873,
+      "gameTick": 15135
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19212,
+      "newValue": 19213,
+      "timestamp": 1774797774881,
+      "gameTick": 15135
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045981184,
+      "newValue": 1045983232,
+      "timestamp": 1774797777290,
+      "gameTick": 15139
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756470,
+      "newValue": 756474,
+      "timestamp": 1774797777290,
+      "gameTick": 15139
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19213,
+      "newValue": 19214,
+      "timestamp": 1774797777304,
+      "gameTick": 15140
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579962,
+      "newValue": 29579963,
+      "timestamp": 1774797779073,
+      "gameTick": 15142
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756474,
+      "newValue": 756478,
+      "timestamp": 1774797779676,
+      "gameTick": 15143
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045983232,
+      "newValue": 1045985280,
+      "timestamp": 1774797779676,
+      "gameTick": 15143
+    },
+    {
+      "type": "varp",
+      "varId": 1457,
+      "oldValue": 30019048,
+      "newValue": 30019052,
+      "timestamp": 1774797779676,
+      "gameTick": 15143
+    },
+    {
+      "type": "varbit",
+      "varId": 22562,
+      "oldValue": 7504762,
+      "newValue": 7504763,
+      "timestamp": 1774797779678,
+      "gameTick": 15143
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19214,
+      "newValue": 19215,
+      "timestamp": 1774797779684,
+      "gameTick": 15143
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 134224390,
+      "newValue": 134224389,
+      "timestamp": 1774797782075,
+      "gameTick": 15147
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872428544,
+      "newValue": 872428288,
+      "timestamp": 1774797782075,
+      "gameTick": 15147
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 439451828,
+      "newValue": 447807669,
+      "timestamp": 1774797782075,
+      "gameTick": 15147
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 518,
+      "newValue": 517,
+      "timestamp": 1774797782077,
+      "gameTick": 15147
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 52,
+      "newValue": 51,
+      "timestamp": 1774797782077,
+      "gameTick": 15147
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 52,
+      "newValue": 53,
+      "timestamp": 1774797782077,
+      "gameTick": 15147
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 99,
+      "newValue": 98,
+      "timestamp": 1774797782077,
+      "gameTick": 15147
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 52,
+      "newValue": 53,
+      "timestamp": 1774797782077,
+      "gameTick": 15147
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045985280,
+      "newValue": 1045987328,
+      "timestamp": 1774797786875,
+      "gameTick": 15155
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756478,
+      "newValue": 756490,
+      "timestamp": 1774797786875,
+      "gameTick": 15155
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19215,
+      "newValue": 19216,
+      "timestamp": 1774797786887,
+      "gameTick": 15156
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045987328,
+      "newValue": 1045989376,
+      "timestamp": 1774797791677,
+      "gameTick": 15163
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756490,
+      "newValue": 756498,
+      "timestamp": 1774797791677,
+      "gameTick": 15163
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19216,
+      "newValue": 19217,
+      "timestamp": 1774797791689,
+      "gameTick": 15164
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756498,
+      "newValue": 756506,
+      "timestamp": 1774797796473,
+      "gameTick": 15171
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045989376,
+      "newValue": 1045991424,
+      "timestamp": 1774797796473,
+      "gameTick": 15171
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19217,
+      "newValue": 19218,
+      "timestamp": 1774797796484,
+      "gameTick": 15172
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045991424,
+      "newValue": 1045993472,
+      "timestamp": 1774797806078,
+      "gameTick": 15187
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756506,
+      "newValue": 756522,
+      "timestamp": 1774797806078,
+      "gameTick": 15187
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19218,
+      "newValue": 19219,
+      "timestamp": 1774797806083,
+      "gameTick": 15187
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045993472,
+      "newValue": 1045995520,
+      "timestamp": 1774797808493,
+      "gameTick": 15191
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756522,
+      "newValue": 756526,
+      "timestamp": 1774797808493,
+      "gameTick": 15191
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19219,
+      "newValue": 19220,
+      "timestamp": 1774797808507,
+      "gameTick": 15192
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045995520,
+      "newValue": 1045997568,
+      "timestamp": 1774797810875,
+      "gameTick": 15195
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756526,
+      "newValue": 756530,
+      "timestamp": 1774797810875,
+      "gameTick": 15195
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19220,
+      "newValue": 19221,
+      "timestamp": 1774797810889,
+      "gameTick": 15196
+    },
+    {
+      "type": "varp",
+      "varId": 10382,
+      "oldValue": 1045997568,
+      "newValue": 1045999616,
+      "timestamp": 1774797813280,
+      "gameTick": 15199
+    },
+    {
+      "type": "varp",
+      "varId": 3513,
+      "oldValue": 756530,
+      "newValue": 756534,
+      "timestamp": 1774797813280,
+      "gameTick": 15199
+    },
+    {
+      "type": "varbit",
+      "varId": 56622,
+      "oldValue": 19221,
+      "newValue": 19222,
+      "timestamp": 1774797813284,
+      "gameTick": 15199
+    },
+    {
+      "type": "varp",
+      "varId": 4012,
+      "oldValue": 756447,
+      "newValue": 756536,
+      "timestamp": 1774797814496,
+      "gameTick": 15201
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579963,
+      "newValue": 29579964,
+      "timestamp": 1774797839094,
+      "gameTick": 15242
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 447807669,
+      "newValue": 456163510,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 134224389,
+      "newValue": 134224388,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872428288,
+      "newValue": 872428032,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 53,
+      "newValue": 54,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 517,
+      "newValue": 516,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 98,
+      "newValue": 97,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 53,
+      "newValue": 54,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 51,
+      "newValue": 50,
+      "timestamp": 1774797842075,
+      "gameTick": 15247
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579964,
+      "newValue": 29579965,
+      "timestamp": 1774797899095,
+      "gameTick": 15342
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 134224388,
+      "newValue": 134224387,
+      "timestamp": 1774797902096,
+      "gameTick": 15347
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 456163510,
+      "newValue": 464519351,
+      "timestamp": 1774797902096,
+      "gameTick": 15347
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872428032,
+      "newValue": 872427776,
+      "timestamp": 1774797902096,
+      "gameTick": 15347
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 516,
+      "newValue": 515,
+      "timestamp": 1774797902098,
+      "gameTick": 15347
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 54,
+      "newValue": 55,
+      "timestamp": 1774797902098,
+      "gameTick": 15347
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 97,
+      "newValue": 96,
+      "timestamp": 1774797902098,
+      "gameTick": 15347
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 54,
+      "newValue": 55,
+      "timestamp": 1774797902098,
+      "gameTick": 15347
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 50,
+      "newValue": 49,
+      "timestamp": 1774797902098,
+      "gameTick": 15347
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579965,
+      "newValue": 29579966,
+      "timestamp": 1774797959094,
+      "gameTick": 15442
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 464519351,
+      "newValue": 472875192,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872427776,
+      "newValue": 872427520,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 134224387,
+      "newValue": 134224386,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 515,
+      "newValue": 514,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 55,
+      "newValue": 56,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 96,
+      "newValue": 95,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
       "oldValue": 49,
       "newValue": 48,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 27,
-      "newValue": 28,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 3,
-      "newValue": 2,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 62,
-      "newValue": 61,
-      "timestamp": 1774749534258,
-      "gameTick": 4100
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579158,
-      "newValue": 29579159,
-      "timestamp": 1774749540259,
-      "gameTick": 4110
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442922,
-      "newValue": 268442921,
-      "timestamp": 1774749594271,
-      "gameTick": 4200
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 236456092,
-      "newValue": 244811421,
-      "timestamp": 1774749594271,
-      "gameTick": 4200
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805321986,
-      "newValue": 805321729,
-      "timestamp": 1774749594271,
-      "gameTick": 4200
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1322,
-      "newValue": 1321,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
+      "timestamp": 1774797962099,
+      "gameTick": 15447
     },
     {
       "type": "varbit",
       "varId": 20742,
-      "oldValue": 28,
-      "newValue": 29,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
+      "oldValue": 55,
+      "newValue": 56,
+      "timestamp": 1774797962099,
+      "gameTick": 15447
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579966,
+      "newValue": 29579967,
+      "timestamp": 1774798019095,
+      "gameTick": 15542
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 472875192,
+      "newValue": 481231033,
+      "timestamp": 1774798022092,
+      "gameTick": 15547
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 134224386,
+      "newValue": 134224385,
+      "timestamp": 1774798022092,
+      "gameTick": 15547
+    },
+    {
+      "type": "varp",
+      "varId": 20,
+      "oldValue": 1476395008,
+      "newValue": 1493172224,
+      "timestamp": 1774798022092,
+      "gameTick": 15547
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 872427520,
+      "newValue": 872427264,
+      "timestamp": 1774798022094,
+      "gameTick": 15547
     },
     {
       "type": "varbit",
-      "varId": 20744,
-      "oldValue": 4,
-      "newValue": 3,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
+      "varId": 94,
+      "oldValue": 88,
+      "newValue": 89,
+      "timestamp": 1774798022094,
+      "gameTick": 15547
+    },
+    {
+      "type": "varbit",
+      "varId": 8820,
+      "oldValue": 352,
+      "newValue": 356,
+      "timestamp": 1774798022094,
+      "gameTick": 15547
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 514,
+      "newValue": 513,
+      "timestamp": 1774798022096,
+      "gameTick": 15547
     },
     {
       "type": "varbit",
       "varId": 20746,
+      "oldValue": 95,
+      "newValue": 94,
+      "timestamp": 1774798022096,
+      "gameTick": 15547
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 56,
+      "newValue": 57,
+      "timestamp": 1774798022096,
+      "gameTick": 15547
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 56,
+      "newValue": 57,
+      "timestamp": 1774798022096,
+      "gameTick": 15547
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
       "oldValue": 48,
       "newValue": 47,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 28,
-      "newValue": 29,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 2,
-      "newValue": 1,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 61,
-      "newValue": 60,
-      "timestamp": 1774749594277,
-      "gameTick": 4200
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579159,
-      "newValue": 29579160,
-      "timestamp": 1774749600283,
-      "gameTick": 4210
-    },
-    {
-      "type": "varp",
-      "varId": 6162,
-      "oldValue": 3304,
-      "newValue": 5352,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varp",
-      "varId": 3913,
-      "oldValue": 268442921,
-      "newValue": 402660648,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varp",
-      "varId": 3914,
-      "oldValue": 244811421,
-      "newValue": 253166750,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varp",
-      "varId": 3915,
-      "oldValue": 805321729,
-      "newValue": 805321492,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20736,
-      "oldValue": 1321,
-      "newValue": 1320,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20738,
-      "oldValue": 0,
-      "newValue": 1,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20742,
-      "oldValue": 29,
-      "newValue": 30,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20744,
-      "oldValue": 3,
-      "newValue": 2,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20746,
-      "oldValue": 47,
-      "newValue": 46,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20747,
-      "oldValue": 29,
-      "newValue": 30,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20749,
-      "oldValue": 1,
-      "newValue": 20,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 20750,
-      "oldValue": 60,
-      "newValue": 59,
-      "timestamp": 1774749654272,
-      "gameTick": 4300
-    },
-    {
-      "type": "varbit",
-      "varId": 37511,
-      "oldValue": 1,
-      "newValue": 2,
-      "timestamp": 1774749654279,
-      "gameTick": 4300
-    },
-    {
-      "type": "varp",
-      "varId": 11489,
-      "oldValue": 29579160,
-      "newValue": 29579161,
-      "timestamp": 1774749660274,
-      "gameTick": 4310
+      "timestamp": 1774798022096,
+      "gameTick": 15547
     }
   ],
   "chat": [
@@ -3003,6 +2865,90 @@
       "playerName": "",
       "timestamp": 1774749441050,
       "gameTick": 3944
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 136,
+      "text": "Want free membership? Pay for your membership with in-game wealth with Bonds, available now on the Grand Exchange.",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You swing your hatchet at the tree.",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You get some willow logs.",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your wood box contains:",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "38/130 Willow logs",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Ser Ev just died for the last time in Hardcore Ironman mode with a skill total of 1314, fighting against: Hellhound!",
+      "playerName": "",
+      "timestamp": 1774797311497,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: JO2H has achieved 200 million XP in Constitution!",
+      "playerName": "",
+      "timestamp": 1774797762927,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: boeboehs has unlocked the \u0027Jack of All Blades\u0027 title!",
+      "playerName": "",
+      "timestamp": 1774797762927,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "You\u0027ve just advanced a Woodcutting level! You have reached level 68.",
+      "playerName": "",
+      "timestamp": 1774797762927,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "80/190 Willow logs",
+      "playerName": "",
+      "timestamp": 1774797762927,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: saathiya has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774797914984,
+      "gameTick": 15369
     }
   ],
   "snapshots": [
@@ -3010,25 +2956,56 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
-        "inventoryChanged": false,
+        "inventoryChanged": true,
         "animationEnded": false,
         "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
+        "varbitChanged": true,
+        "recentItemChanges": [
+          {
+            "itemId": 1519,
+            "itemName": "Willow logs",
+            "oldQty": 16,
+            "newQty": 18,
+            "timestamp": 1774797328426,
+            "gameTick": 14391
+          }
+        ],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71303194,
+            "newValue": 71303195,
+            "timestamp": 1774797333628,
+            "gameTick": 14400
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 26,
+            "newValue": 27,
+            "timestamp": 1774797333632,
+            "gameTick": 14400
+          }
+        ]
       },
       "intent": {
-        "description": "UI interaction",
-        "confidence": "low"
+        "description": "UI interaction — state change",
+        "confidence": "medium"
       },
       "openInterfaceId": 550
     },
@@ -3036,90 +3013,17 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
-          }
-        ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "UI interaction",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
+          },
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "UI interaction",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
-          {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
-          }
-        ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "Walking",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
-          {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
-          }
-        ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
@@ -3131,17 +3035,25 @@
         "recentVarChanges": [
           {
             "type": "varp",
-            "varId": 11489,
-            "oldValue": 29579146,
-            "newValue": 29579147,
-            "timestamp": 1774748820222,
-            "gameTick": 2910
+            "varId": 8172,
+            "oldValue": 71303195,
+            "newValue": 71303197,
+            "timestamp": 1774797335231,
+            "gameTick": 14403
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 27,
+            "newValue": 29,
+            "timestamp": 1774797335238,
+            "gameTick": 14403
           }
         ]
       },
       "intent": {
-        "description": "Walking",
-        "confidence": "low"
+        "description": "UI interaction — state change",
+        "confidence": "medium"
       },
       "openInterfaceId": 550
     },
@@ -3149,12 +3061,529 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71303197,
+            "newValue": 71310406,
+            "timestamp": 1774797343820,
+            "gameTick": 14417
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 29,
+            "newValue": 70,
+            "timestamp": 1774797343822,
+            "gameTick": 14417
+          },
+          {
+            "type": "varbit",
+            "varId": 42102,
+            "oldValue": 0,
+            "newValue": 7,
+            "timestamp": 1774797343822,
+            "gameTick": 14417
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71310406,
+            "newValue": 71309352,
+            "timestamp": 1774797346038,
+            "gameTick": 14421
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 70,
+            "newValue": 40,
+            "timestamp": 1774797346042,
+            "gameTick": 14421
+          },
+          {
+            "type": "varbit",
+            "varId": 42102,
+            "oldValue": 7,
+            "newValue": 6,
+            "timestamp": 1774797346042,
+            "gameTick": 14421
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71309352,
+            "newValue": 71309350,
+            "timestamp": 1774797347395,
+            "gameTick": 14423
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 40,
+            "newValue": 38,
+            "timestamp": 1774797347397,
+            "gameTick": 14423
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71309350,
+            "newValue": 71309365,
+            "timestamp": 1774797349092,
+            "gameTick": 14426
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 38,
+            "newValue": 53,
+            "timestamp": 1774797349098,
+            "gameTick": 14426
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71309365,
+            "newValue": 71309366,
+            "timestamp": 1774797349837,
+            "gameTick": 14427
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 53,
+            "newValue": 54,
+            "timestamp": 1774797349840,
+            "gameTick": 14427
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71309366,
+            "newValue": 71310406,
+            "timestamp": 1774797352419,
+            "gameTick": 14431
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 54,
+            "newValue": 70,
+            "timestamp": 1774797352426,
+            "gameTick": 14431
+          },
+          {
+            "type": "varbit",
+            "varId": 42102,
+            "oldValue": 6,
+            "newValue": 7,
+            "timestamp": 1774797352426,
+            "gameTick": 14431
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71310406,
+            "newValue": 71304204,
+            "timestamp": 1774797355179,
+            "gameTick": 14436
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 70,
+            "newValue": 12,
+            "timestamp": 1774797355183,
+            "gameTick": 14436
+          },
+          {
+            "type": "varbit",
+            "varId": 42102,
+            "oldValue": 7,
+            "newValue": 1,
+            "timestamp": 1774797355183,
+            "gameTick": 14436
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71304204,
+            "newValue": 71304216,
+            "timestamp": 1774797357575,
+            "gameTick": 14440
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 12,
+            "newValue": 24,
+            "timestamp": 1774797357577,
+            "gameTick": 14440
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71304216,
+            "newValue": 71304212,
+            "timestamp": 1774797361797,
+            "gameTick": 14447
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 24,
+            "newValue": 20,
+            "timestamp": 1774797361802,
+            "gameTick": 14447
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 8172,
+            "oldValue": 71304212,
+            "newValue": 71304209,
+            "timestamp": 1774797370374,
+            "gameTick": 14461
+          },
+          {
+            "type": "varbit",
+            "varId": 42101,
+            "oldValue": 20,
+            "newValue": 17,
+            "timestamp": 1774797370379,
+            "gameTick": 14461
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
@@ -3175,50 +3604,46 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
-          }
-        ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "Walking",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
+          },
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
         "inventoryChanged": false,
         "animationEnded": false,
         "playerStopped": false,
-        "varbitChanged": false,
+        "varbitChanged": true,
         "recentItemChanges": [],
-        "recentVarChanges": []
+        "recentVarChanges": [
+          {
+            "type": "varbit",
+            "varId": 18994,
+            "oldValue": 9,
+            "newValue": 0,
+            "timestamp": 1774797384014,
+            "gameTick": 14484
+          },
+          {
+            "type": "varp",
+            "varId": 3708,
+            "oldValue": 4195337,
+            "newValue": 4195328,
+            "timestamp": 1774797384014,
+            "gameTick": 14484
+          }
+        ]
       },
       "intent": {
-        "description": "Object interaction: warm hands",
+        "description": "UI interaction — state change",
         "confidence": "medium"
       },
       "openInterfaceId": 550
@@ -3227,76 +3652,46 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
-          }
-        ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "Walking",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
+          },
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
         "inventoryChanged": false,
         "animationEnded": false,
         "playerStopped": false,
-        "varbitChanged": false,
+        "varbitChanged": true,
         "recentItemChanges": [],
-        "recentVarChanges": []
-      },
-      "intent": {
-        "description": "Walking",
-        "confidence": "low"
-      },
-      "openInterfaceId": 550
-    },
-    {
-      "backpack": {
-        "items": [
+        "recentVarChanges": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
-            "quantity": 1
+            "type": "varp",
+            "varId": 3708,
+            "oldValue": 4195328,
+            "newValue": 4195335,
+            "timestamp": 1774797388374,
+            "gameTick": 14491
+          },
+          {
+            "type": "varbit",
+            "varId": 18994,
+            "oldValue": 0,
+            "newValue": 7,
+            "timestamp": 1774797388376,
+            "gameTick": 14491
           }
-        ],
-        "freeSlots": 27,
-        "full": false
-      },
-      "triggers": {
-        "inventoryChanged": false,
-        "animationEnded": false,
-        "playerStopped": false,
-        "varbitChanged": false,
-        "recentItemChanges": [],
-        "recentVarChanges": []
+        ]
       },
       "intent": {
-        "description": "NPC interaction: shop",
+        "description": "UI interaction — state change",
         "confidence": "medium"
       },
       "openInterfaceId": 550
@@ -3305,12 +3700,65 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 3709,
+            "oldValue": 273,
+            "newValue": 1297,
+            "timestamp": 1774797390475,
+            "gameTick": 14495
+          },
+          {
+            "type": "varbit",
+            "varId": 19002,
+            "oldValue": 1,
+            "newValue": 5,
+            "timestamp": 1774797390477,
+            "gameTick": 14495
+          }
+        ]
+      },
+      "intent": {
+        "description": "UI interaction — state change",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
@@ -3322,7 +3770,7 @@
         "recentVarChanges": []
       },
       "intent": {
-        "description": "Walking",
+        "description": "UI interaction",
         "confidence": "low"
       },
       "openInterfaceId": 550
@@ -3331,12 +3779,17 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
@@ -3348,7 +3801,7 @@
         "recentVarChanges": []
       },
       "intent": {
-        "description": "Walking",
+        "description": "UI interaction",
         "confidence": "low"
       },
       "openInterfaceId": 550
@@ -3357,12 +3810,17 @@
       "backpack": {
         "items": [
           {
-            "itemId": 49538,
-            "name": "Archaeological soil box",
+            "itemId": 54905,
+            "name": "Acadia wood box",
             "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
           }
         ],
-        "freeSlots": 27,
+        "freeSlots": 9,
         "full": false
       },
       "triggers": {
@@ -3374,13 +3832,44 @@
         "recentVarChanges": []
       },
       "intent": {
-        "description": "Walking",
+        "description": "UI interaction",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 54905,
+            "name": "Acadia wood box",
+            "quantity": 1
+          },
+          {
+            "itemId": 1519,
+            "name": "Willow logs",
+            "quantity": 18
+          }
+        ],
+        "freeSlots": 9,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "UI interaction",
         "confidence": "low"
       },
       "openInterfaceId": 550
     }
   ],
-  "exportTime": 1774749660673,
+  "exportTime": 1774798028573,
   "description": "autosave",
   "lastSeenActionTimestamp": 82878546
 }

@@ -1,18 +1,12 @@
 package com.botwithus.bot.scripts.woodcutting.task;
 
-import com.botwithus.bot.api.log.BotLogger;
-import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.script.Task;
+import com.botwithus.bot.scripts.woodcutting.TileAnchor;
 import com.botwithus.bot.scripts.woodcutting.WoodcuttingContext;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Walks back to the tree area when the player is too far away and the backpack is not full.
- */
 public final class WalkToTreesTask implements Task {
-
-    private static final BotLogger log = LoggerFactory.getLogger(WalkToTreesTask.class);
 
     private final WoodcuttingContext wctx;
 
@@ -32,24 +26,23 @@ public final class WalkToTreesTask implements Task {
 
     @Override
     public boolean validate() {
-        return !wctx.backpack.isFull()
-                && wctx.playerHelper.distanceTo(wctx.config.getTreeAreaX(), wctx.config.getTreeAreaY()) > wctx.config.getWalkRadius();
+        return !wctx.bank.isOpen() && !wctx.isNearCurrentTreeArea();
     }
 
     @Override
     public int execute() {
-        int destX = wctx.config.getTreeAreaX();
-        int destY = wctx.config.getTreeAreaY();
+        TileAnchor anchor = wctx.currentTravelAnchor();
+        int destX = anchor.x();
+        int destY = anchor.y();
 
-        // Quirk 8: overshoot — walk past the tree area, then course-correct next tick
         if (wctx.quirks.shouldOvershoot()) {
-            int overshootX = destX + ThreadLocalRandom.current().nextInt(-8, 9);
-            int overshootY = destY + ThreadLocalRandom.current().nextInt(-8, 9);
-            wctx.logAction("Walking to trees (overshot)");
-            wctx.api.walkWorldPathAsync(overshootX, overshootY, 0);
+            int overshootX = destX + ThreadLocalRandom.current().nextInt(-6, 7);
+            int overshootY = destY + ThreadLocalRandom.current().nextInt(-6, 7);
+            wctx.logAction("MOVE: Walking to " + anchor.label() + " (overshoot)");
+            wctx.api.walkWorldPathAsync(overshootX, overshootY, anchor.plane());
         } else {
-            wctx.logAction("Walking to trees");
-            wctx.api.walkWorldPathAsync(destX, destY, 0);
+            wctx.logAction("MOVE: Walking to " + anchor.label());
+            wctx.api.walkWorldPathAsync(destX, destY, anchor.plane());
         }
 
         return (int) wctx.pace.delay("walk");
