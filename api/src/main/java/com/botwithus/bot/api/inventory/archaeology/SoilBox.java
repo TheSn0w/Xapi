@@ -1,6 +1,9 @@
-package com.botwithus.bot.api.inventory;
+package com.botwithus.bot.api.inventory.archaeology;
 
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.inventory.Backpack;
+import com.botwithus.bot.api.inventory.ComponentHelper;
+import com.botwithus.bot.api.inventory.InventoryContainer;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
