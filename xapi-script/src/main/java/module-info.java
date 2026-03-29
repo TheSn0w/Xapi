@@ -8,7 +8,5 @@ module com.xapi.debugger {
     opens com.xapi.debugger to com.google.gson;
 
     provides com.botwithus.bot.api.BotScript
-        with com.xapi.debugger.XapiScript,
-             com.xapi.debugger.TestScript,
-             com.xapi.debugger.WoodBoxTestScript;
+        with com.xapi.debugger.XapiScript;
 }

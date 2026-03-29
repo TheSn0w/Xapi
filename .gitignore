@@ -41,7 +41,12 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### Windows ###
+desktop.ini
+
 ### Runtime/Generated ###
 imgui.ini
 scripts/**/*.jar
+scripts/overlay-pos.txt
+logs/
 navdata/
