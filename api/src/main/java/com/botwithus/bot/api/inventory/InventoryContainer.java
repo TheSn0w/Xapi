@@ -1,6 +1,7 @@
 package com.botwithus.bot.api.inventory;
 
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.inventory.Banking.Bank;
 import com.botwithus.bot.api.model.InventoryItem;
 import com.botwithus.bot.api.query.InventoryFilter;
 

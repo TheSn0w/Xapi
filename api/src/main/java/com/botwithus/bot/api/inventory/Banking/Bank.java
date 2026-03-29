@@ -1,7 +1,10 @@
-package com.botwithus.bot.api.inventory;
+package com.botwithus.bot.api.inventory.Banking;
 
 import com.botwithus.bot.api.antiban.Delays;
 import com.botwithus.bot.api.GameAPI;
+import com.botwithus.bot.api.inventory.ActionTypes;
+import com.botwithus.bot.api.inventory.Backpack;
+import com.botwithus.bot.api.inventory.InventoryContainer;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
@@ -15,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.botwithus.bot.api.inventory.ComponentHelper.componentHash;
 import static com.botwithus.bot.api.inventory.ComponentHelper.queueComponentAction;
 
 /**

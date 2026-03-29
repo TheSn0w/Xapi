@@ -36,12 +36,8 @@ public final class Porters {
 
     /** Equipment inventory ID. */
     private static final int EQUIPMENT_INV = 94;
-    /** Amulet slot index in equipment inventory. */
-    private static final int SLOT_AMULET = 2;
     /** Pocket slot index in equipment inventory. */
     private static final int SLOT_POCKET = 17;
-    /** Param for GotE porter charges (amulet slot). */
-    public static final int PARAM_GOTE_CHARGES = 30214;
     /** Param for worn porter charges (pocket slot). */
     public static final int PARAM_WORN_PORTER_CHARGES = 20171;
 

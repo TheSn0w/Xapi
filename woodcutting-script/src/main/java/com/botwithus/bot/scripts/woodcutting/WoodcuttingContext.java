@@ -5,7 +5,7 @@ import com.botwithus.bot.api.antiban.Pace;
 import com.botwithus.bot.api.entities.SceneObjects;
 import com.botwithus.bot.api.event.TickEvent;
 import com.botwithus.bot.api.inventory.Backpack;
-import com.botwithus.bot.api.inventory.Bank;
+import com.botwithus.bot.api.inventory.Banking.Bank;
 import com.botwithus.bot.api.inventory.WoodBox;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;

@@ -2,6 +2,7 @@ package com.botwithus.bot.api.inventory;
 
 import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.antiban.Delays;
+import com.botwithus.bot.api.inventory.Banking.Bank;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
@@ -14,7 +15,6 @@ import com.botwithus.bot.api.model.PlayerStat;
 import com.botwithus.bot.api.query.InventoryFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

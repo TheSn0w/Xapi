@@ -2,6 +2,7 @@ package com.botwithus.bot.api.inventory;
 
 import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.antiban.Delays;
+import com.botwithus.bot.api.inventory.Banking.Bank;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
