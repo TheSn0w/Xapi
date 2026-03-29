@@ -4,6 +4,7 @@ import com.botwithus.bot.api.GameAPI;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.model.Component;
+import com.botwithus.bot.api.model.GameAction;
 import com.botwithus.bot.api.model.InventoryItem;
 
 import java.util.List;
@@ -16,12 +17,13 @@ import java.util.List;
  * screen soil directly from the box at a screening station.</p>
  *
  * <p>Unlike the wood box, the soil box is a single item with upgradeable capacity.
- * Capacity upgrades are purchased from the Archaeology Guild Shop with Chronotes,
+ * Capacity upgrades are purchased from Ezreal's Archaeology Guild Shop with Chronotes,
  * gated by qualification tier (Intern → Assistant → Associate → Professor).</p>
  *
- * <p>Stored quantities are tracked per soil type via player variables (varps).
- * The upgrade level is tracked by varbit {@value #UPGRADE_VARBIT}.
- * Item contents are also readable from inventory ID {@value #STORAGE_INVENTORY_ID}.</p>
+ * <p>Stored quantities are tracked per soil type via full 32-bit varplayers (raw varps,
+ * not subdivided by varbits). The upgrade tier is tracked by varbit {@value #UPGRADE_VARBIT}.
+ * Item contents are also readable from inventory ID {@value #STORAGE_INVENTORY_ID}
+ * (6 slots). Soil types are enumerated in cache enum 14069.</p>
  *
  * <pre>{@code
  * SoilBox soilBox = new SoilBox(ctx.getGameAPI());
@@ -41,16 +43,23 @@ public final class SoilBox {
     /** Inventory ID for soil box stored items. */
     public static final int STORAGE_INVENTORY_ID = 884;
 
-    /** Varbit that tracks the soil box upgrade level (0–3). */
+    /** Varbit that tracks the soil box upgrade tier (0–3). */
     public static final int UPGRADE_VARBIT = 47021;
-    /** Capacity per soil type at each upgrade level. */
+    /** Varbit that tracks soil box state/flags (4-bit, max 15). */
+    public static final int STATE_VARBIT = 49538;
+    /** Varbit for Archaeology tutorial gate (0=locked, 1=unlocked). */
+    public static final int TUTORIAL_VARBIT = 21748;
+
+    /** Capacity per soil type at each upgrade tier: Intern(50), Assistant(100), Associate(250), Professor(500). */
     private static final int[] CAPACITIES = {50, 100, 250, 500};
 
-    // Bank backpack component (for empty action at bank)
+    // Bank backpack component actions
     private static final int BANK_INTERFACE_ID = 517;
     private static final int BANK_BACKPACK_COMPONENT = 15;
-    /** Option index for "Empty" on soil box in bank backpack (action type 57). */
+    private static final int ACTION_CONTAINER = 1007;
+    private static final int OPTION_FILL_AT_BANK = 8;
     private static final int OPTION_EMPTY_AT_BANK = 9;
+    private static final int OPTION_DEPOSIT = 2;
 
     private final GameAPI api;
     private final InventoryContainer storage;
@@ -313,74 +322,103 @@ public final class SoilBox {
 
     /**
      * Empty the soil box contents into the bank.
-     * <p>Must be performed while the bank interface is open. Uses the same
-     * bank backpack component interaction as WoodBox (interface 517, component 15).</p>
+     * <p>Must be performed while the bank interface is open. Uses action type 1007
+     * with option 9 on the bank backpack component (517, 15).</p>
      *
      * @return {@code true} if the empty action was queued
      */
     public boolean emptyAtBank() {
-        if (!api.isInterfaceOpen(BANK_INTERFACE_ID)) {
-            log.warn("[SoilBox] Cannot empty at bank: bank is not open");
-            return false;
-        }
-        if (!hasSoilBox()) {
-            log.warn("[SoilBox] Cannot empty at bank: no soil box found in backpack");
-            return false;
-        }
-        if (isEmpty()) {
-            log.warn("[SoilBox] Cannot empty at bank: soil box is already empty");
-            return false;
-        }
-        Component comp = findSoilBoxInBankBackpack();
-        if (comp == null) {
-            log.warn("[SoilBox] Cannot empty at bank: soil box not found in bank backpack view");
-            return false;
-        }
-        // Use standard COMPONENT action (57) with option 8, same pattern as WoodBox.
-        // The bank backpack component (517, 15) reports 0 options via getComponentOptions
-        // but still processes actions via type 57.
-        ComponentHelper.queueComponentAction(api, comp, OPTION_EMPTY_AT_BANK);
+        Component comp = findSoilBoxInBank("empty at bank");
+        if (comp == null) return false;
+        api.queueAction(new GameAction(
+                ACTION_CONTAINER, OPTION_EMPTY_AT_BANK, comp.subComponentId(),
+                ComponentHelper.componentHash(comp)));
         log.info("[SoilBox] Emptying soil box at bank (slot {})", comp.subComponentId());
+        return true;
+    }
+
+    /**
+     * Fill the soil box from the bank.
+     * <p>Must be performed while the bank interface is open. Uses action type 1007
+     * with option 8 on the bank backpack component (517, 15).</p>
+     *
+     * @return {@code true} if the fill action was queued
+     */
+    public boolean fillAtBank() {
+        Component comp = findSoilBoxInBank("fill at bank");
+        if (comp == null) return false;
+        api.queueAction(new GameAction(
+                ACTION_CONTAINER, OPTION_FILL_AT_BANK, comp.subComponentId(),
+                ComponentHelper.componentHash(comp)));
+        log.info("[SoilBox] Filling soil box at bank (slot {})", comp.subComponentId());
+        return true;
+    }
+
+    /**
+     * Deposit the soil box itself into the bank (action type 57, option 2).
+     * <p>Must be performed while the bank interface is open.</p>
+     *
+     * @return {@code true} if the deposit action was queued
+     */
+    public boolean deposit() {
+        Component comp = findSoilBoxInBank("deposit");
+        if (comp == null) return false;
+        ComponentHelper.queueComponentAction(api, comp, OPTION_DEPOSIT);
+        log.info("[SoilBox] Depositing soil box (slot {})", comp.subComponentId());
         return true;
     }
 
     // ========================== Helpers ==========================
 
-    /**
-     * Find the soil box component in the bank's backpack view.
-     */
-    private Component findSoilBoxInBankBackpack() {
-        return api.getComponentChildren(BANK_INTERFACE_ID, BANK_BACKPACK_COMPONENT).stream()
+    private Component findSoilBoxInBank(String action) {
+        if (!api.isInterfaceOpen(BANK_INTERFACE_ID)) {
+            log.warn("[SoilBox] Cannot {}: bank is not open", action);
+            return null;
+        }
+        if (!hasSoilBox()) {
+            log.warn("[SoilBox] Cannot {}: no soil box found in backpack", action);
+            return null;
+        }
+        Component comp = api.getComponentChildren(BANK_INTERFACE_ID, BANK_BACKPACK_COMPONENT).stream()
                 .filter(c -> c.itemId() == ITEM_ID)
                 .findFirst().orElse(null);
+        if (comp == null) {
+            log.warn("[SoilBox] Cannot {}: soil box not found in bank backpack view", action);
+        }
+        return comp;
     }
 
     // ========================== Enum ==========================
 
     /**
      * Soil types that can be stored in the Archaeological soil box.
-     * Each type has a player variable (varp) that tracks the stored quantity.
+     * <p>Each type has a full 32-bit varplayer (raw varp, not subdivided by varbits)
+     * that tracks the stored quantity. Order matches cache enum 14069.</p>
      */
     public enum SoilType {
-        ANCIENT_GRAVEL  ("Ancient gravel",    49517, 9370,  5),
-        SALTWATER_MUD   ("Saltwater mud",     49519, 9371, 42),
-        FIERY_BRIMSTONE ("Fiery brimstone",   49521, 9372, 20),
-        AERATED_SEDIMENT("Aerated sediment",  49523, 9373, 70),
-        EARTHEN_CLAY    ("Earthen clay",      49525, 9374, 76),
-        VOLCANIC_ASH    ("Volcanic ash",      50696, 9578, 73);
+        // Order matches enum 14069 (slot 0–5)
+        ANCIENT_GRAVEL  ("Ancient gravel",   49517, 49528, 9370,  5),
+        FIERY_BRIMSTONE ("Fiery brimstone",  49521, 49530, 9372, 20),
+        SALTWATER_MUD   ("Saltwater mud",    49519, 49529, 9371, 42),
+        AERATED_SEDIMENT("Aerated sediment", 49523, 49531, 9373, 70),
+        VOLCANIC_ASH    ("Volcanic ash",     50696, 50698, 9578, 73),
+        EARTHEN_CLAY    ("Earthen clay",     49525, 49532, 9374, 76);
 
         /** Display name of this soil type. */
         public final String name;
         /** In-game item ID for this soil type (backpack variant, category 4603). */
         public final int itemId;
-        /** Player variable (varp) ID that tracks the stored quantity. */
+        /** Screening dummy item ID (category 4717, used in screening interface). */
+        public final int screeningDummyId;
+        /** Player variable (varp) ID that tracks the stored quantity (full 32-bit). */
         public final int varpId;
-        /** Minimum Archaeology level required to obtain this soil. */
+        /** Minimum Archaeology level required to screen this soil. */
         public final int requiredLevel;
 
-        SoilType(String name, int itemId, int varpId, int requiredLevel) {
+        SoilType(String name, int itemId, int screeningDummyId, int varpId, int requiredLevel) {
             this.name = name;
             this.itemId = itemId;
+            this.screeningDummyId = screeningDummyId;
             this.varpId = varpId;
             this.requiredLevel = requiredLevel;
         }
