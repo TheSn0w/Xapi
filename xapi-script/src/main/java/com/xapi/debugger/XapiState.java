@@ -284,6 +284,11 @@ final class XapiState {
     boolean showVarbits = true;
     boolean showVarps = true;
 
+    // Variables tab: var lookup
+    final ImString varLookupId = new ImString(64);
+    volatile boolean varLookupIsVarbit = true; // true = varbit, false = varp
+    volatile int varLookupResult = Integer.MIN_VALUE; // MIN_VALUE = no result yet
+
     // Session files (for export/import UI)
     String[] sessionFiles = new String[0];
 

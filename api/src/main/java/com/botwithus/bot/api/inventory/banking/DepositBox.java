@@ -1,4 +1,4 @@
-package com.botwithus.bot.api.inventory.Banking;
+package com.botwithus.bot.api.inventory.banking;
 
 import com.botwithus.bot.api.antiban.Delays;
 import com.botwithus.bot.api.GameAPI;

@@ -51,6 +51,34 @@ final class VariablesTab {
         ImGui.inputText("##var_filter", state.varFilterText);
         ImGui.popItemWidth();
 
+        // -- Var Lookup --
+        ImGui.sameLine();
+        ImGui.text("|");
+        ImGui.sameLine();
+        boolean isVarbit = state.varLookupIsVarbit;
+        if (ImGui.button(isVarbit ? "Varbit##vl" : "Varp##vl")) { state.varLookupIsVarbit = !isVarbit; state.varLookupResult = Integer.MIN_VALUE; }
+        if (ImGui.isItemHovered()) ImGui.setTooltip("Click to toggle varbit/varp");
+        ImGui.sameLine();
+        ImGui.pushItemWidth(80);
+        ImGui.inputText("##var_lookup_id", state.varLookupId);
+        ImGui.popItemWidth();
+        if (ImGui.isItemHovered()) ImGui.setTooltip("Enter a " + (state.varLookupIsVarbit ? "varbit" : "varp") + " ID to see its current value");
+        ImGui.sameLine();
+        ImGui.text("=");
+        ImGui.sameLine();
+        int lookupVal = state.varLookupResult;
+        if (lookupVal != Integer.MIN_VALUE) {
+            ImGui.textColored(0.3f, 0.9f, 0.3f, 1f, String.valueOf(lookupVal));
+            ImGui.sameLine();
+            String lookupCode = state.varLookupIsVarbit ? "api.getVarbit(" + state.varLookupId.get().trim() + ")" : "api.getVarp(" + state.varLookupId.get().trim() + ")";
+            ImGui.pushStyleColor(ImGuiCol.Text, 0.4f, 0.9f, 0.5f, 1f);
+            if (ImGui.smallButton("copy##vl")) ImGui.setClipboardText(lookupCode);
+            ImGui.popStyleColor();
+            if (ImGui.isItemHovered()) ImGui.setTooltip(lookupCode);
+        } else {
+            ImGui.textColored(0.5f, 0.5f, 0.5f, 0.8f, "...");
+        }
+
         // -- Inventory Varbit Search --
         renderInvVarSearch();
 

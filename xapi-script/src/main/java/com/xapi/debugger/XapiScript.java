@@ -634,6 +634,7 @@ public class XapiScript implements BotScript {
 
         try { inspectorCollector.pollInvVarLive(api); } catch (Exception e) { log.debug("pollInvVarLive failed: {}", e.getMessage()); }
 
+        try { dataPoller.pollVarLookup(api); } catch (Exception e) { log.debug("pollVarLookup failed: {}", e.getMessage()); }
         try { dataPoller.pollPinnedVars(api); } catch (Exception e) { log.debug("pollPinnedVars failed: {}", e.getMessage()); }
         try { dataPoller.pollChatHistory(api); } catch (Exception e) { log.debug("pollChatHistory failed: {}", e.getMessage()); }
         try { dataPoller.pollActionHistory(api); } catch (Exception e) { log.debug("pollActionHistory failed: {}", e.getMessage()); }

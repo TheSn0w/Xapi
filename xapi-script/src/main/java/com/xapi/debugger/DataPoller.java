@@ -45,6 +45,17 @@ final class DataPoller {
         this.inventoryTracker = inventoryTracker;
     }
 
+    void pollVarLookup(GameAPI api) {
+        String idStr = state.varLookupId.get().trim();
+        if (idStr.isEmpty()) { state.varLookupResult = Integer.MIN_VALUE; return; }
+        try {
+            int id = Integer.parseInt(idStr);
+            state.varLookupResult = state.varLookupIsVarbit ? api.getVarbit(id) : api.getVarp(id);
+        } catch (NumberFormatException e) {
+            state.varLookupResult = Integer.MIN_VALUE;
+        }
+    }
+
     void pollPinnedVars(GameAPI api) {
         for (String key : state.pinnedVars) {
             try {

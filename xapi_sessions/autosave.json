@@ -1,61 +1,1396 @@
 {
-  "actions": [],
+  "actions": [
+    {
+      "actionId": 57,
+      "param1": 5,
+      "param2": 2,
+      "param3": 95944719,
+      "timestamp": 1774748343483,
+      "gameTick": 2115,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Grace of the elves",
+      "optionName": "Charge porter",
+      "playerX": 3186,
+      "playerY": 2744,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 1007,
+      "param1": 6,
+      "param2": 2,
+      "param3": 95944719,
+      "timestamp": 1774748370203,
+      "gameTick": 2160,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Grace of the elves",
+      "optionName": "Charge all porters",
+      "playerX": 3186,
+      "playerY": 2744,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 1007,
+      "param1": 7,
+      "param2": 2,
+      "param3": 95944719,
+      "timestamp": 1774748381383,
+      "gameTick": 2178,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Grace of the elves",
+      "optionName": "Toggle porter",
+      "playerX": 3186,
+      "playerY": 2744,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3182,
+      "param3": 2744,
+      "timestamp": 1774748513173,
+      "gameTick": 2398,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3186,
+      "playerY": 2744,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3182,
+      "param3": 2742,
+      "timestamp": 1774748820430,
+      "gameTick": 2910,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3182,
+      "playerY": 2744,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 57,
+      "param1": 1,
+      "param2": -1,
+      "param3": 109641809,
+      "timestamp": 1774748920740,
+      "gameTick": 3077,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Interface 1673",
+      "optionName": "Cast",
+      "playerX": 3182,
+      "playerY": 2742,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3293,
+      "param3": 10129,
+      "timestamp": 1774748953475,
+      "gameTick": 3132,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3294,
+      "playerY": 10127,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 3,
+      "param1": 114751,
+      "param2": 3298,
+      "param3": 10126,
+      "timestamp": 1774749065725,
+      "gameTick": 3319,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "Campfire",
+      "optionName": "Warm hands",
+      "playerX": 3293,
+      "playerY": 10129,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3298,
+      "param3": 10129,
+      "timestamp": 1774749072564,
+      "gameTick": 3330,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3297,
+      "playerY": 10126,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3296,
+      "param3": 10128,
+      "timestamp": 1774749132203,
+      "gameTick": 3429,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3298,
+      "playerY": 10129,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 11,
+      "param1": 25095,
+      "param2": 0,
+      "param3": 0,
+      "timestamp": 1774749133667,
+      "gameTick": 3432,
+      "wasBlocked": false,
+      "source": "client",
+      "entityName": "War",
+      "optionName": "Shop",
+      "playerX": 3296,
+      "playerY": 10128,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3297,
+      "param3": 10129,
+      "timestamp": 1774749478868,
+      "gameTick": 4007,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3291,
+      "playerY": 10129,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": false
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3298,
+      "param3": 10129,
+      "timestamp": 1774749479934,
+      "gameTick": 4009,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3293,
+      "playerY": 10129,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": true
+    },
+    {
+      "actionId": 23,
+      "param1": 0,
+      "param2": 3299,
+      "param3": 10131,
+      "timestamp": 1774749481024,
+      "gameTick": 4011,
+      "wasBlocked": false,
+      "source": "client",
+      "optionName": "Walk here",
+      "playerX": 3297,
+      "playerY": 10129,
+      "playerPlane": 0,
+      "playerAnim": -1,
+      "playerMoving": true
+    }
+  ],
   "vars": [
     {
       "type": "varp",
-      "varId": 12285,
-      "oldValue": 34,
-      "newValue": 33,
-      "timestamp": 1774740045178,
-      "gameTick": 125
-    },
-    {
-      "type": "varbit",
-      "varId": 58272,
-      "oldValue": 34,
-      "newValue": 33,
-      "timestamp": 1774740045183,
-      "gameTick": 125
+      "varId": 3914,
+      "oldValue": 169613460,
+      "newValue": 177968789,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
     },
     {
       "type": "varp",
-      "varId": 12285,
-      "oldValue": 33,
-      "newValue": 32,
-      "timestamp": 1774740060194,
-      "gameTick": 150
+      "varId": 3913,
+      "oldValue": 268442930,
+      "newValue": 268442929,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805324042,
+      "newValue": 805323785,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1330,
+      "newValue": 1329,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 20,
+      "newValue": 21,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 12,
+      "newValue": 11,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 20,
+      "newValue": 21,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 10,
+      "newValue": 9,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 69,
+      "newValue": 68,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 56,
+      "newValue": 55,
+      "timestamp": 1774749114233,
+      "gameTick": 3400
     },
     {
       "type": "varp",
       "varId": 11489,
-      "oldValue": 29579000,
-      "newValue": 29579001,
-      "timestamp": 1774740060194,
-      "gameTick": 150
-    },
-    {
-      "type": "varbit",
-      "varId": 58272,
-      "oldValue": 33,
-      "newValue": 32,
-      "timestamp": 1774740060201,
-      "gameTick": 150
+      "oldValue": 29579151,
+      "newValue": 29579152,
+      "timestamp": 1774749120236,
+      "gameTick": 3410
     },
     {
       "type": "varp",
-      "varId": 12285,
-      "oldValue": 32,
-      "newValue": 31,
-      "timestamp": 1774740075194,
-      "gameTick": 175
+      "varId": 5147,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774749135264,
+      "gameTick": 3435
+    },
+    {
+      "type": "varp",
+      "varId": 5148,
+      "oldValue": -1,
+      "newValue": 11621,
+      "timestamp": 1774749135264,
+      "gameTick": 3435
+    },
+    {
+      "type": "varp",
+      "varId": 5149,
+      "oldValue": 0,
+      "newValue": -1,
+      "timestamp": 1774749135264,
+      "gameTick": 3435
+    },
+    {
+      "type": "varp",
+      "varId": 6437,
+      "oldValue": 0,
+      "newValue": -1,
+      "timestamp": 1774749135264,
+      "gameTick": 3435
     },
     {
       "type": "varbit",
-      "varId": 58272,
-      "oldValue": 32,
+      "varId": 27175,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30587,
+      "oldValue": 4095,
+      "newValue": 3429,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30589,
+      "oldValue": 127,
+      "newValue": 0,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30590,
+      "oldValue": 1,
+      "newValue": 0,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30588,
+      "oldValue": 4095,
+      "newValue": 2,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30591,
+      "oldValue": 0,
+      "newValue": 4095,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30592,
+      "oldValue": 0,
+      "newValue": 4095,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 30593,
+      "oldValue": 0,
+      "newValue": 127,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 32839,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 40726,
+      "oldValue": 0,
       "newValue": 31,
-      "timestamp": 1774740075201,
-      "gameTick": 175
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 40727,
+      "oldValue": 0,
+      "newValue": 15,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 40728,
+      "oldValue": 0,
+      "newValue": 1023,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varbit",
+      "varId": 40729,
+      "oldValue": 0,
+      "newValue": 8191,
+      "timestamp": 1774749135271,
+      "gameTick": 3435
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 177968789,
+      "newValue": 186324118,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442929,
+      "newValue": 268442928,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805323785,
+      "newValue": 805323528,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 21,
+      "newValue": 22,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 11,
+      "newValue": 10,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 21,
+      "newValue": 22,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 9,
+      "newValue": 8,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 68,
+      "newValue": 67,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1329,
+      "newValue": 1328,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 55,
+      "newValue": 54,
+      "timestamp": 1774749174253,
+      "gameTick": 3500
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579152,
+      "newValue": 29579153,
+      "timestamp": 1774749180254,
+      "gameTick": 3510
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 186324118,
+      "newValue": 194679447,
+      "timestamp": 1774749234231,
+      "gameTick": 3600
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442928,
+      "newValue": 268442927,
+      "timestamp": 1774749234231,
+      "gameTick": 3600
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805323528,
+      "newValue": 805323271,
+      "timestamp": 1774749234231,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1328,
+      "newValue": 1327,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 22,
+      "newValue": 23,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 10,
+      "newValue": 9,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 22,
+      "newValue": 23,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 8,
+      "newValue": 7,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 54,
+      "newValue": 53,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 67,
+      "newValue": 66,
+      "timestamp": 1774749234238,
+      "gameTick": 3600
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579153,
+      "newValue": 29579154,
+      "timestamp": 1774749240271,
+      "gameTick": 3610
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 194679447,
+      "newValue": 203034776,
+      "timestamp": 1774749294237,
+      "gameTick": 3700
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442927,
+      "newValue": 268442926,
+      "timestamp": 1774749294237,
+      "gameTick": 3700
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805323271,
+      "newValue": 805323014,
+      "timestamp": 1774749294237,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1327,
+      "newValue": 1326,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 9,
+      "newValue": 8,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 23,
+      "newValue": 24,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 53,
+      "newValue": 52,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 7,
+      "newValue": 6,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 66,
+      "newValue": 65,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 23,
+      "newValue": 24,
+      "timestamp": 1774749294243,
+      "gameTick": 3700
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579154,
+      "newValue": 29579155,
+      "timestamp": 1774749300252,
+      "gameTick": 3710
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442926,
+      "newValue": 268442925,
+      "timestamp": 1774749354255,
+      "gameTick": 3800
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 203034776,
+      "newValue": 211390105,
+      "timestamp": 1774749354255,
+      "gameTick": 3800
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805323014,
+      "newValue": 805322757,
+      "timestamp": 1774749354255,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1326,
+      "newValue": 1325,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 24,
+      "newValue": 25,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 8,
+      "newValue": 7,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 52,
+      "newValue": 51,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 65,
+      "newValue": 64,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 24,
+      "newValue": 25,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 6,
+      "newValue": 5,
+      "timestamp": 1774749354260,
+      "gameTick": 3800
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579155,
+      "newValue": 29579156,
+      "timestamp": 1774749360477,
+      "gameTick": 3810
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442925,
+      "newValue": 268442924,
+      "timestamp": 1774749414254,
+      "gameTick": 3900
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 211390105,
+      "newValue": 219745434,
+      "timestamp": 1774749414254,
+      "gameTick": 3900
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805322757,
+      "newValue": 805322500,
+      "timestamp": 1774749414254,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1325,
+      "newValue": 1324,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 25,
+      "newValue": 26,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 7,
+      "newValue": 6,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 51,
+      "newValue": 50,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 25,
+      "newValue": 26,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 5,
+      "newValue": 4,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 64,
+      "newValue": 63,
+      "timestamp": 1774749414260,
+      "gameTick": 3900
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579156,
+      "newValue": 29579157,
+      "timestamp": 1774749420255,
+      "gameTick": 3910
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442924,
+      "newValue": 268442923,
+      "timestamp": 1774749474261,
+      "gameTick": 4000
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 219745434,
+      "newValue": 228100763,
+      "timestamp": 1774749474261,
+      "gameTick": 4000
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805322500,
+      "newValue": 805322243,
+      "timestamp": 1774749474261,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1324,
+      "newValue": 1323,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 26,
+      "newValue": 27,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 6,
+      "newValue": 5,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 50,
+      "newValue": 49,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 26,
+      "newValue": 27,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 4,
+      "newValue": 3,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 63,
+      "newValue": 62,
+      "timestamp": 1774749474267,
+      "gameTick": 4000
+    },
+    {
+      "type": "varp",
+      "varId": 6,
+      "oldValue": 10551296,
+      "newValue": 655360,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varp",
+      "varId": 20,
+      "oldValue": -1258291200,
+      "newValue": -1224736768,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 156,
+      "oldValue": 161,
+      "newValue": 10,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 854,
+      "oldValue": 5,
+      "newValue": 0,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 853,
+      "oldValue": 4,
+      "newValue": 40,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 94,
+      "oldValue": 181,
+      "newValue": 183,
+      "timestamp": 1774749479051,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 8820,
+      "oldValue": 724,
+      "newValue": 732,
+      "timestamp": 1774749479058,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 22074,
+      "oldValue": 80,
+      "newValue": 5,
+      "timestamp": 1774749479058,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 22038,
+      "oldValue": 1,
+      "newValue": 0,
+      "timestamp": 1774749479058,
+      "gameTick": 4007
+    },
+    {
+      "type": "varbit",
+      "varId": 853,
+      "oldValue": 40,
+      "newValue": 4,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varbit",
+      "varId": 156,
+      "oldValue": 10,
+      "newValue": 161,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varbit",
+      "varId": 854,
+      "oldValue": 0,
+      "newValue": 5,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varp",
+      "varId": 6,
+      "oldValue": 655360,
+      "newValue": 10551296,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varbit",
+      "varId": 22074,
+      "oldValue": 5,
+      "newValue": 80,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varbit",
+      "varId": 22038,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774749479082,
+      "gameTick": 4008
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579157,
+      "newValue": 29579158,
+      "timestamp": 1774749480257,
+      "gameTick": 4010
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442923,
+      "newValue": 268442922,
+      "timestamp": 1774749534251,
+      "gameTick": 4100
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 228100763,
+      "newValue": 236456092,
+      "timestamp": 1774749534251,
+      "gameTick": 4100
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805322243,
+      "newValue": 805321986,
+      "timestamp": 1774749534251,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1323,
+      "newValue": 1322,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 27,
+      "newValue": 28,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 5,
+      "newValue": 4,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 49,
+      "newValue": 48,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 27,
+      "newValue": 28,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 3,
+      "newValue": 2,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 62,
+      "newValue": 61,
+      "timestamp": 1774749534258,
+      "gameTick": 4100
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579158,
+      "newValue": 29579159,
+      "timestamp": 1774749540259,
+      "gameTick": 4110
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442922,
+      "newValue": 268442921,
+      "timestamp": 1774749594271,
+      "gameTick": 4200
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 236456092,
+      "newValue": 244811421,
+      "timestamp": 1774749594271,
+      "gameTick": 4200
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805321986,
+      "newValue": 805321729,
+      "timestamp": 1774749594271,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1322,
+      "newValue": 1321,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 28,
+      "newValue": 29,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 4,
+      "newValue": 3,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 48,
+      "newValue": 47,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 28,
+      "newValue": 29,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 2,
+      "newValue": 1,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 61,
+      "newValue": 60,
+      "timestamp": 1774749594277,
+      "gameTick": 4200
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579159,
+      "newValue": 29579160,
+      "timestamp": 1774749600283,
+      "gameTick": 4210
+    },
+    {
+      "type": "varp",
+      "varId": 6162,
+      "oldValue": 3304,
+      "newValue": 5352,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varp",
+      "varId": 3913,
+      "oldValue": 268442921,
+      "newValue": 402660648,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varp",
+      "varId": 3914,
+      "oldValue": 244811421,
+      "newValue": 253166750,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varp",
+      "varId": 3915,
+      "oldValue": 805321729,
+      "newValue": 805321492,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20736,
+      "oldValue": 1321,
+      "newValue": 1320,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20738,
+      "oldValue": 0,
+      "newValue": 1,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20742,
+      "oldValue": 29,
+      "newValue": 30,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20744,
+      "oldValue": 3,
+      "newValue": 2,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20746,
+      "oldValue": 47,
+      "newValue": 46,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20747,
+      "oldValue": 29,
+      "newValue": 30,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20749,
+      "oldValue": 1,
+      "newValue": 20,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 20750,
+      "oldValue": 60,
+      "newValue": 59,
+      "timestamp": 1774749654272,
+      "gameTick": 4300
+    },
+    {
+      "type": "varbit",
+      "varId": 37511,
+      "oldValue": 1,
+      "newValue": 2,
+      "timestamp": 1774749654279,
+      "gameTick": 4300
+    },
+    {
+      "type": "varp",
+      "varId": 11489,
+      "oldValue": 29579160,
+      "newValue": 29579161,
+      "timestamp": 1774749660274,
+      "gameTick": 4310
     }
   ],
   "chat": [
@@ -1059,10 +2394,993 @@
       "playerName": "",
       "timestamp": 1774740017432,
       "gameTick": 78
+    },
+    {
+      "messageType": 137,
+      "text": "News: AflatuSolace just died for the last time in Hardcore Ironman mode with a skill total of 2229, in a PvP battle against Stuartz!",
+      "playerName": "",
+      "timestamp": 1774740322454,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "The effects of your Gift of Friendship XP boost are about to wear off.",
+      "playerName": "",
+      "timestamp": 1774740525630,
+      "gameTick": 925
+    },
+    {
+      "messageType": 0,
+      "text": "The effects of your Gift of Friendship XP boost have worn off.",
+      "playerName": "",
+      "timestamp": 1774740540423,
+      "gameTick": 950
+    },
+    {
+      "messageType": 0,
+      "text": "You have correctly entered your PIN.",
+      "playerName": "",
+      "timestamp": 1774740979195,
+      "gameTick": 0
+    },
+    {
+      "messageType": 138,
+      "text": "News: Blobby404 has received a Balarak\u0027s sash brush handle drop!",
+      "playerName": "",
+      "timestamp": 1774741004941,
+      "gameTick": 173
+    },
+    {
+      "messageType": 138,
+      "text": "News: ShaoNazg has received Archie, the Archaeology pet drop at 1,664,799 XP!",
+      "playerName": "",
+      "timestamp": 1774741010461,
+      "gameTick": 182
+    },
+    {
+      "messageType": 137,
+      "text": "News: SSoad4 has achieved 200 million XP in Constitution!",
+      "playerName": "",
+      "timestamp": 1774741113497,
+      "gameTick": 354
+    },
+    {
+      "messageType": 138,
+      "text": "News: ConceillingL has received a Frozen core of Leng drop!",
+      "playerName": "",
+      "timestamp": 1774741289411,
+      "gameTick": 647
+    },
+    {
+      "messageType": 0,
+      "text": "Alpha Reaper has shared their Gift of Friendship with you! For the next hour you gain an XP boost of 1%.",
+      "playerName": "",
+      "timestamp": 1774741312252,
+      "gameTick": 685
+    },
+    {
+      "messageType": 137,
+      "text": "News: Zarvn has unlocked the \u0027Jack of All Blades\u0027 title!",
+      "playerName": "",
+      "timestamp": 1774741596769,
+      "gameTick": 1159
+    },
+    {
+      "messageType": 137,
+      "text": "News: zeusgod1983 has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774741597387,
+      "gameTick": 1160
+    },
+    {
+      "messageType": 138,
+      "text": "News: Farron Stark has received Silverquill\u0027s blood-filled cyst drop at 262 kills!",
+      "playerName": "",
+      "timestamp": 1774741751662,
+      "gameTick": 1417
+    },
+    {
+      "messageType": 138,
+      "text": "News: Farron Stark has accomplished the \u0027The Whole Hog\u0027 feat!",
+      "playerName": "",
+      "timestamp": 1774741768530,
+      "gameTick": 1446
+    },
+    {
+      "messageType": 137,
+      "text": "News: Exec91 has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774741904402,
+      "gameTick": 1672
+    },
+    {
+      "messageType": 137,
+      "text": "News: Witherhoard has unlocked the \u0027Jack of All Blades\u0027 title!",
+      "playerName": "",
+      "timestamp": 1774742007064,
+      "gameTick": 1843
+    },
+    {
+      "messageType": 2,
+      "text": "Go",
+      "playerName": "Eskkii",
+      "timestamp": 1774742053484,
+      "gameTick": 1920
+    },
+    {
+      "messageType": 138,
+      "text": "News: dragon0ffire has been awarded the Quest Cape!",
+      "playerName": "",
+      "timestamp": 1774742121329,
+      "gameTick": 2033
+    },
+    {
+      "messageType": 137,
+      "text": "News: Efora has been awarded the trimmed Completionist Cape!",
+      "playerName": "",
+      "timestamp": 1774742152121,
+      "gameTick": 2085
+    },
+    {
+      "messageType": 109,
+      "text": "Emptied 0 sapphires, 0 emeralds, 0 rubies, 0 diamonds and 27 dragonstones into your bank.",
+      "playerName": "",
+      "timestamp": 1774742181197,
+      "gameTick": 2133
+    },
+    {
+      "messageType": 138,
+      "text": "News: Jimlynoriho has just achieved 120 Magic!",
+      "playerName": "",
+      "timestamp": 1774742226392,
+      "gameTick": 2209
+    },
+    {
+      "messageType": 137,
+      "text": "News: N00BDoctor has been awarded the trimmed Completionist Cape!",
+      "playerName": "",
+      "timestamp": 1774742365482,
+      "gameTick": 2440
+    },
+    {
+      "messageType": 137,
+      "text": "News: slay 4 smut has achieved 200 million XP in Woodcutting!",
+      "playerName": "",
+      "timestamp": 1774742417797,
+      "gameTick": 2528
+    },
+    {
+      "messageType": 0,
+      "text": "The Voice of Seren is now active in the Meilyr district.",
+      "playerName": "",
+      "timestamp": 1774742437519,
+      "gameTick": 2560
+    },
+    {
+      "messageType": 0,
+      "text": "The Voice of Seren is now active in the Hefin district.",
+      "playerName": "",
+      "timestamp": 1774742437519,
+      "gameTick": 2560
+    },
+    {
+      "messageType": 137,
+      "text": "News: PvM Smiter has achieved 200 million XP in Mining!",
+      "playerName": "",
+      "timestamp": 1774742817605,
+      "gameTick": 3194
+    },
+    {
+      "messageType": 137,
+      "text": "News: SOL LEVELING has achieved 200 million XP in Runecrafting!",
+      "playerName": "",
+      "timestamp": 1774742847911,
+      "gameTick": 3244
+    },
+    {
+      "messageType": 137,
+      "text": "News: Pink Stormy has unlocked the \u0027Final Boss\u0027 title!",
+      "playerName": "",
+      "timestamp": 1774742873289,
+      "gameTick": 3287
+    },
+    {
+      "messageType": 137,
+      "text": "News: For becoming a master of quests and lore Meg AW Hale has been awarded the Master Quest Cape!",
+      "playerName": "",
+      "timestamp": 1774742915345,
+      "gameTick": 3357
+    },
+    {
+      "messageType": 137,
+      "text": "News: Pink Stormy has been awarded the Completionist Cape!",
+      "playerName": "",
+      "timestamp": 1774742964218,
+      "gameTick": 3438
+    },
+    {
+      "messageType": 137,
+      "text": "News: Meg AW Hale has been awarded the Completionist Cape!",
+      "playerName": "",
+      "timestamp": 1774742975973,
+      "gameTick": 3458
+    },
+    {
+      "messageType": 137,
+      "text": "News: kelea00 has achieved 200 million XP in Mining!",
+      "playerName": "",
+      "timestamp": 1774743109073,
+      "gameTick": 3680
+    },
+    {
+      "messageType": 137,
+      "text": "News: kelea00 has achieved 200 million XP in Fishing!",
+      "playerName": "",
+      "timestamp": 1774743117729,
+      "gameTick": 3694
+    },
+    {
+      "messageType": 138,
+      "text": "News: For handies has achieved 110 Mining!",
+      "playerName": "",
+      "timestamp": 1774743276626,
+      "gameTick": 3959
+    },
+    {
+      "messageType": 0,
+      "text": "The porter functionality of Grace of the elves has been disabled.",
+      "playerName": "",
+      "timestamp": 1774743362906,
+      "gameTick": 4103
+    },
+    {
+      "messageType": 0,
+      "text": "The porter functionality of Grace of the elves has been enabled.",
+      "playerName": "",
+      "timestamp": 1774743370317,
+      "gameTick": 4115
+    },
+    {
+      "messageType": 109,
+      "text": "50,000 coins have been removed from your money pouch.",
+      "playerName": "",
+      "timestamp": 1774743406295,
+      "gameTick": 4175
+    },
+    {
+      "messageType": 0,
+      "text": "The cost was negated as you tuned this portal to match your other portal.",
+      "playerName": "",
+      "timestamp": 1774743461699,
+      "gameTick": 4267
+    },
+    {
+      "messageType": 122,
+      "text": "News: Zarosian demonic energy is building up North-West of Het\u0027s Oasis!",
+      "playerName": "",
+      "timestamp": 1774743498381,
+      "gameTick": 4328
+    },
+    {
+      "messageType": 137,
+      "text": "News: Mekrais has achieved 200 million XP in Defence!",
+      "playerName": "",
+      "timestamp": 1774743546346,
+      "gameTick": 4408
+    },
+    {
+      "messageType": 109,
+      "text": "5 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774743575603,
+      "gameTick": 4457
+    },
+    {
+      "messageType": 109,
+      "text": "7 coins have been added to your money pouch.",
+      "playerName": "",
+      "timestamp": 1774743611307,
+      "gameTick": 4517
+    },
+    {
+      "messageType": 123,
+      "text": "News: A sinkhole is going to spawn in 10 minutes! Talk to Talsar at Daemonheim for more information.",
+      "playerName": "",
+      "timestamp": 1774743617582,
+      "gameTick": 4527
+    },
+    {
+      "messageType": 137,
+      "text": "News: Cant Quit has achieved 200 million XP in Herblore!",
+      "playerName": "",
+      "timestamp": 1774743875151,
+      "gameTick": 4956
+    },
+    {
+      "messageType": 125,
+      "text": "A soul obelisk has spawned in the Merchant district of Menaphos!",
+      "playerName": "",
+      "timestamp": 1774744039093,
+      "gameTick": 5230
+    },
+    {
+      "messageType": 137,
+      "text": "News: Bluebaerry has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774744125673,
+      "gameTick": 5374
+    },
+    {
+      "messageType": 137,
+      "text": "News: Strawbaerry has achieved 200 million XP in Attack!",
+      "playerName": "",
+      "timestamp": 1774744125673,
+      "gameTick": 5374
+    },
+    {
+      "messageType": 137,
+      "text": "News: Strawbaerry has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774744136193,
+      "gameTick": 5391
+    },
+    {
+      "messageType": 137,
+      "text": "News: Strawbaerry has achieved 200 million XP in all skills!",
+      "playerName": "",
+      "timestamp": 1774744136193,
+      "gameTick": 5391
+    },
+    {
+      "messageType": 137,
+      "text": "News: Bluebaerry has achieved 200 million XP in Strength!",
+      "playerName": "",
+      "timestamp": 1774744136812,
+      "gameTick": 5392
+    },
+    {
+      "messageType": 137,
+      "text": "News: Bluebaerry has achieved 200 million XP in all skills!",
+      "playerName": "",
+      "timestamp": 1774744136812,
+      "gameTick": 5392
+    },
+    {
+      "messageType": 138,
+      "text": "News: Joint Fury has received a Scripture of Wen drop!",
+      "playerName": "",
+      "timestamp": 1774744241527,
+      "gameTick": 5567
+    },
+    {
+      "messageType": 122,
+      "text": "News: Zarosian demons have appeared North-West of Het\u0027s Oasis!",
+      "playerName": "",
+      "timestamp": 1774744398332,
+      "gameTick": 5828
+    },
+    {
+      "messageType": 137,
+      "text": "News: Kurotshuchi has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774744495858,
+      "gameTick": 5991
+    },
+    {
+      "messageType": 0,
+      "text": "You empty your soil box.",
+      "playerName": "",
+      "timestamp": 1774744499656,
+      "gameTick": 5997
+    },
+    {
+      "messageType": 0,
+      "text": "You fill your soil box with soil.",
+      "playerName": "",
+      "timestamp": 1774744530704,
+      "gameTick": 6049
+    },
+    {
+      "messageType": 138,
+      "text": "News: DeTwo has been awarded the Quest Cape!",
+      "playerName": "",
+      "timestamp": 1774744572821,
+      "gameTick": 6119
+    },
+    {
+      "messageType": 138,
+      "text": "News: Babun has received a severed hoof drop at 447,333 kills!",
+      "playerName": "",
+      "timestamp": 1774744656368,
+      "gameTick": 6258
+    },
+    {
+      "messageType": 138,
+      "text": "News: Babun has received a severed hoof drop at 447,335 kills!",
+      "playerName": "",
+      "timestamp": 1774744742347,
+      "gameTick": 6402
+    },
+    {
+      "messageType": 0,
+      "text": "The effects of your Gift of Friendship XP boost are about to wear off.",
+      "playerName": "",
+      "timestamp": 1774744897606,
+      "gameTick": 6660
+    },
+    {
+      "messageType": 0,
+      "text": "The effects of your Gift of Friendship XP boost have worn off.",
+      "playerName": "",
+      "timestamp": 1774744912446,
+      "gameTick": 6685
+    },
+    {
+      "messageType": 0,
+      "text": "Welcome to RuneScape.",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 0,
+      "text": "Your crystal tree currently has 30 Crystal Blossoms and will not grow any more until some are harvested.",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 109,
+      "text": "You are fully rested. Head to your Fort to claim your bonus XP.",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 122,
+      "text": "News: Zamorakian demonic energy is building up in the Feldip Hills!",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Emo Jess has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 123,
+      "text": "News: A sinkhole is going to spawn in 10 minutes! Talk to Talsar at Daemonheim for more information.",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: Nights9 has achieved 200 million XP in Mining!",
+      "playerName": "",
+      "timestamp": 1774747336880,
+      "gameTick": 0
+    },
+    {
+      "messageType": 137,
+      "text": "News: MAS0N JAR has achieved 200 million XP in Construction!",
+      "playerName": "",
+      "timestamp": 1774747355215,
+      "gameTick": 468
+    },
+    {
+      "messageType": 137,
+      "text": "News: Dimak has achieved 200 million XP in Hunter!",
+      "playerName": "",
+      "timestamp": 1774747731164,
+      "gameTick": 1095
+    },
+    {
+      "messageType": 137,
+      "text": "News: Dimak has achieved 200 million XP in Fishing!",
+      "playerName": "",
+      "timestamp": 1774747738582,
+      "gameTick": 1107
+    },
+    {
+      "messageType": 137,
+      "text": "News: Dimak has achieved 200 million XP in Smithing!",
+      "playerName": "",
+      "timestamp": 1774747747239,
+      "gameTick": 1121
+    },
+    {
+      "messageType": 137,
+      "text": "News: Dumn11 has achieved 200 million XP in Necromancy!",
+      "playerName": "",
+      "timestamp": 1774747812169,
+      "gameTick": 1230
+    },
+    {
+      "messageType": 2,
+      "text": "108 invention",
+      "playerName": "ChampHarper",
+      "timestamp": 1774747825164,
+      "gameTick": 1251
+    },
+    {
+      "messageType": 137,
+      "text": "News: Light Lord15 has just achieved at least level 99 in all skills!",
+      "playerName": "",
+      "timestamp": 1774747846206,
+      "gameTick": 1286
+    },
+    {
+      "messageType": 137,
+      "text": "News: Sasshley has achieved 200 million XP in Dungeoneering!",
+      "playerName": "",
+      "timestamp": 1774747901256,
+      "gameTick": 1378
+    },
+    {
+      "messageType": 122,
+      "text": "News: Zamorakian demons have appeared in the Feldip Hills!",
+      "playerName": "",
+      "timestamp": 1774747998322,
+      "gameTick": 1540
+    },
+    {
+      "messageType": 137,
+      "text": "News: TVSTBUDS has achieved 200 million XP in Thieving!",
+      "playerName": "",
+      "timestamp": 1774748033585,
+      "gameTick": 1599
+    },
+    {
+      "messageType": 137,
+      "text": "News: 1 Crow 1 has achieved 200 million XP in Invention!",
+      "playerName": "",
+      "timestamp": 1774748154828,
+      "gameTick": 1801
+    },
+    {
+      "messageType": 137,
+      "text": "News: Drakmord92 has achieved 200 million XP in Archaeology!",
+      "playerName": "",
+      "timestamp": 1774748229065,
+      "gameTick": 1924
+    },
+    {
+      "messageType": 0,
+      "text": "You have correctly entered your PIN.",
+      "playerName": "",
+      "timestamp": 1774748250760,
+      "gameTick": 1960
+    },
+    {
+      "messageType": 0,
+      "text": "You have no porters to recharge this.",
+      "playerName": "",
+      "timestamp": 1774748344546,
+      "gameTick": 2117
+    },
+    {
+      "messageType": 0,
+      "text": "The porter functionality of Grace of the elves has been disabled.",
+      "playerName": "",
+      "timestamp": 1774748382044,
+      "gameTick": 2179
+    },
+    {
+      "messageType": 125,
+      "text": "Agitated scarabs have burrowed up onto the surface and are spreading corruption!",
+      "playerName": "",
+      "timestamp": 1774748736003,
+      "gameTick": 2769
+    },
+    {
+      "messageType": 137,
+      "text": "News: Bite Marks has achieved 200 million XP in Ranged!",
+      "playerName": "",
+      "timestamp": 1774748939501,
+      "gameTick": 3108
+    },
+    {
+      "messageType": 0,
+      "text": "The bonfire\u0027s warmth increases your maximum health by 5.2%. This will last 72 minutes.",
+      "playerName": "",
+      "timestamp": 1774749071242,
+      "gameTick": 3328
+    },
+    {
+      "messageType": 5,
+      "text": "CeeAirUh has logged out.",
+      "playerName": "",
+      "timestamp": 1774749434854,
+      "gameTick": 3934
+    },
+    {
+      "messageType": 5,
+      "text": "CeeAirUh has logged in.",
+      "playerName": "",
+      "timestamp": 1774749441050,
+      "gameTick": 3944
     }
   ],
-  "snapshots": [],
-  "exportTime": 1774740075416,
+  "snapshots": [
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "UI interaction",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "UI interaction",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "UI interaction",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": true,
+        "recentItemChanges": [],
+        "recentVarChanges": [
+          {
+            "type": "varp",
+            "varId": 11489,
+            "oldValue": 29579146,
+            "newValue": 29579147,
+            "timestamp": 1774748820222,
+            "gameTick": 2910
+          }
+        ]
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "UI interaction",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Object interaction: warm hands",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "NPC interaction: shop",
+        "confidence": "medium"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    },
+    {
+      "backpack": {
+        "items": [
+          {
+            "itemId": 49538,
+            "name": "Archaeological soil box",
+            "quantity": 1
+          }
+        ],
+        "freeSlots": 27,
+        "full": false
+      },
+      "triggers": {
+        "inventoryChanged": false,
+        "animationEnded": false,
+        "playerStopped": false,
+        "varbitChanged": false,
+        "recentItemChanges": [],
+        "recentVarChanges": []
+      },
+      "intent": {
+        "description": "Walking",
+        "confidence": "low"
+      },
+      "openInterfaceId": 550
+    }
+  ],
+  "exportTime": 1774749660673,
   "description": "autosave",
   "lastSeenActionTimestamp": 82878546
 }
