@@ -23,4 +23,5 @@ module com.botwithus.bot.api {
     exports com.botwithus.bot.api.ui;
     exports com.botwithus.bot.api.nav;
     exports com.botwithus.bot.api.inventory.banking;
+    exports com.botwithus.bot.api.inventory.warsRetreat;
 }
