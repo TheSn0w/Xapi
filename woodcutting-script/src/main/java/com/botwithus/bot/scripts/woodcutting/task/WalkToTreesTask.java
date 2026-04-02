@@ -26,7 +26,7 @@ public final class WalkToTreesTask implements Task {
 
     @Override
     public boolean validate() {
-        return !wctx.bank.isOpen() && !wctx.isNearCurrentTreeArea();
+        return !wctx.bankOpen && !wctx.depositOpen && !wctx.isNearCurrentTreeArea();
     }
 
     @Override

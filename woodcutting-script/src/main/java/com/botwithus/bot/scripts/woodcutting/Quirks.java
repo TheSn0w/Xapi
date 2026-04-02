@@ -63,6 +63,11 @@ public final class Quirks {
     /** Last quirk that fired, for overlay display. */
     private volatile String lastQuirk = "None";
 
+    // ── Latch state for early-bank decision ─────────────────────
+    private boolean earlyBankDecided = false;
+    private boolean earlyBankResult = false;
+    private int earlyBankDecidedAtFreeSlots = -1;
+
     public Quirks() {
         ThreadLocalRandom rng = ThreadLocalRandom.current();
 
@@ -116,12 +121,33 @@ public final class Quirks {
         return 0;
     }
 
-    /** Should we bank early (with empty slots remaining)? */
+    /**
+     * Should we bank early (with empty slots remaining)?
+     * Latched: rolls once per threshold crossing, remembers the decision
+     * until free slots increase (i.e. after banking/filling resets inventory).
+     */
     public boolean shouldEarlyBank(int freeSlots) {
-        if (earlyBankSlots <= 0 || freeSlots > earlyBankSlots) return false;
-        boolean result = roll(0.6); // 60% chance when within threshold
-        if (result) setLastQuirk("Early bank (" + freeSlots + " slots left)");
-        return result;
+        if (earlyBankSlots <= 0 || freeSlots > earlyBankSlots) {
+            // Above threshold — reset latch so it can re-roll next time slots drop
+            earlyBankDecided = false;
+            earlyBankResult = false;
+            return false;
+        }
+        // Within threshold — roll once, then latch the result
+        if (!earlyBankDecided || freeSlots != earlyBankDecidedAtFreeSlots) {
+            earlyBankDecided = true;
+            earlyBankDecidedAtFreeSlots = freeSlots;
+            earlyBankResult = roll(0.6);
+            if (earlyBankResult) setLastQuirk("Early bank (" + freeSlots + " slots left)");
+        }
+        return earlyBankResult;
+    }
+
+    /** Reset early-bank latch (call after banking/filling completes). */
+    public void resetEarlyBankLatch() {
+        earlyBankDecided = false;
+        earlyBankResult = false;
+        earlyBankDecidedAtFreeSlots = -1;
     }
 
     /** Should we mis-order bank operations (try fill before deposit)? */

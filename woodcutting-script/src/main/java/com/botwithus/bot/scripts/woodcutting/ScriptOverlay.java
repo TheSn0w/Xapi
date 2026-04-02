@@ -304,9 +304,15 @@ public final class ScriptOverlay {
         rateItem.getValue().active = rate > 0;
         rateItem.getValue().color = rate > 0 ? GREEN : null;
 
-        woodboxItem.getValue().text = "Wood box: " + wctx.woodboxStored + " / " + wctx.woodboxCapacity;
-        woodboxItem.getValue().active = wctx.hasWoodBox;
-        woodboxItem.getValue().color = wctx.hasWoodBox ? GREEN : null;
+        if (wctx.woodBoxUnsupported) {
+            woodboxItem.getValue().text = "Wood box: unsupported (will bank)";
+            woodboxItem.getValue().active = true;
+            woodboxItem.getValue().color = ORANGE;
+        } else {
+            woodboxItem.getValue().text = "Wood box: " + wctx.woodboxStored + " / " + wctx.woodboxCapacity;
+            woodboxItem.getValue().active = wctx.hasWoodBox;
+            woodboxItem.getValue().color = wctx.hasWoodBox ? GREEN : null;
+        }
 
         bankTripsItem.getValue().text = "Bank trips: " + wctx.bankTrips;
         bankTripsItem.getValue().active = wctx.bankTrips > 0;

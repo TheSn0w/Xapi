@@ -44,7 +44,7 @@ public final class ChoppingTask implements Task {
         TreeProfile profile = wctx.profile();
         HotspotProfile hotspot = wctx.hotspot();
 
-        if (wctx.playerHelper.isAnimating()) {
+        if (wctx.animationId != -1) {
             if (wctx.quirks.shouldFidget()) {
                 doFidget(profile);
             }
@@ -163,7 +163,10 @@ public final class ChoppingTask implements Task {
             return (int) wctx.pace.delay("react");
         }
 
-        boolean started = Conditions.waitUntil(() -> wctx.playerHelper.isAnimating() || wctx.playerHelper.isMoving(), 1200);
+        boolean started = Conditions.waitUntil(() -> {
+            var player = wctx.api.getLocalPlayer();
+            return player.animationId() != -1 || player.isMoving();
+        }, 1200, 600);
         if (!started) {
             wctx.logAction("WARN: Chop interaction did not start");
             return (int) wctx.pace.delay("react");
@@ -185,17 +188,8 @@ public final class ChoppingTask implements Task {
         }
 
         int offset = wctx.quirks.treeSelectionOffset();
-        if (offset > 0) {
-            int index = Math.min(offset, all.size() - 1);
-            return all.get(index);
-        }
-
-        return wctx.objects.query()
-                .named(profile.objectName())
-                .within(anchor.x(), anchor.y(), wctx.hotspot().radius())
-                .visible()
-                .filter(object -> isLiveCandidate(profile, object))
-                .nearest();
+        int index = Math.min(offset, all.size() - 1);
+        return all.get(index);
     }
 
     private SceneObject findDepletedTree(TreeProfile profile, HotspotProfile hotspot) {
@@ -235,14 +229,17 @@ public final class ChoppingTask implements Task {
     }
 
     private void doFidget(TreeProfile profile) {
-        if (wctx.woodBox.hasWoodBox() && Math.random() < 0.5) {
-            wctx.api.getComponentChildren(1473, 5).stream()
-                    .filter(component -> component.subComponentId() == 0)
-                    .findFirst()
-                    .ifPresent(component -> {
-                        ComponentHelper.queueComponentAction(wctx.api, component, 3);
-                        wctx.logAction("QUIRK: Inspected wood box");
-                    });
+        if (wctx.hasWoodBox && Math.random() < 0.5) {
+            var children = wctx.api.getComponentChildren(1473, 5);
+            if (children != null) {
+                children.stream()
+                        .filter(component -> component.subComponentId() == 0)
+                        .findFirst()
+                        .ifPresent(component -> {
+                            ComponentHelper.queueComponentAction(wctx.api, component, 3);
+                            wctx.logAction("QUIRK: Inspected wood box");
+                        });
+            }
             return;
         }
 

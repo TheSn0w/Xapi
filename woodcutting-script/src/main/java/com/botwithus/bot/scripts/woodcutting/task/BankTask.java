@@ -36,16 +36,15 @@ public final class BankTask implements Task {
 
     @Override
     public boolean validate() {
-        TreeProfile profile = wctx.profile();
-        HotspotProfile hotspot = wctx.hotspot();
-        InventoryMode mode = hotspot.inventoryMode();
-        boolean inventoryPressure = wctx.backpack.isFull() || (mode.isBankLike() && wctx.quirks.shouldEarlyBank(wctx.backpack.freeSlots()));
+        // All values read from cached volatile fields (populated by collectUIState, no RPC here)
+        InventoryMode mode = wctx.hotspot().inventoryMode();
+        boolean inventoryPressure = wctx.backpackFull || (mode.isBankLike() && wctx.quirks.shouldEarlyBank(wctx.freeSlots));
 
         return switch (mode) {
-            case BANK -> inventoryPressure || wctx.bank.isOpen();
-            case DEPOSIT_BOX -> inventoryPressure || (wctx.depositBox.isOpen() && wctx.backpack.occupiedSlots() > WoodcuttingContext.WOOD_BOX_KEEP_IDS.length);
-            case DROP -> wctx.backpack.isFull() && hasProductInBackpack(profile);
-            case SPECIAL -> wctx.backpack.isFull() && hasProductInBackpack(profile);
+            case BANK -> inventoryPressure || wctx.bankOpen;
+            case DEPOSIT_BOX -> inventoryPressure || (wctx.depositOpen && (28 - wctx.freeSlots) > WoodcuttingContext.WOOD_BOX_KEEP_IDS.length);
+            case DROP -> wctx.backpackFull && wctx.backpackProductCount > 0;
+            case SPECIAL -> wctx.backpackFull && wctx.backpackProductCount > 0;
             case NONE -> false;
         };
     }
@@ -86,9 +85,11 @@ public final class BankTask implements Task {
 
         wctx.logAction("TASK: Deposit box");
         wctx.depositBox.depositAllExcept(WoodcuttingContext.WOOD_BOX_KEEP_IDS);
-        Conditions.waitUntil(() -> wctx.depositBox.occupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 2500);
+        Conditions.waitUntil(() -> wctx.depositBox.occupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 2500, 600);
 
         wctx.bankTrips++;
+        wctx.quirks.resetEarlyBankLatch();
+        wctx.invalidateWoodBoxCache();
         wctx.logAction("OK: Deposit complete");
         wctx.pace.after("bank");
         wctx.pace.breakCheck();
@@ -122,7 +123,7 @@ public final class BankTask implements Task {
             }
             dropped++;
             int itemId = item.itemId();
-            Conditions.waitUntil(() -> !wctx.backpack.contains(itemId) || wctx.trackedProductCount() < before, 700);
+            Conditions.waitUntil(() -> !wctx.backpack.contains(itemId), 1200, 600);
             if (dropped >= 5) {
                 break;
             }
@@ -141,10 +142,10 @@ public final class BankTask implements Task {
 
     private int executeNormal() {
         TreeProfile profile = wctx.profile();
-        if (profile.supportsWoodBox() && wctx.woodBox.hasWoodBox() && !wctx.woodBoxIsEmptyEffective()) {
+        if (profile.supportsWoodBox() && wctx.hasWoodBox && !wctx.woodBoxUnsupported && !wctx.woodBoxIsEmptyEffective()) {
             wctx.logAction("TASK: Emptying wood box");
             wctx.woodBox.empty();
-            Conditions.waitUntil(() -> wctx.woodBox.isEmpty() || wctx.woodBox.getTotalStored() == 0, 3000);
+            Conditions.waitUntil(() -> wctx.woodBox.getTotalStored() == 0, 3000, 600);
             wctx.markWoodBoxEmptied();
             return (int) wctx.pace.delay("bank");
         }
@@ -154,31 +155,41 @@ public final class BankTask implements Task {
     private int executeMisOrdered() {
         wctx.logAction("QUIRK: Mis-ordered banking");
         wctx.bank.depositAllExcept(WoodcuttingContext.WOOD_BOX_KEEP_IDS);
-        Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length + 2, 3000);
+        Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length + 2, 3000, 600);
 
-        if (wctx.woodBox.hasWoodBox() && !wctx.woodBoxIsEmptyEffective()) {
+        if (wctx.hasWoodBox && !wctx.woodBoxUnsupported && !wctx.woodBoxIsEmptyEffective()) {
             wctx.logAction("TASK: Emptying wood box after deposit");
             wctx.woodBox.empty();
-            Conditions.waitUntil(() -> wctx.woodBox.isEmpty() || wctx.woodBox.getTotalStored() == 0, 3000);
+            Conditions.waitUntil(() -> wctx.woodBox.getTotalStored() == 0, 3000, 600);
             wctx.markWoodBoxEmptied();
             wctx.bank.depositAllExcept(WoodcuttingContext.WOOD_BOX_KEEP_IDS);
-            Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 3000);
+            Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 3000, 600);
         }
 
         return closeBank();
     }
 
     private int depositAndClose() {
-        wctx.logAction("TASK: Depositing backpack");
-        wctx.bank.depositAllExcept(WoodcuttingContext.WOOD_BOX_KEEP_IDS);
-        Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 3000);
+        if (wctx.woodBoxUnsupported) {
+            // Wood box can't store our log type — bank everything including the wood box
+            wctx.logAction("TASK: Depositing all (unsupported wood box)");
+            wctx.bank.depositAll();
+            Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() == 0, 3000, 600);
+            wctx.invalidateWoodBoxCache();
+        } else {
+            wctx.logAction("TASK: Depositing backpack");
+            wctx.bank.depositAllExcept(WoodcuttingContext.WOOD_BOX_KEEP_IDS);
+            Conditions.waitUntil(() -> wctx.bank.backpackOccupiedSlots() <= WoodcuttingContext.WOOD_BOX_KEEP_IDS.length, 3000, 600);
+        }
         return closeBank();
     }
 
     private int closeBank() {
         wctx.bank.close();
-        Conditions.waitUntil(() -> !wctx.bank.isOpen(), 2000);
+        Conditions.waitUntil(() -> !wctx.bank.isOpen(), 2000, 600);
         wctx.bankTrips++;
+        wctx.quirks.resetEarlyBankLatch();
+        wctx.invalidateWoodBoxCache();
         wctx.logAction("OK: Banking complete");
         wctx.pace.after("bank");
         wctx.pace.breakCheck();
@@ -211,7 +222,7 @@ public final class BankTask implements Task {
             return (int) wctx.pace.delay("react");
         }
 
-        Conditions.waitUntil(bankTarget ? wctx.bank::isOpen : wctx.depositBox::isOpen, 3000);
+        Conditions.waitUntil(bankTarget ? wctx.bank::isOpen : wctx.depositBox::isOpen, 3000, 600);
         return (int) wctx.pace.delay("bank");
     }
 

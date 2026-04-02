@@ -83,7 +83,7 @@ public class WoodcuttingScript extends TaskScript {
         wctx.pace.breakCheck();
         wctx.collectUIState();
 
-        if (wctx.playerHelper.isMoving()) {
+        if (wctx.playerMoving) {
             return (int) wctx.pace.delay("walk");
         }
 

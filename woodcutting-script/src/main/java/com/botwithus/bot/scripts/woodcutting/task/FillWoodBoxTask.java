@@ -3,6 +3,7 @@ package com.botwithus.bot.scripts.woodcutting.task;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.script.Task;
+import com.botwithus.bot.api.inventory.WoodBox;
 import com.botwithus.bot.api.util.Conditions;
 import com.botwithus.bot.scripts.woodcutting.TreeProfile;
 import com.botwithus.bot.scripts.woodcutting.WoodcuttingContext;
@@ -29,29 +30,24 @@ public final class FillWoodBoxTask implements Task {
 
     @Override
     public boolean validate() {
-        TreeProfile profile = wctx.profile();
-        if (!profile.supportsWoodBox()) {
-            return false;
-        }
-        if (!wctx.woodBox.hasWoodBox() || !wctx.woodBox.canStore(profile.woodBoxLogType()) || wctx.woodBoxIsFull(profile)) {
-            return false;
-        }
-        if (wctx.backpack.isFull()) {
-            return true;
-        }
-        int backpackCount = profile.logItemId() != null ? wctx.backpack.count(profile.logItemId()) : 0;
-        int capacity = wctx.woodBox.getCapacity();
-        return capacity > 0 && wctx.quirks.shouldEarlyFill(backpackCount, wctx.woodBoxStoredFor(profile), capacity);
+        // All values read from cached volatile fields (populated by collectUIState, no RPC here)
+        if (!wctx.profile().supportsWoodBox()) return false;
+        if (!wctx.hasWoodBox || !wctx.woodBoxCanStore || wctx.woodBoxFull) return false;
+        if (wctx.backpackFull) return true;
+        int capacity = wctx.woodboxCapacity;
+        return capacity > 0 && wctx.quirks.shouldEarlyFill(wctx.backpackProductCount, wctx.woodBoxStoredForProfile, capacity);
     }
 
     @Override
     public int execute() {
         TreeProfile profile = wctx.profile();
-        int storedBefore = wctx.woodBoxStoredFor(profile);
-        int logsBefore = profile.logItemId() != null ? wctx.backpack.count(profile.logItemId()) : 0;
+        int storedBefore = wctx.woodBoxStoredForProfile;
+        int logsBefore = wctx.backpackProductCount;
 
         wctx.logAction("TASK: Filling wood box");
-        boolean filled = wctx.woodBox.fill();
+        // Use cached tier name to avoid re-scanning all 11 tiers via RPC
+        WoodBox.Tier tier = wctx.cachedWoodBoxTier;
+        boolean filled = tier != null && wctx.backpack.interact(tier.name, "Fill");
         if (!filled) {
             log.warn("[Woodcutting] Fill action failed");
             wctx.logAction("WARN: Wood box fill failed");
@@ -59,22 +55,21 @@ public final class FillWoodBoxTask implements Task {
         }
 
         wctx.woodboxFills++;
-        Conditions.waitUntil(() -> {
-            int storedNow = wctx.woodBox.count(profile.woodBoxLogType());
+        wctx.quirks.resetEarlyBankLatch();
+        // Poll with single RPC — check if backpack log count decreased
+        boolean success = Conditions.waitUntil(() -> {
             int logsNow = profile.logItemId() != null ? wctx.backpack.count(profile.logItemId()) : 0;
-            return storedNow > storedBefore || logsNow < logsBefore;
-        }, 3000);
+            return logsNow < logsBefore;
+        }, 3000, 600);
         wctx.clearWoodBoxEmptyAssumption();
 
-        int storedAfter = wctx.woodBox.count(profile.woodBoxLogType());
-        int logsAfter = profile.logItemId() != null ? wctx.backpack.count(profile.logItemId()) : 0;
-        int capacity = wctx.woodBox.getCapacity();
-
-        if (storedAfter <= storedBefore && logsAfter >= logsBefore) {
-            log.warn("[Woodcutting] Fill made no progress (stored {}/{}, logs still {})", storedAfter, capacity, logsAfter);
+        if (!success) {
+            log.warn("[Woodcutting] Fill made no progress");
             wctx.logAction("WARN: Wood box fill made no progress");
         } else {
-            wctx.logAction("OK: Wood box -> " + storedAfter + "/" + capacity);
+            // Single RPC to get updated stored count for the log message
+            int storedAfter = wctx.woodBox.count(profile.woodBoxLogType());
+            wctx.logAction("OK: Wood box -> " + storedAfter + "/" + wctx.woodboxCapacity);
         }
 
         wctx.pace.after("gather");
