@@ -2,7 +2,6 @@ package com.botwithus.bot.scripts.woodcutting;
 
 import com.botwithus.bot.api.model.LocalPlayer;
 import com.botwithus.bot.api.nav.LocalPathfinder;
-import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.script.Task;
 import com.botwithus.bot.api.ui.ScriptUI;
 import imgui.ImGui;
@@ -299,15 +298,9 @@ final class WoodcuttingUI implements ScriptUI {
         int plane = player.plane();
 
         int chebyshev = Math.max(Math.abs(px - destX), Math.abs(py - destY));
-        WorldPathfinder wpf = WorldPathfinder.getInstance();
-        String wpfInfo = "not initialised";
-        if (wpf != null) {
-            int dist = wpf.walkDistance(px, py, destX, destY, plane);
-            wpfInfo = dist >= 0 ? "steps=" + dist : "NO PATH";
-        }
 
-        String msg = String.format("%s from (%d,%d,%d) to (%d,%d,%d)%nChebyshev: %d%nWorldPathfinder: %s",
-                label, px, py, plane, destX, destY, plane, chebyshev, wpfInfo);
+        String msg = String.format("%s from (%d,%d,%d) to (%d,%d,%d)%nChebyshev: %d",
+                label, px, py, plane, destX, destY, plane, chebyshev);
         wctx.logAction("DEBUG: " + msg.replace('\n', ' '));
         return msg;
     }

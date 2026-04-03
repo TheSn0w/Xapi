@@ -9,7 +9,6 @@ import com.botwithus.bot.api.event.TickEvent;
 import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.nav.LocalPathfinder;
-import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.script.Task;
 import com.botwithus.bot.api.script.TaskScript;
 import com.botwithus.bot.api.ui.ScriptUI;
@@ -56,10 +55,6 @@ public class WoodcuttingScript extends TaskScript {
 
         ctx.getEventBus().subscribe(TickEvent.class, wctx::onTick);
 
-        if (WorldPathfinder.getInstance() == null) {
-            WorldPathfinder.init(Path.of("navdata"));
-            wctx.logAction("INFO: WorldPathfinder initialized");
-        }
         if (LocalPathfinder.getInstance() == null) {
             LocalPathfinder.init(Path.of("navdata/regions"));
         }

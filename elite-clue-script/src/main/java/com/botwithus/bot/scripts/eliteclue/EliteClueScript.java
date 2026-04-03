@@ -10,7 +10,6 @@ import com.botwithus.bot.api.log.BotLogger;
 import com.botwithus.bot.api.log.LoggerFactory;
 import com.botwithus.bot.api.nav.LocalPathfinder;
 import com.botwithus.bot.api.Navigation;
-import com.botwithus.bot.api.nav.WorldPathfinder;
 import com.botwithus.bot.api.script.Task;
 import com.botwithus.bot.api.script.TaskScript;
 import com.botwithus.bot.api.ui.ScriptUI;
@@ -51,11 +50,6 @@ public class EliteClueScript extends TaskScript {
         // Subscribe to game tick for lightweight tracking
         scriptCtx.getEventBus().subscribe(TickEvent.class, this::onTick);
 
-        // Initialize pathfinding if not already done
-        if (WorldPathfinder.getInstance() == null) {
-            WorldPathfinder.init(Path.of("navdata"));
-            ctx.logAction("WorldPathfinder initialized");
-        }
         if (LocalPathfinder.getInstance() == null) {
             LocalPathfinder.init(Path.of("navdata/regions"));
         }

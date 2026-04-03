@@ -1,7 +1,5 @@
 module com.botwithus.bot.api {
     requires transitive org.slf4j;
-    requires transitive claude.pathfinder;
-    requires com.google.gson;
 
     exports com.botwithus.bot.api;
     exports com.botwithus.bot.api.event;

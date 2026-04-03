@@ -2,7 +2,6 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("org.gradlex.extra-java-module-info") version "1.11"
 }
 
 publishing {
@@ -16,13 +15,6 @@ publishing {
 
 dependencies {
     api("org.slf4j:slf4j-api:2.0.16")
-    api(files("${rootProject.projectDir}/libs/ClaudePathfinder-1.0.0.jar"))
-    // Gson needed at runtime by ClaudePathfinder for loading transitions/teleports JSON
-    implementation("com.google.code.gson:gson:2.11.0")
-}
-
-extraJavaModuleInfo {
-    automaticModule("ClaudePathfinder-1.0.0.jar", "claude.pathfinder")
 }
 
 tasks.javadoc {
