@@ -97,8 +97,6 @@ public final class WoodcuttingContext {
     final CopyOnWriteArrayList<String> actionLog = new CopyOnWriteArrayList<>();
 
     private int previousResourceCount = -1;
-    private int windowRectLoopCounter = 0;
-    private int wcLevelTickCounter = 0;
     public WoodBox.Tier cachedWoodBoxTier = null;
     private boolean woodBoxTierScanned = false;
     private String previousResourceKey = "";
@@ -121,6 +119,7 @@ public final class WoodcuttingContext {
         this.quirks = new Quirks();
         this.playerHelper = new LocalPlayerHelper(api);
         this.startTime = System.currentTimeMillis();
+        this.woodcuttingLevel = Skills.getLevel(api, Skills.WOODCUTTING);
         syncSelectionState();
     }
 
@@ -209,112 +208,102 @@ public final class WoodcuttingContext {
         assumeWoodBoxEmpty = false;
     }
 
-    /** Invalidate cached wood box tier — call after banking when equipment might change. */
-    public void invalidateWoodBoxCache() {
-        woodBoxTierScanned = false;
-    }
-
     /** Returns cached backpack product count (updated by collectUIState, no RPC). */
     public int trackedProductCount() {
         return backpackProductCount;
     }
 
-    public void collectUIState() {
+    /** Invalidate cached wood box tier — call after banking when equipment might change. */
+    public void invalidateWoodBoxCache() {
+        woodBoxTierScanned = false;
+    }
+
+    /** Returns true if state was refreshed successfully, false if RPC failed (stale state). */
+    public boolean collectUIState() {
         syncSelectionState();
 
-        // ── Player state (1 RPC call) ───────────────────────────
-        LocalPlayer player = api.getLocalPlayer();
-        this.animationId = player.animationId();
-        this.playerMoving = player.isMoving();
+        try {
+            // ── Player state (1 RPC call) ───────────────────────────
+            LocalPlayer player = api.getLocalPlayer();
+            this.animationId = player.animationId();
+            this.playerMoving = player.isMoving();
 
-        // ── Backpack (1 RPC call — freeSlots fetches all 28 slots once) ─
-        this.freeSlots = backpack.freeSlots();
-        this.backpackFull = freeSlots == 0;
+            // ── Backpack (1 RPC call — freeSlots fetches all 28 slots once) ─
+            this.freeSlots = backpack.freeSlots();
+            this.backpackFull = freeSlots == 0;
 
-        // ── Interface checks (2 RPC calls) ──────────────────────
-        this.bankOpen = bank.isOpen();
-        this.depositOpen = depositBox.isOpen();
+            // ── Interface checks (2 RPC calls) ──────────────────────
+            this.bankOpen = bank.isOpen();
+            this.depositOpen = depositBox.isOpen();
 
-        // ── Woodcutting level (cached, 1 RPC call every ~60s) ───
-        if (++wcLevelTickCounter >= 100 || woodcuttingLevel <= 0) {
-            wcLevelTickCounter = 0;
+            // ── Woodcutting level ────────────────────────────────────
             this.woodcuttingLevel = Skills.getLevel(api, Skills.WOODCUTTING);
-        }
 
-        // ── Game window position (1 RPC call every ~5 loops) ────
-        if (++windowRectLoopCounter >= 8) {
-            windowRectLoopCounter = 0;
-            try {
-                GameWindowRect rect = api.getGameWindowRect();
-                this.gameWindowX = rect.x();
-                this.gameWindowY = rect.y();
-                this.gameWindowWidth = rect.width();
-                this.gameWindowHeight = rect.height();
-            } catch (Exception ignored) { }
-        }
+            // ── Game window position ────────────────────────────────
+            GameWindowRect rect = api.getGameWindowRect();
+            this.gameWindowX = rect.x();
+            this.gameWindowY = rect.y();
+            this.gameWindowWidth = rect.width();
+            this.gameWindowHeight = rect.height();
 
-        // ── Wood box state (scan tier once, cache until bank trip/reload) ──
-        TreeProfile profile = profile();
-        if (!woodBoxTierScanned) {
-            cachedWoodBoxTier = woodBox.getEquippedTier(); // 1-11 RPC calls (tier scan, only once)
-            woodBoxTierScanned = true;
-        }
-        WoodBox.Tier equippedTier = cachedWoodBoxTier;
-        this.hasWoodBox = equippedTier != null;
-        if (hasWoodBox) {
-            int capacity = 70 + (equippedTier.level * 10) + wcLevelBonus(woodcuttingLevel);
-            this.woodboxCapacity = capacity;
-            if (assumeWoodBoxEmpty) {
-                this.woodboxStored = 0;
-            } else {
-                int stored = woodBox.getTotalStored(); // 1 RPC call
+            // ── Wood box tier (scan once, re-scan after banking) ────
+            TreeProfile profile = profile();
+            if (!woodBoxTierScanned) {
+                cachedWoodBoxTier = woodBox.getEquippedTier();
+                woodBoxTierScanned = true;
+            }
+            WoodBox.Tier equippedTier = cachedWoodBoxTier;
+            this.hasWoodBox = equippedTier != null;
+            if (hasWoodBox) {
+                int capacity = 70 + (equippedTier.level * 10) + wcLevelBonus(woodcuttingLevel);
+                this.woodboxCapacity = capacity;
+                int stored = woodBox.getTotalStored();
                 this.woodboxStored = stored;
-                // Check for stale empty assumption
                 if (assumeWoodBoxEmpty && stored > 0) {
                     assumeWoodBoxEmpty = false;
-                    this.woodboxStored = stored;
                 }
-            }
-            // Cache wood box state for validate methods
-            if (profile.supportsWoodBox()) {
-                boolean canStore = equippedTier.level >= profile.woodBoxLogType().requiredTier;
-                this.woodBoxCanStore = canStore;
-                this.woodBoxUnsupported = !canStore;
-                if (canStore) {
-                    int profileStored = assumeWoodBoxEmpty ? 0 : woodBox.count(profile.woodBoxLogType()); // 1 RPC
-                    this.woodBoxStoredForProfile = profileStored;
-                    this.woodBoxFull = profileStored >= capacity;
+                if (profile.supportsWoodBox()) {
+                    boolean canStore = equippedTier.level >= profile.woodBoxLogType().requiredTier;
+                    this.woodBoxCanStore = canStore;
+                    this.woodBoxUnsupported = !canStore;
+                    if (canStore) {
+                        int profileStored = woodBox.count(profile.woodBoxLogType());
+                        this.woodBoxStoredForProfile = profileStored;
+                        this.woodBoxFull = profileStored >= capacity;
+                    } else {
+                        this.woodBoxStoredForProfile = 0;
+                        this.woodBoxFull = false;
+                    }
                 } else {
+                    this.woodBoxCanStore = false;
+                    this.woodBoxUnsupported = false;
                     this.woodBoxStoredForProfile = 0;
                     this.woodBoxFull = false;
                 }
             } else {
+                this.woodboxCapacity = 0;
+                this.woodboxStored = 0;
                 this.woodBoxCanStore = false;
                 this.woodBoxUnsupported = false;
                 this.woodBoxStoredForProfile = 0;
                 this.woodBoxFull = false;
             }
-        } else {
-            this.woodboxCapacity = 0;
-            this.woodboxStored = 0;
-            this.woodBoxCanStore = false;
-            this.woodBoxUnsupported = false;
-            this.woodBoxStoredForProfile = 0;
-            this.woodBoxFull = false;
-        }
 
-        // ── Backpack product count (1 RPC call) ─────────────────
-        if (profile.logItemId() != null) {
-            this.backpackProductCount = backpack.count(profile.logItemId());
-        } else if (!profile.productName().isBlank()) {
-            this.backpackProductCount = backpack.count(profile.productName());
-        } else {
-            this.backpackProductCount = 0;
+            // ── Backpack product count (1 RPC call) ─────────────────
+            if (profile.logItemId() != null) {
+                this.backpackProductCount = backpack.count(profile.logItemId());
+            } else if (!profile.productName().isBlank()) {
+                this.backpackProductCount = backpack.count(profile.productName());
+            } else {
+                this.backpackProductCount = 0;
+            }
+        } catch (Exception e) {
+            log.warn("[Woodcutting] RPC failed in collectUIState, skipping tasks: {}", e.getMessage());
+            return false;
         }
 
         // ── Pace/antiban state (no RPC — local state only) ──────
         this.pacePhase = pace.phase();
-        this.fatigue = pace.fatigue();
         this.onBreak = pace.onBreak();
         this.breakLabel = pace.breakLabel();
         this.breakRemainingMs = pace.breakRemainingMs();
@@ -323,6 +312,7 @@ public final class WoodcuttingContext {
         this.sessionMinutes = pace.sessionMinutes();
 
         // ── Profile/hotspot display state (no RPC) ──────────────
+        TreeProfile profile = profile();
         HotspotProfile hotspot = hotspot();
         boolean levelReady = woodcuttingLevel >= profile.requiredLevel();
         boolean hasManualGate = !profile.requirementNote().isBlank() || !hotspot.requirementNote().isBlank();
@@ -353,6 +343,8 @@ public final class WoodcuttingContext {
         this.currentRouteLabel = hotspot.hasRoute()
                 ? currentTreeAnchor().label() + " (" + (routeIndex + 1) + "/" + hotspot.routeAnchors().size() + ")"
                 : hotspot.treeAnchor().label();
+
+        return true;
     }
 
     /** Same formula as WoodBox.wcLevelBonus but avoids calling back into WoodBox. */

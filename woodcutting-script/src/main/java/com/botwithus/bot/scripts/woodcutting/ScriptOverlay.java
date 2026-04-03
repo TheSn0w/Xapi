@@ -225,7 +225,7 @@ public final class ScriptOverlay {
         stage.setX(screen.getMaxX() - WIDTH - 20);
         stage.setY(50);
 
-        timeline = new Timeline(new KeyFrame(Duration.millis(250), event -> update()));
+        timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> update()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }

@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/cli" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/elite-clue-script" />
             <option value="$PROJECT_DIR$/woodcutting-script" />
             <option value="$PROJECT_DIR$/xapi-script" />
           </set>

@@ -30,10 +30,12 @@ import java.nio.file.Path;
 public class WoodcuttingScript extends TaskScript {
 
     private static final BotLogger log = LoggerFactory.getLogger(WoodcuttingScript.class);
+    private static final int REFRESH_INTERVAL = 100;
 
     WoodcuttingContext wctx;
     private WoodcuttingUI ui;
     private ScriptOverlay overlay;
+    private long nextTaskTime = 0;
 
     @Override
     public void onStart(ScriptContext ctx) {
@@ -81,7 +83,26 @@ public class WoodcuttingScript extends TaskScript {
     @Override
     public int onLoop() {
         wctx.pace.breakCheck();
-        wctx.collectUIState();
+
+        if (!wctx.collectUIState()) {
+            wctx.currentTaskName = "Recovering";
+            return REFRESH_INTERVAL;
+        }
+
+        // Always refresh state every 100ms, but only run tasks when the delay expires
+        long now = System.currentTimeMillis();
+        if (now < nextTaskTime) {
+            return REFRESH_INTERVAL;
+        }
+
+        int delay = runTasks();
+        nextTaskTime = System.currentTimeMillis() + delay;
+        return REFRESH_INTERVAL;
+    }
+
+    private int runTasks() {
+        // Sample fatigue once per task cycle (it has Gaussian noise — don't resample every 100ms)
+        wctx.fatigue = wctx.pace.fatigue();
 
         if (wctx.playerMoving) {
             return (int) wctx.pace.delay("walk");

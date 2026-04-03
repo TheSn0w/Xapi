@@ -180,6 +180,7 @@ public final class ChoppingTask implements Task {
                 .named(profile.objectName())
                 .within(anchor.x(), anchor.y(), wctx.hotspot().radius())
                 .visible()
+                .sortByDistance(true)
                 .filter(object -> isLiveCandidate(profile, object))
                 .all();
 

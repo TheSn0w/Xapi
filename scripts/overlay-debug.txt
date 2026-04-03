@@ -1,0 +1,1 @@
+gwX=3411 gwY=32 gwW=1705 gwH=1360 hasGW=true offsetX=1369.0 offsetY=36.0 dragging=false stageX=4780.0 stageY=68.0 visible=true

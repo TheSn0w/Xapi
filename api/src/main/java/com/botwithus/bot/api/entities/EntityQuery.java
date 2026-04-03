@@ -122,6 +122,12 @@ public abstract class EntityQuery<T extends EntityContext, Q extends EntityQuery
         return self();
     }
 
+    /** Sort results by distance from the local player (server-side). */
+    public Q sortByDistance(boolean sort) {
+        filterBuilder.sortByDistance(sort);
+        return self();
+    }
+
     /** Limit the maximum number of results. */
     public Q limit(int max) {
         filterBuilder.maxResults(max);

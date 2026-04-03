@@ -40,6 +40,7 @@ public final class WoodcuttingProfiles {
                                         tile(3108, 3230, 0, "Draynor trees"),
                                         18,
                                         tile(3091, 3245, 0, "Draynor bank"),
+                                        List.of(), List.of(2012), "Bank",
                                         "Low-friction early-game regular trees."),
                                 bankHotspot("tree_ge", "Grand Exchange Outer Ring", "Dense",
                                         tile(3151, 3498, 0, "GE trees"),
@@ -82,6 +83,7 @@ public final class WoodcuttingProfiles {
                                         tile(3117, 3240, 0, "Draynor oaks"),
                                         18,
                                         tile(3091, 3245, 0, "Draynor bank"),
+                                        List.of(), List.of(2012), "Bank",
                                         "Simple no-req fallback with easy banking."),
                                 bankHotspot("oak_seers", "Seers' Village", "Dense",
                                         tile(2701, 3483, 0, "Seers oaks"),
@@ -124,6 +126,7 @@ public final class WoodcuttingProfiles {
                                         tile(3086, 3234, 0, "Draynor willows"),
                                         15,
                                         tile(3091, 3245, 0, "Draynor bank"),
+                                        List.of(), List.of(2012), "Bank",
                                         "Default low-friction willow profile."),
                                 bankHotspot("willow_seers", "Seers' Village", "Dense",
                                         tile(2712, 3509, 0, "Seers willows"),
@@ -619,6 +622,22 @@ public final class WoodcuttingProfiles {
             TileAnchor bankAnchor,
             String note
     ) {
+        return bankHotspot(id, label, hotspotType, treeAnchor, radius, bankAnchor,
+                HotspotProfile.defaultBankNames(), HotspotProfile.defaultBankIds(), "Bank", note);
+    }
+
+    private static HotspotProfile bankHotspot(
+            String id,
+            String label,
+            String hotspotType,
+            TileAnchor treeAnchor,
+            int radius,
+            TileAnchor bankAnchor,
+            List<String> bankNames,
+            List<Integer> bankIds,
+            String bankAction,
+            String note
+    ) {
         return new HotspotProfile(
                 id,
                 label,
@@ -628,9 +647,9 @@ public final class WoodcuttingProfiles {
                 radius,
                 InventoryMode.BANK,
                 bankAnchor,
-                HotspotProfile.defaultBankNames(),
-                HotspotProfile.defaultBankIds(),
-                "Bank",
+                bankNames,
+                bankIds,
+                bankAction,
                 null,
                 List.of(),
                 List.of(),

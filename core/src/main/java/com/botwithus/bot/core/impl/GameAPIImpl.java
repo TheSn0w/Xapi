@@ -810,8 +810,12 @@ public class GameAPIImpl implements GameAPI {
 
     @Override
     public PlayerStat getPlayerStat(int skillId) {
-        Map<String, Object> r = rpc.callSync("get_player_stat", Map.of("skill_id", skillId));
-        return mapPlayerStat(r);
+        // Use getPlayerStats() and filter — the singular "get_player_stat" RPC endpoint
+        // returns incorrect data (off-by-one skill ID mapping on the server side).
+        return getPlayerStats().stream()
+                .filter(s -> s.skillId() == skillId)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
