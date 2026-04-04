@@ -14,10 +14,6 @@ base {
     archivesName = "Xapi"
 }
 
-extraJavaModuleInfo {
-    automaticModule("ClaudePathfinder-1.0.0.jar", "claude.pathfinder")
-}
-
 dependencies {
     implementation(project(":api"))
     implementation(project(":core"))

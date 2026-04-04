@@ -11,7 +11,6 @@ dependencies {
 
 extraJavaModuleInfo {
     automaticModule("org.msgpack:msgpack-core", "msgpack.core")
-    automaticModule("ClaudePathfinder-1.0.0.jar", "claude.pathfinder")
 }
 
 tasks.register<JavaExec>("benchmark") {

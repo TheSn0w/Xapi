@@ -50,3 +50,7 @@ scripts/**/*.jar
 scripts/overlay-pos.txt
 logs/
 navdata/
+
+### Map Debugger (Node/Vite) ###
+node_modules/
+map-debugger/dist/

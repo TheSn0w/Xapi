@@ -236,6 +236,13 @@ final class XapiState {
     volatile int smithProgressPerStrike;
     volatile int smithReheatRate;
 
+    // ── Transition capture state ────────────────────────────────────────
+    volatile boolean transitionAutoCapture = true;
+    volatile boolean transitionTrackPosition = true;
+    final List<TransitionData> transitionLog = new CopyOnWriteArrayList<>();
+    volatile List<TransitionCandidate> transitionCandidates = List.of();
+    volatile String mapDebuggerStatus = "Disconnected";
+
     // ── Entity facades (initialized in onStart) ──────────────────────────
     Npcs npcs;
     Players players;

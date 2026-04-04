@@ -18,6 +18,7 @@
     </rollingPolicy>
   </appender>
   <logger name="com.botwithus.bot.scripts.xapi" level="DEBUG"/>
+  <logger name="com.xapi.debugger" level="DEBUG"/>
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="LOG_BUFFER"/>

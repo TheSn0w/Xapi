@@ -15,7 +15,6 @@ base {
 }
 
 extraJavaModuleInfo {
-    automaticModule("ClaudePathfinder-1.0.0.jar", "claude.pathfinder")
     automaticModule("org.msgpack:msgpack-core", "msgpack.core")
 }
 

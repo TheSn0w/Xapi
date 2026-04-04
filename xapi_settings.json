@@ -1,5 +1,5 @@
 {
-  "recording": true,
+  "recording": false,
   "blocking": false,
   "selectiveBlocking": false,
   "trackVars": true,
@@ -24,7 +24,7 @@
     false
   ],
   "showVarbits": true,
-  "showVarps": true,
+  "showVarps": false,
   "showVarcs": false,
   "showVarcStrs": false,
   "showItemVarbits": false,

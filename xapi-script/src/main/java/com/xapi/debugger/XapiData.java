@@ -91,6 +91,22 @@ public final class XapiData {
     public record ActionSnapshot(BackpackSnapshot backpack, TriggerSignals triggers,
                                   IntentHypothesis intent, int openInterfaceId) {}
 
+    // ── Transition capture records ──────────────────────────────────────────
+
+    /** A captured transition ready for submission to the map debugger. */
+    public record TransitionData(
+            String type, int srcX, int srcY, int srcP,
+            int dstX, int dstY, int dstP,
+            String name, String option, int cost, boolean bidir,
+            long timestamp, String status  // "pending", "sent", "failed", "duplicate"
+    ) {}
+
+    /** A nearby scene object that looks like a transition candidate. */
+    public record TransitionCandidate(
+            int typeId, String name, int tileX, int tileY, int plane,
+            List<String> options, String classifiedType
+    ) {}
+
     // ── Session export/import ─────────────────────────────────────────────
 
     public record SessionData(List<LogEntry> actions, List<VarChange> vars, List<ChatEntry> chat,

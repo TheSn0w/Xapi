@@ -81,6 +81,7 @@ public class XapiScript implements BotScript {
     private ProductionTab productionTab;
     private SmithingTab smithingTab;
     private ActionBarTab actionBarTab;
+    private TransitionsTab transitionsTab;
 
     // ── Helper instances ─────────────────────────────────────────────────
     private NameResolver nameResolver;
@@ -90,6 +91,8 @@ public class XapiScript implements BotScript {
     private InspectorCollector inspectorCollector;
     private DataPoller dataPoller;
     private InventoryTracker inventoryTracker;
+    private MapDebuggerClient mapDebuggerClient;
+    private TransitionCapture transitionCapture;
 
     // ── Private fields (not shared with tabs) ────────────────────────────
     private volatile boolean lastBlockingSentToClient;
@@ -130,6 +133,9 @@ public class XapiScript implements BotScript {
         productionTab = new ProductionTab(state);
         smithingTab = new SmithingTab(state);
         actionBarTab = new ActionBarTab(state);
+        mapDebuggerClient = new MapDebuggerClient();
+        transitionCapture = new TransitionCapture(state, mapDebuggerClient);
+        transitionsTab = new TransitionsTab(state, transitionCapture);
 
         // Initialize entity facades
         GameAPI gameApi = ctx.getGameAPI();
@@ -401,6 +407,21 @@ public class XapiScript implements BotScript {
                 state.snapshotLog.add(null); // maintain index alignment
             }
         }
+
+        // Feed transition capture system — always active regardless of recording/blocking
+        if (transitionCapture != null && state.transitionAutoCapture) {
+            try {
+                int px = 0, py = 0, pp = 0;
+                LocalPlayer lp = state.localPlayerData;
+                if (lp != null) {
+                    px = lp.tileX(); py = lp.tileY(); pp = lp.plane();
+                }
+                String[] names = nameResolver.resolveNames(state.ctx.getGameAPI(),
+                        e.getActionId(), e.getParam1(), e.getParam2(), e.getParam3());
+                transitionCapture.onInteraction(e.getActionId(), e.getParam1(),
+                        names[0], names[1], px, py, pp);
+            } catch (Exception ignored) {}
+        }
     }
 
     private void onVarbitChange(VarbitChangeEvent e) {
@@ -565,6 +586,27 @@ public class XapiScript implements BotScript {
 
         try { inventoryTracker.collectInventoryDiff(api); } catch (Exception e) { log.debug("collectInventoryDiff failed: {}", e.getMessage()); }
 
+        // Transition capture polling — always active (captures work from any tab)
+        if (transitionCapture != null) {
+            try {
+                LocalPlayer lp = state.localPlayerData;
+                if (lp != null) {
+                    transitionCapture.pollPosition(lp.tileX(), lp.tileY(), lp.plane(), lp.isMoving());
+                    if (state.transitionTrackPosition) {
+                        mapDebuggerClient.sendPlayerPosition(lp.tileX(), lp.tileY(), lp.plane());
+                    }
+                } else if (!mapDebuggerClient.isConnected()) {
+                    mapDebuggerClient.ping();
+                }
+                state.mapDebuggerStatus = mapDebuggerClient.isConnected() ? "Connected" : "Disconnected";
+            } catch (Exception e) { log.debug("Transition capture poll failed: {}", e.getMessage()); }
+
+            // Scan nearby objects for transition candidates when Transitions tab (11) is active
+            if (tab == 11) {
+                try { scanTransitionCandidates(api); } catch (Exception e) { log.debug("scanTransitionCandidates failed: {}", e.getMessage()); }
+            }
+        }
+
         // Mini menu poll + pre-resolve action names — only when Actions tab (0) is active
         if (tab == 0) {
             try {
@@ -641,8 +683,8 @@ public class XapiScript implements BotScript {
         try { dataPoller.pollInterfaceEvents(api); } catch (Exception e) { log.debug("pollInterfaceEvents failed: {}", e.getMessage()); }
 
         // Heavy inspector data collection (entity queries — every ~3 ticks / 1.8s)
-        // Only when Entities (4) or Interfaces (5) tab is active
-        if ((tab == 4 || tab == 5) && now - lastInspectorUpdate > 1800) {
+        // When Entities (4), Interfaces (5), or Transitions (11) tab is active
+        if ((tab == 4 || tab == 5 || tab == 11) && now - lastInspectorUpdate > 1800) {
             lastInspectorUpdate = now;
             try {
                 inspectorCollector.collectInspectorData(api);
@@ -705,6 +747,53 @@ public class XapiScript implements BotScript {
             log.debug("Failed to unblock on stop: {}", e.getMessage());
         }
         state.replaying = false;
+    }
+
+    // ── Transition candidate scanning (onLoop thread, RPC-safe) ────────
+
+    private void scanTransitionCandidates(GameAPI api) {
+        try {
+            List<Entity> objects = state.nearbyObjects;
+            if (objects == null || objects.isEmpty()) {
+                state.transitionCandidates = List.of();
+                return;
+            }
+
+            var candidates = new java.util.ArrayList<XapiData.TransitionCandidate>();
+            for (Entity obj : objects) {
+                String name = obj.name();
+                if (name == null || name.isEmpty() || "null".equals(name)) continue;
+
+                // Get options from type cache, fetch via RPC if missing
+                var locType = state.locTypeCache.computeIfAbsent(obj.typeId(), id -> {
+                    try { return api.getLocationType(id); } catch (Exception e) { return null; }
+                });
+                List<String> options = List.of();
+                if (locType != null) {
+                    options = locType.options();
+                    if (options == null) options = List.of();
+                }
+
+                // Classify based on name and first relevant option
+                String firstOpt = "";
+                for (String opt : options) {
+                    if (opt != null && !opt.isEmpty() && !"Examine".equals(opt)) {
+                        firstOpt = opt;
+                        break;
+                    }
+                }
+                String classified = TransitionCapture.classifyType(name, firstOpt, 1, 0);
+
+                candidates.add(new XapiData.TransitionCandidate(
+                        obj.typeId(), name, obj.tileX(), obj.tileY(), Math.max(0, obj.tileZ()),
+                        options, classified
+                ));
+                if (candidates.size() >= 200) break;
+            }
+            state.transitionCandidates = List.copyOf(candidates);
+        } catch (Exception e) {
+            log.debug("scanTransitionCandidates failed: {}", e.getMessage());
+        }
     }
 
     // ── Action bar data collection (onLoop thread, RPC-safe) ──────────
@@ -1100,7 +1189,7 @@ public class XapiScript implements BotScript {
         try {
             // Evenly space tabs across the full width using custom buttons as tabs
             String[] tabNames = {"Actions", "Variables", "Chat", "Player", "Entities",
-                    "Interfaces", "Inventory", "Production", "Smithing", "Settings", "Action Bar"};
+                    "Interfaces", "Inventory", "Production", "Smithing", "Settings", "Action Bar", "Transitions"};
             float availWidth = ImGui.getContentRegionAvailX();
             float tabWidth = availWidth / tabNames.length;
 
@@ -1138,6 +1227,7 @@ public class XapiScript implements BotScript {
                 case 8 -> { try { smithingTab.render(); } catch (Exception e) { log.error("Smithing tab error", e); ImGui.text("Error: " + e.getMessage()); } }
                 case 9 -> { try { renderControls(); } catch (Exception e) { log.error("Settings tab error", e); ImGui.text("Error: " + e.getMessage()); } }
                 case 10 -> { try { actionBarTab.render(); } catch (Exception e) { log.error("Action Bar tab error", e); ImGui.text("Error: " + e.getMessage()); } }
+                case 11 -> { try { transitionsTab.render(); } catch (Exception e) { log.error("Transitions tab error", e); ImGui.text("Error: " + e.getMessage()); } }
             }
 
             // Status line below tabs
