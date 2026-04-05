@@ -130,11 +130,11 @@ public class PathfinderScript implements BotScript {
      */
     public PathResult findPathTo(int destX, int destY, int destPlane) {
         if (pathfinder == null) return PathResult.notFound();
-        if (playerPlane != destPlane) {
-            return pathfinder.findPathCrossPlane(playerX, playerY, playerPlane,
-                    destX, destY, destPlane, 0);
-        }
-        return pathfinder.findPath(playerX, playerY, destX, destY, destPlane);
+        // Always use findPathCrossPlane — it handles same-plane internally and
+        // falls back to cross-plane routing when buildings are disconnected on
+        // the same plane (e.g. plane 2 Falador → plane 2 Lumbridge).
+        return pathfinder.findPathCrossPlane(playerX, playerY, playerPlane,
+                destX, destY, destPlane, 0);
     }
 
     /**

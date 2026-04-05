@@ -135,13 +135,13 @@ public final class AStarPathfinder {
                                            int destX, int destY, int destPlane, long seed,
                                            int depth, int cameFromPlane) {
         if (startPlane == destPlane) {
-            // Try same-plane first (both in the same building)
-            PathResult samePlane;
-            if (!map.isWalkable(startX, startY, startPlane)) {
-                samePlane = findPathFromAdjacent(startX, startY, destX, destY, startPlane, seed);
-            } else {
-                samePlane = findPath(startX, startY, destX, destY, startPlane, seed);
-            }
+            // Try same-plane first (both in the same building).
+            // Always use findPath here — it handles unwalkable start via
+            // findNearestWalkable (rings 1-3), which is more robust than
+            // findPathFromAdjacent (ring 1 only). findPathFromAdjacent is
+            // reserved for cross-plane transition landings where connectivity
+            // analysis matters.
+            PathResult samePlane = findPath(startX, startY, destX, destY, startPlane, seed);
             if (samePlane.found()) return samePlane;
             // Same-plane failed — fall through to cross-plane routing.
             trace(String.format("CrossPlane d%d: same-plane %d failed (%d,%d)->(%d,%d), trying cross-plane",
