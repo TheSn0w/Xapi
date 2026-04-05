@@ -40,8 +40,13 @@ final class TransitionsTab {
     private final boolean[] typeInitialized = new boolean[200];
     private final ImString objectFilter = new ImString(128);
 
+    // Per-log-entry selected type index
+    private final ImInt[] logSelectedType = new ImInt[500];
+    private final boolean[] logTypeInitialized = new boolean[500];
+
     {
         for (int i = 0; i < selectedType.length; i++) selectedType[i] = new ImInt(0);
+        for (int i = 0; i < logSelectedType.length; i++) logSelectedType[i] = new ImInt(0);
     }
 
     TransitionsTab(XapiState state, TransitionCapture capture) {
@@ -171,11 +176,35 @@ final class TransitionsTab {
                 ImGui.tableNextColumn();
                 ImGui.text(String.valueOf(i + 1));
 
-                // Type
+                // Type (editable combo)
                 ImGui.tableNextColumn();
-                setTypeColor(t.type());
-                ImGui.text(t.type());
-                ImGui.popStyleColor();
+                if (i < logSelectedType.length) {
+                    if (!logTypeInitialized[i]) {
+                        logTypeInitialized[i] = true;
+                        for (int ti = 0; ti < TRANSITION_TYPES.length; ti++) {
+                            if (TRANSITION_TYPES[ti].equals(t.type())) {
+                                logSelectedType[i].set(ti);
+                                break;
+                            }
+                        }
+                    }
+                    ImGui.setNextItemWidth(ImGui.getColumnWidth());
+                    if (ImGui.combo("##logtype" + i, logSelectedType[i], TRANSITION_TYPES)) {
+                        String newType = TRANSITION_TYPES[logSelectedType[i].get()];
+                        if (!newType.equals(t.type())) {
+                            state.transitionLog.set(i, new TransitionData(
+                                    newType, t.srcX(), t.srcY(), t.srcP(),
+                                    t.dstX(), t.dstY(), t.dstP(),
+                                    t.name(), t.option(), t.cost(), t.bidir(),
+                                    t.timestamp(), t.status()
+                            ));
+                        }
+                    }
+                } else {
+                    setTypeColor(t.type());
+                    ImGui.text(t.type());
+                    ImGui.popStyleColor();
+                }
 
                 // Name
                 ImGui.tableNextColumn();

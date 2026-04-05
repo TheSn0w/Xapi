@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { createMap, createTileLayer } from './map/MapEngine';
 import { OverlayRenderer } from './map/OverlayRenderer';
 import { calibration } from './map/CoordinateTransform';
-import { getRegion, isTileBlocked, getWallEdges, getTransitionsAtTile, addTransition, removeTransition, moveTransition, reloadTransitions } from './data/DataManager';
+import { getRegion, isTileBlocked, getWallEdges, getTransitionsAtTile, addTransition, removeTransition, moveTransition, reloadTransitions, removeWallEdge, addWallEdge, refetchRegion } from './data/DataManager';
 import type { Transition, TransitionMatch } from './data/DataManager';
 import { worldToRegionId, worldToLocal } from './utils/RegionMath';
 
@@ -32,6 +32,12 @@ function init() {
   setupKeyboardShortcuts();
   setupCoordReadout();
   setupTileClick();
+  setupWallEditMode();
+  // Diagonal walls toggle
+  const diagToggle = document.getElementById('toggle-diag-walls') as HTMLInputElement | null;
+  diagToggle?.addEventListener('change', () => {
+    overlay.setShowDiagWalls(diagToggle.checked);
+  });
   setupGoTo();
   setupPlayerTracking();
 
@@ -434,6 +440,7 @@ function setupOpacitySliders() {
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Escape' && moveMode) { exitMoveMode(); return; }
+    if (e.key === 'Escape' && selectedWall) { clearWallSelection(); return; }
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
     switch (e.key.toLowerCase()) {
@@ -551,6 +558,9 @@ function setupTileClick() {
   map.on('click', async (e: L.LeafletMouseEvent) => {
     const worldX = Math.floor(e.latlng.lng);
     const worldY = Math.floor(e.latlng.lat);
+
+    // Wall edit mode intercepts clicks
+    if (wallEditMode) return;
 
     // Handle move mode — relocate the transition
     if (moveMode) {
@@ -691,6 +701,225 @@ function refreshTransitionList(worldX: number, worldY: number, plane: number) {
       }
     });
   });
+}
+
+// ── Wall edit mode ──────────────────────────────────────
+let wallEditMode = false;
+type WallDir = 'north' | 'south' | 'east' | 'west' | 'nwse' | 'nesw';
+let selectedWall: { wx: number; wy: number; direction: WallDir; regionId: number; localX: number; localY: number } | null = null;
+
+/** Snap a world coordinate to the nearest tile corner (integer point). */
+function snapToCorner(lng: number, lat: number): { x: number; y: number } {
+  return { x: Math.round(lng), y: Math.round(lat) };
+}
+
+/**
+ * Given two corner points, determine the tile and wall direction.
+ * Returns null if the two points don't form a valid wall edge.
+ *
+ * Corner layout for tile (tx, ty):
+ *   NW=(tx, ty+1)  NE=(tx+1, ty+1)
+ *   SW=(tx, ty)    SE=(tx+1, ty)
+ */
+function cornersToWall(a: { x: number; y: number }, b: { x: number; y: number }):
+    { tileX: number; tileY: number; direction: WallDir } | null {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  // Cardinal: adjacent corners (manhattan 1)
+  if (Math.abs(dx) + Math.abs(dy) === 1) {
+    if (dx === 1 && dy === 0) {
+      // Horizontal edge: south wall of tile above (a.x, a.y) or north wall of tile below
+      // This is the south edge of tile (a.x, a.y) = north edge of tile (a.x, a.y-1)
+      return { tileX: a.x, tileY: a.y, direction: 'south' };
+    }
+    if (dx === -1 && dy === 0) {
+      return { tileX: b.x, tileY: b.y, direction: 'south' };
+    }
+    if (dy === 1 && dx === 0) {
+      // Vertical edge: west wall of tile (a.x, a.y) = east wall of tile (a.x-1, a.y)
+      return { tileX: a.x, tileY: a.y, direction: 'west' };
+    }
+    if (dy === -1 && dx === 0) {
+      return { tileX: b.x, tileY: b.y, direction: 'west' };
+    }
+  }
+  // Diagonal: opposite corners (manhattan 2, chebyshev 1)
+  if (Math.abs(dx) === 1 && Math.abs(dy) === 1) {
+    // Determine tile: the tile whose corners these are
+    const minX = Math.min(a.x, b.x);
+    const minY = Math.min(a.y, b.y);
+    if (dx * dy > 0) {
+      // SW→NE or NE→SW: this is a nesw (/) diagonal
+      return { tileX: minX, tileY: minY, direction: 'nesw' };
+    } else {
+      // NW→SE or SE→NW: this is a nwse (\) diagonal
+      return { tileX: minX, tileY: minY, direction: 'nwse' };
+    }
+  }
+  return null;
+}
+
+function setupWallEditMode() {
+  const toggleBtn = document.getElementById('wall-edit-toggle') as HTMLInputElement | null;
+  const banner = document.getElementById('wall-edit-banner')!;
+  const confirmBtn = document.getElementById('wall-edit-confirm')!;
+  const cancelBtn = document.getElementById('wall-edit-cancel')!;
+  const infoEl = document.getElementById('wall-edit-info')!;
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('change', () => {
+      wallEditMode = toggleBtn.checked;
+      overlay.setWallEditMode(wallEditMode);
+      if (!wallEditMode) clearWallSelection();
+      document.getElementById('map')!.style.cursor = wallEditMode ? 'crosshair' : '';
+    });
+  }
+
+  // Delete existing wall
+  confirmBtn?.addEventListener('click', async () => {
+    if (!selectedWall) return;
+    const { regionId, localX, localY, direction } = selectedWall;
+    const ok = await removeWallEdge(regionId, currentPlane, localX, localY, direction);
+    if (ok) {
+      await refetchRegion(regionId);
+      overlay.setHighlightedWall(null);
+      overlay.scheduleRedraw();
+      clearWallSelection();
+    } else {
+      infoEl.textContent = 'Failed to delete wall';
+      infoEl.style.color = '#ff4444';
+    }
+  });
+
+  cancelBtn?.addEventListener('click', () => clearWallSelection());
+
+  // Escape clears selection
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && wallEditMode) clearWallSelection();
+  });
+
+  // ── Map click: corner-based wall drawing + existing wall selection ──
+  map.on('click', (e: L.LeafletMouseEvent) => {
+    if (!wallEditMode) return;
+    if (moveMode) return;
+
+    const corner = snapToCorner(e.latlng.lng, e.latlng.lat);
+    const anchor = overlay.getWallAnchor();
+
+    if (!anchor) {
+      // ── First click: check if clicking an existing wall or starting a new one ──
+      // Check proximity to existing walls first
+      const existingWall = findNearestWall(e.latlng.lng, e.latlng.lat);
+      if (existingWall) {
+        selectExistingWall(existingWall);
+        return;
+      }
+      // No existing wall — set first anchor point
+      overlay.setWallAnchor(corner);
+      infoEl.textContent = `Anchor: (${corner.x}, ${corner.y}) — click another corner to draw wall`;
+      infoEl.style.color = '#00ff00';
+      banner.style.display = '';
+      // Hide delete button, show only cancel
+      confirmBtn.style.display = 'none';
+    } else {
+      // ── Second click: draw wall between anchor and this corner ──
+      if (anchor.x === corner.x && anchor.y === corner.y) {
+        // Clicked same corner — cancel
+        overlay.setWallAnchor(null);
+        clearWallSelection();
+        return;
+      }
+
+      const wall = cornersToWall(anchor, corner);
+      if (!wall) {
+        infoEl.textContent = 'Invalid wall — corners must be adjacent or diagonal on the same tile';
+        infoEl.style.color = '#ff4444';
+        overlay.setWallAnchor(null);
+        return;
+      }
+
+      // Add the wall
+      const regionId = worldToRegionId(wall.tileX, wall.tileY);
+      const local = worldToLocal(wall.tileX, wall.tileY);
+      overlay.setWallAnchor(null);
+
+      (async () => {
+        const ok = await addWallEdge(regionId, currentPlane, local.localX, local.localY, wall.direction);
+        if (ok) {
+          await refetchRegion(regionId);
+          overlay.scheduleRedraw();
+          infoEl.textContent = `Added ${wall.direction} wall at (${wall.tileX}, ${wall.tileY})`;
+          infoEl.style.color = '#00ff00';
+          setTimeout(() => { if (banner.style.display !== 'none') banner.style.display = 'none'; }, 2000);
+        } else {
+          infoEl.textContent = 'Failed to add wall';
+          infoEl.style.color = '#ff4444';
+        }
+      })();
+    }
+  });
+}
+
+/** Find the nearest existing wall edge to a click point. Returns null if none within threshold. */
+function findNearestWall(lng: number, lat: number): { wx: number; wy: number; direction: string } | null {
+  const worldX = Math.floor(lng);
+  const worldY = Math.floor(lat);
+  const fracX = lng - worldX;
+  const fracY = lat - worldY;
+  const threshold = 0.2; // must be within 20% of tile from edge
+
+  let bestWall: { wx: number; wy: number; direction: string } | null = null;
+  let bestDist = threshold;
+
+  // Check this tile and its 4 neighbors
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      const tx = worldX + dx, ty = worldY + dy;
+      const rid = worldToRegionId(tx, ty);
+      const region = getRegion(rid);
+      if (!region) continue;
+      const walls = getWallEdges(region, currentPlane);
+      for (const w of walls) {
+        if (w.wx !== tx || w.wy !== ty) continue;
+        // Distance from click to this wall edge
+        const fx = lng - w.wx, fy = lat - w.wy;
+        let dist = Infinity;
+        if (w.direction === 'north') dist = Math.abs(fy - 1) + Math.abs(fx - 0.5) * 0.2;
+        else if (w.direction === 'south') dist = Math.abs(fy) + Math.abs(fx - 0.5) * 0.2;
+        else if (w.direction === 'east') dist = Math.abs(fx - 1) + Math.abs(fy - 0.5) * 0.2;
+        else if (w.direction === 'west') dist = Math.abs(fx) + Math.abs(fy - 0.5) * 0.2;
+        else if (w.direction === 'nwse') dist = Math.abs(fx + fy - 1) / Math.SQRT2;
+        else if (w.direction === 'nesw') dist = Math.abs(fx - fy) / Math.SQRT2;
+        if (dist < bestDist) { bestDist = dist; bestWall = w; }
+      }
+    }
+  }
+  return bestWall;
+}
+
+function selectExistingWall(wall: { wx: number; wy: number; direction: string }) {
+  const dir = wall.direction as WallDir;
+  const regionId = worldToRegionId(wall.wx, wall.wy);
+  const local = worldToLocal(wall.wx, wall.wy);
+
+  selectedWall = { wx: wall.wx, wy: wall.wy, direction: dir, regionId, localX: local.localX, localY: local.localY };
+  overlay.setHighlightedWall({ wx: wall.wx, wy: wall.wy, direction: dir });
+  overlay.setWallAnchor(null);
+
+  const banner = document.getElementById('wall-edit-banner')!;
+  const infoEl = document.getElementById('wall-edit-info')!;
+  const confirmBtn = document.getElementById('wall-edit-confirm')!;
+  banner.style.display = '';
+  confirmBtn.style.display = '';
+  infoEl.textContent = `Wall: (${wall.wx}, ${wall.wy}) ${dir} — Region ${regionId} Local (${local.localX}, ${local.localY})`;
+  infoEl.style.color = '#ffdd00';
+}
+
+function clearWallSelection() {
+  selectedWall = null;
+  overlay.setHighlightedWall(null);
+  overlay.setWallAnchor(null);
+  document.getElementById('wall-edit-banner')!.style.display = 'none';
+  document.getElementById('wall-edit-confirm')!.style.display = '';
 }
 
 function escHtml(s: string): string {

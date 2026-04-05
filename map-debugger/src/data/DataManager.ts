@@ -351,6 +351,56 @@ export function isTileBlocked(region: RegionWalkability, localX: number, localY:
   return row[localX] === '#';
 }
 
+/** Evict a region from the cache so it will be re-fetched from the server */
+export function invalidateRegion(regionId: number): void {
+  regionCache.delete(regionId);
+  pendingFetches.delete(regionId);
+}
+
+/** Re-fetch a single region from the server (after editing wall data) */
+export async function refetchRegion(regionId: number): Promise<void> {
+  regionCache.delete(regionId);
+  pendingFetches.delete(regionId);
+  await fetchRegion(regionId);
+}
+
+/** Delete a wall edge via the backend API. Returns true on success. */
+type WallDirection = 'north' | 'south' | 'east' | 'west' | 'nwse' | 'nesw';
+
+/** Delete a wall edge via the backend API. Returns true on success. */
+export async function removeWallEdge(
+  regionId: number, plane: number, localX: number, localY: number,
+  direction: WallDirection
+): Promise<boolean> {
+  try {
+    const resp = await fetch('/api/walls', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ regionId, plane, localX, localY, direction }),
+    });
+    if (!resp.ok) return false;
+    invalidateRegion(regionId);
+    return true;
+  } catch { return false; }
+}
+
+/** Add a wall edge via the backend API. Returns true on success. */
+export async function addWallEdge(
+  regionId: number, plane: number, localX: number, localY: number,
+  direction: WallDirection
+): Promise<boolean> {
+  try {
+    const resp = await fetch('/api/walls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ regionId, plane, localX, localY, direction }),
+    });
+    if (!resp.ok) return false;
+    invalidateRegion(regionId);
+    return true;
+  } catch { return false; }
+}
+
 /**
  * Get wall edges for a region on a specific plane, converted to world coordinates.
  */
@@ -362,7 +412,6 @@ export function getWallEdges(region: RegionWalkability, plane: number): WallEdge
   const originY = region.map_z * REGION_SIZE;
 
   return planeData.wall_edges
-    .filter(w => w.orientation === 'cardinal')
     .map(w => ({
       wx: originX + w.x,
       wy: originY + w.y,

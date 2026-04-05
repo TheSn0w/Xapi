@@ -135,6 +135,14 @@ export class OverlayRenderer {
   private playerPosition: { x: number; y: number; plane: number; timestamp: number } | null = null;
   /** Whether to show the "Confirmed In-Game" highlight layer */
   private showConfirmedLayer = false;
+  /** Currently highlighted wall edge (for wall edit mode) */
+  private highlightedWall: { wx: number; wy: number; direction: string } | null = null;
+  /** Whether to show diagonal walls */
+  private showDiagWalls = false;
+  /** Wall edit mode — show corner anchors */
+  private wallEditMode = false;
+  /** First anchor point for wall drawing (integer corner coords) */
+  private wallAnchor: { x: number; y: number } | null = null;
 
   constructor(map: L.Map) {
     this.map = map;
@@ -195,6 +203,32 @@ export class OverlayRenderer {
   setShowConfirmedLayer(show: boolean): void {
     this.showConfirmedLayer = show;
     this.scheduleRedraw();
+  }
+
+  /** Set or clear the highlighted wall edge for wall edit mode. */
+  setHighlightedWall(wall: { wx: number; wy: number; direction: string } | null): void {
+    this.highlightedWall = wall;
+    this.scheduleRedraw();
+  }
+
+  setShowDiagWalls(show: boolean): void {
+    this.showDiagWalls = show;
+    this.scheduleRedraw();
+  }
+
+  setWallEditMode(on: boolean): void {
+    this.wallEditMode = on;
+    if (!on) this.wallAnchor = null;
+    this.scheduleRedraw();
+  }
+
+  setWallAnchor(anchor: { x: number; y: number } | null): void {
+    this.wallAnchor = anchor;
+    this.scheduleRedraw();
+  }
+
+  getWallAnchor(): { x: number; y: number } | null {
+    return this.wallAnchor;
   }
 
   setWalkabilityOpacity(opacity: number): void {
@@ -366,8 +400,8 @@ export class OverlayRenderer {
     const tilePx = this.getTilePx();
     if (tilePx < 4) return;
 
-    ctx.strokeStyle = `rgba(255, 0, 0, ${this.layers.wallOpacity})`;
-    ctx.lineWidth = Math.max(3, tilePx / 4);
+    const baseLineWidth = Math.max(3, tilePx / 4);
+    const hl = this.highlightedWall;
 
     for (const [, region] of getAllRegions()) {
       const walls = getWallEdges(region, this.plane);
@@ -378,6 +412,24 @@ export class OverlayRenderer {
 
         if (wx < bounds.minX - 1 || wx > bounds.maxX + 1) continue;
         if (wy < bounds.minY - 1 || wy > bounds.maxY + 1) continue;
+
+        // Skip diagonal walls unless toggle is on
+        const isDiag = wall.direction === 'nwse' || wall.direction === 'nesw';
+        if (isDiag && !this.showDiagWalls) continue;
+
+        // Check if this wall is highlighted
+        const isHighlighted = hl && hl.wx === wall.wx && hl.wy === wall.wy && hl.direction === wall.direction;
+
+        if (isHighlighted) {
+          ctx.strokeStyle = '#ffff00';
+          ctx.lineWidth = baseLineWidth + 2;
+          ctx.shadowColor = '#ffff00';
+          ctx.shadowBlur = 6;
+        } else {
+          ctx.strokeStyle = `rgba(255, 0, 0, ${this.layers.wallOpacity})`;
+          ctx.lineWidth = baseLineWidth;
+          ctx.shadowBlur = 0;
+        }
 
         const p0 = this.gameToScreen(wx, wy + 1);       // NW corner
         const p1 = this.gameToScreen(wx + 1, wy + 1);   // NE corner
@@ -402,9 +454,46 @@ export class OverlayRenderer {
             ctx.moveTo(p0.x, p0.y);
             ctx.lineTo(p3.x, p3.y);
             break;
+          case 'nwse': // \ diagonal: NW corner to SE corner
+            if (!isHighlighted) ctx.strokeStyle = `rgba(255, 128, 0, ${this.layers.wallOpacity})`;
+            ctx.moveTo(p0.x, p0.y);
+            ctx.lineTo(p2.x, p2.y);
+            break;
+          case 'nesw': // / diagonal: NE corner to SW corner
+            if (!isHighlighted) ctx.strokeStyle = `rgba(255, 128, 0, ${this.layers.wallOpacity})`;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p3.x, p3.y);
+            break;
         }
         ctx.stroke();
       }
+    }
+    ctx.shadowBlur = 0;
+
+    // ── Draw corner anchors when in wall edit mode ──
+    if (this.wallEditMode && tilePx >= 16) {
+      const dotRadius = Math.max(3, tilePx / 8);
+      const anchor = this.wallAnchor;
+
+      for (let wy = Math.floor(bounds.minY); wy <= Math.ceil(bounds.maxY) + 1; wy++) {
+        for (let wx = Math.floor(bounds.minX); wx <= Math.ceil(bounds.maxX) + 1; wx++) {
+          const sx = this.gameToScreen(wx, wy);
+          const isAnchor = anchor && anchor.x === wx && anchor.y === wy;
+
+          ctx.beginPath();
+          ctx.arc(sx.x, sx.y, isAnchor ? dotRadius + 2 : dotRadius, 0, Math.PI * 2);
+          if (isAnchor) {
+            ctx.fillStyle = '#00ff00';
+            ctx.shadowColor = '#00ff00';
+            ctx.shadowBlur = 8;
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.shadowBlur = 0;
+          }
+          ctx.fill();
+        }
+      }
+      ctx.shadowBlur = 0;
     }
   }
 

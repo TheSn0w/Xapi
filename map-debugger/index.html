@@ -280,6 +280,49 @@
 
     #move-mode-cancel:hover { background: rgba(0,0,0,0.5); }
 
+    #wall-edit-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(40, 40, 10, 0.92);
+      color: #ffdd00;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      z-index: 1001;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ffdd00;
+    }
+
+    #wall-edit-confirm {
+      padding: 3px 10px;
+      background: #8b0000;
+      color: #ff6666;
+      border: 1px solid #ff4444;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    #wall-edit-confirm:hover { background: #aa0000; }
+
+    #wall-edit-cancel {
+      padding: 3px 10px;
+      background: rgba(0,0,0,0.3);
+      color: #ccc;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    #wall-edit-cancel:hover { background: rgba(0,0,0,0.5); }
+
     #add-transition-form {
       margin-top: 6px;
       padding-top: 6px;
@@ -406,6 +449,16 @@
           <div class="layer-toggle"><input type="checkbox" class="trans-filter" data-types="OTHER" checked /><span class="filter-dot" style="background:#ff6644;"></span><label style="font-size:11px;">Other</label></div>
         </div>
         <div class="layer-toggle" style="margin-top: 8px; border-top: 1px solid #1a3a5c; padding-top: 6px;">
+          <input type="checkbox" id="toggle-diag-walls" />
+          <span class="filter-dot" style="background:#ff8800;"></span>
+          <label for="toggle-diag-walls">Diagonal Walls</label>
+        </div>
+        <div class="layer-toggle">
+          <input type="checkbox" id="wall-edit-toggle" />
+          <span class="filter-dot" style="background:#ffff00;"></span>
+          <label for="wall-edit-toggle">Wall Edit Mode</label>
+        </div>
+        <div class="layer-toggle" style="margin-top: 4px; border-top: 1px solid #1a3a5c; padding-top: 6px;">
           <input type="checkbox" id="toggle-player" />
           <span class="filter-dot" style="background:#1e90ff;"></span>
           <label for="toggle-player">Live Player</label>
@@ -536,6 +589,13 @@
       <div id="move-mode-banner" style="display:none;">
         <span id="move-mode-label"></span>
         <button id="move-mode-cancel">Cancel (Esc)</button>
+      </div>
+      <div id="wall-edit-banner" style="display:none;">
+        <span id="wall-edit-info"></span>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button id="wall-edit-confirm">Delete Wall</button>
+          <button id="wall-edit-cancel">Cancel</button>
+        </div>
       </div>
       <div id="status-bar">
         <span><span class="coord">World:</span> <span class="value" id="coord-world">-</span></span>

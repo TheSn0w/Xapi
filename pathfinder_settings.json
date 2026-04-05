@@ -1,0 +1,58 @@
+{
+  "typeFilters": {
+    "DOOR": true,
+    "GATE": true,
+    "STAIRCASE": true,
+    "LADDER": true,
+    "PORTAL": true,
+    "AGILITY": true,
+    "PASSAGE": true,
+    "WALL_PASSAGE": true,
+    "ENTRANCE": true,
+    "BRIDGE": true,
+    "TRANSPORT": true,
+    "NPC_TRANSPORT": true,
+    "TELEPORT": true,
+    "FAIRY_RING": true,
+    "SPIRIT_TREE": true,
+    "LODESTONE": true,
+    "ITEM_TELEPORT": true,
+    "OTHER": true
+  },
+  "checkpoints": [
+    {
+      "name": "Bank Area",
+      "x": 3206,
+      "y": 3212,
+      "plane": 2
+    },
+    {
+      "name": "lumbirdge front",
+      "x": 3221,
+      "y": 3219,
+      "plane": 0
+    },
+    {
+      "name": "falador lodestone",
+      "x": 2965,
+      "y": 3401,
+      "plane": 0
+    },
+    {
+      "name": "fally top",
+      "x": 2982,
+      "y": 3335,
+      "plane": 2
+    },
+    {
+      "name": "top of falador",
+      "x": 2995,
+      "y": 3341,
+      "plane": 3
+    }
+  ],
+  "lastDestX": 3221,
+  "lastDestY": 3219,
+  "lastDestPlane": 0,
+  "jitterSeed": 0
+}
